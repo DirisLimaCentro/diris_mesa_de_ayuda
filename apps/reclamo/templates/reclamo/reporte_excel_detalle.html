@@ -1,0 +1,90 @@
+{% load static format_item %}
+
+{% if object_list %}
+    <div class="table-responsive text-center">
+
+        <a class="btn btn-success btn-sm mb-2"
+           href="{% url 'reclamo:generar-excel' %}?anio={{ anio }}&ris={{ ris }}&ipress={{ ipress }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}"
+           disabled=""
+           id="generar">
+            <i class="la la-file-excel-o"
+               style="font-size: 15px"></i>
+            Generar Excel
+        </a>
+
+
+        <table class="table mb-0">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Fecha de <br> Registro</th>
+            <th>Fecha de <br> Atención</th>
+            <th>Estado</th>
+            <th>Código ticket</th>
+            <th>Usuario</th>
+            <th>Dependencia</th>
+            <th>Sede</th>
+            <th>Tipo de incidencia</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <td>{{ object.created_at }}</td>
+            <td>{{ object.fecha_atencion |default:'' }}</td>
+            <td>
+                                                             {% if object.estado_reclamo == 1 %}
+                                                                    <span class="badge badge-pill badge-warning">En curso</span>
+                                                                {% elif object.estado_reclamo == 2 %}
+                                                                    <span class="badge badge-pill badge-success">Atendido</span>
+                                                                {% endif %}</td>
+            <td>{{ object.codigo_ticket }}</td>
+            <td>{{ object.nombres }} {{ object.apellidos }}</td>
+            <td>{{ object.nombre }}</td>
+            <td>{{ object.sede }}</td>
+            <td>
+                {% if object.tipo_incidencia == 1 %}
+                    <span>Problemas con computadoras</span>
+                {% elif object.tipo_incidencia == 2 %}
+                    <span>Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)</span>
+                {% elif object.tipo_incidencia == 3 %}
+                    <span>Conectividad y Redes</span>
+                {% elif object.tipo_incidencia == 4 %}
+                    <span>Impresoras y escáner</span>
+                {% elif object.tipo_incidencia == 5 %}
+                    <span>Software de Ofimática</span>
+                {% else %}
+                    <span class="badge badge-pill badge-primary">Sin especificar</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+    <script>
+
+    </script>
+{% else %}
+    <div class="table-responsive text-center">
+        <h1 class="text-danger"> Sin Tickets</h1>
+    </div>
+{% endif %}
+
+<script>
+    $("#generar").on('click', function () {
+        $( ".content-spinner" ).show();
+        setTimeout(s => {
+            $("#generar").addClass("disabled");
+            $("#generar").text("Generando...")
+        }, 5)
+
+        setTimeout(s => {
+            $( ".content-spinner" ).hide();
+            $("#generar").removeClass("disabled");
+            $("#generar").text("Generar Excel")
+        }, 3000)
+
+    })
+</script>

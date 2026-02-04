@@ -1,0 +1,52 @@
+
+DELIMITER $$
+
+CREATE PROCEDURE obtener_monitoreo_por_fecha_de_perdida(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE,
+    IN tipo_incidencia_param INT
+)
+BEGIN
+    SELECT 
+        r.denominacion AS RIS, 
+        e.nombre AS EESS, 
+        m.distrito AS DIRECCION,  
+        m.velocidad_inter AS VELOCIDAD_INTERNET_MBPS, 
+        m.anexos AS ANEXOS,  
+        DATE_SUB(m.fecha_hora_perdida, INTERVAL 5 HOUR) AS FECHA_HORA_PERDIDA_CONECTIVIDAD,  
+        DATE_SUB(m.fecha_hora_reestablecido, INTERVAL 5 HOUR) AS FECHA_HORA_REESTABL_CONECTIVIDAD,  
+        m.tiempo_sin_serv AS TIEMPO_PROMEDIO_CALCULADO_SIN_SERVICIO_HORAS,  
+        CASE 
+            WHEN m.estado = 0 THEN 'Sin servicio'
+            WHEN m.estado = 1 THEN 'Reestablecido'
+            WHEN m.estado = 2 THEN 'Inestable'
+            ELSE ''
+        END AS ESTADO,  
+        m.observacion AS OBSERVACION,
+        CASE 
+            WHEN m.tipo_incidencia = 1 THEN 'Caida de Red'
+            WHEN m.tipo_incidencia = 2 THEN 'Intermitencia'
+            WHEN m.tipo_incidencia = 3 THEN 'Lentitud'
+            ELSE ''
+        END AS TIPO_INCIDENCIA,
+        m.evidencia_2 AS evidencia,
+        m.evidencia as evidencia_inicial,
+        m.cod_ticket_gtd as ticket
+    FROM reclamo_monitoreo_internet AS m
+    LEFT JOIN setup_entidad AS e ON e.id = m.entidad2
+    LEFT JOIN setup_ris AS r ON r.id = m.ris_id
+    WHERE 
+        DATE(m.fecha_hora_perdida) BETWEEN fecha_inicio AND fecha_fin
+        AND (
+            tipo_incidencia_param IS NULL 
+            OR m.tipo_incidencia = tipo_incidencia_param
+        )
+    ORDER BY m.fecha_hora_perdida;
+END $$
+
+DELIMITER ;
+
+use diris_mesa_de_ayuda_4;
+drop procedure obtener_monitoreo_por_fecha_de_perdida;
+
+call obtener_monitoreo_por_fecha_de_perdida('2025-11-24','2025-11-24',null)

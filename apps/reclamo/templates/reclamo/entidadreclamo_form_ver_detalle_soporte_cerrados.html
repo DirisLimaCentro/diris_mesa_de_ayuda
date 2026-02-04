@@ -1,0 +1,1299 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block  container %}
+
+    <style>
+
+        .btn-fixed {
+    width: 160px; /* ajusta según tu diseño */
+    text-align: center;
+}
+        .ui-menu > .ui-menu-item {
+            border: 2px solid #0f95ac !important;
+            width: 100% !important;
+        }
+
+
+        .ui-widget.ui-widget-content {
+            width: 50% !important;
+        }
+
+
+        .highlighted {
+            background-color: #21f3b4;
+        }
+
+        .highlight {
+            background-color: #21f3b4;
+            -moz-border-radius: 5px; /* FF1+ */
+            -webkit-border-radius: 5px; /* Saf3-4 */
+            border-radius: 5px; /* Opera 10.5, IE 9, Saf5, Chrome */
+            -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* FF3.5+ */
+            -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* Saf3.0+, Chrome */
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* Opera 10.5+, IE 9.0 */
+        }
+
+        .highlight {
+            padding: 1px 4px;
+            margin: 0 -4px;
+        }
+
+        input[type=checkbox] {
+            /* Double-sized Checkboxes */
+            -ms-transform: scale(2); /* IE */
+            -moz-transform: scale(2); /* FF */
+            -webkit-transform: scale(2); /* Safari and Chrome */
+            -o-transform: scale(2); /* Opera */
+            transform: scale(2);
+            padding: 10px;
+        }
+
+        /* Might want to wrap a span around your checkbox text */
+        .form-check-input {
+            /* Checkbox text */
+            font-size: 110%;
+            display: inline;
+        }
+
+
+        .list-group-item {
+            border: 2px solid #545054 !important;
+        }
+
+        #conent-causas a:nth-child(even) {
+            background: #bee0f6 !important;
+        }
+
+
+        input:invalid {
+            border: 3px dashed red !important;
+        }
+
+        select:invalid {
+            border: 3px dashed red !important;
+        }
+
+        textarea:invalid {
+            border: 3px dashed red !important;
+        }
+
+        input:valid {
+            border: 1px solid green;
+        }
+
+        select:valid {
+            border: 1px solid green;
+        }
+
+        textarea:valid {
+            border: 1px solid green;
+        }
+         
+
+
+    </style>
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Reclamos</li>
+                                <li class="breadcrumb-item ">
+                                    <a href="{% url 'reclamo:entidad-reclamo-list' %}?anio={{ request.session.reclamo_anio }}&mes={{ request.session.reclamo_mes }}">
+                                        Lista de reclamos</a>
+                                </li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <section id="patients-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+
+                                <div class="card-header">
+                                    <h1 class=" mt-2"><strong>Ticket: </strong>{{ object.codigo_ticket }} </h1>
+                                     <h4 class=" mt-2"><strong>Fecha de registro: </strong>{{ object.created_at }} </h4>   
+                                    
+                                </div>
+
+                                <div class="card-content collapse show wizard">
+
+
+                                    <div class="card-body">
+                                        <form class="steps-validation wizard-notification" method="post" role="form"
+                                              enctype="multipart/form-data" id="reclamo-new">
+                                            <div hidden>
+                                                {% include 'includes/bs4_form.html' with form=form col=4 include='entidad' start_tabindex="0" hidden="" %}
+                                                {% include 'includes/bs4_form.html' with form=form col=4 include=inputs_hidden start_tabindex="0" hidden="" %}
+                                            </div>
+                                            {% csrf_token %}
+                                             <p class="h6"> </p>
+                                            <fieldset disabled>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_uno start_tabindex="1" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+                                                 <!--  <h6>USUARIO AFECTADO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_dos start_tabindex="10" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                              <h6>PRESENTA RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row text-center">
+                                                    <div class="col-md-12">
+                                                        <div class="form-check">
+                                                            {{ form.es_mismo_usuario_afectado }}
+                                                            <label class="form-check-label"
+                                                                   for="same_user" style="
+                                                                                    background-color: #3fe43f;
+                                                                                    color: #2700ff;
+                                                                                    padding: 2px 11px;
+                                                                                    font-weight: 700;">
+                                                                Es el mismo usuario afectado ?
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="divider">
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_tres start_tabindex="15" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                    <h6>DETALLE RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+
+                                                     {% include 'includes/bs4_form.html' with form=form col=4 include=paso_cuatro start_tabindex="15" hidden="" %}</div>
+                                            </fieldset>
+
+
+                                            <h6>GESTIÓN DE RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_cinco start_tabindex="28" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                           <h6>RESULTADO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_seis start_tabindex="35" hidden="" %}
+                                                </div>
+                                            </fieldset>-->
+
+                                        </form>
+
+                                        <div class=" float-md-right">
+                                            <a href="{% url 'reclamo:soporte-list-cerrados' %}?anio={{ request.session.reclamo_anio }}&mes={{ request.session.reclamo_mes }}"
+   class="btn btn-danger btn-sm mb-2 btn-fixed">
+    <i class="la la-arrow-left"></i>
+    Lista de tickets
+</a>
+
+<!--<a class="btn btn-success btn-sm mb-2 btn-fixed"
+   data-toggle="modal"
+   data-target="#confirmAtenderModal"
+    data-href="{% url 'reclamo:atender-reclamo' object.id %}">
+    <i class="la la-check"></i>
+    Atender
+</a>-->
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 class="text-success cupos-success">
+                        ¿ Desea guardar los cambios ?
+                    </h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cupos-valid" data-dismiss="modal">Cancelar
+                    </button>
+                    <a type="button" style="color: #fff" class="btn btn-primary cupos-success" data-dismiss="modal"
+                       id="confirmar">Confirmar </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="clasificacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Buscar clasificación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-1 mt-1">
+                            <input name="buscar" placeholder="Buscar..." class="form-control" type="text" id="buscar"
+                                   autocomplete="off">
+                            <input name="numero-causa" id="numero-causa" hidden>
+                        </div>
+                    </div>
+                    <div class="list-group" id="conent-causas">
+                        {% for object in clasificaciones %}
+                            <a href="#" data-pk="{{ object.id }}"
+                               class="list-group-item list-group-item-action flex-column align-items-start item-causa">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ object.codigo }}</h5>
+                                    <small>{{ object.get_categoria_display }}</small>
+                                </div>
+                                <h3>{{ object.causa }}</h3>
+                                <p class="mb-1">{{ object.definicion }}</p>
+                                {#                                <p class="mb-1">{{ object.definicion_corta }}</p>#}
+                                <small>{{ object.definicion_corta }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <div class="modal fade" id="confirmAtenderModal" tabindex="-1" role="dialog" aria-labelledby="confirmAtenderLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Desea atender este caso?
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+        <a id="confirmAtenderGo" class="btn btn-success btn-sm" href="#">Aceptar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock container %}
+
+{% block static %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const risSelect = document.getElementById("id_ris");
+    const entidadSelect = document.getElementById("id_entidad");
+    const distritoInput = document.getElementById("id_distrito"); // campo distrito
+    // ⚡ Guardamos el valor que vino de Django en un data-atributo
+    if (entidadSelect) {
+        entidadSelect.setAttribute("data-seleccionado", "{{ form.entidad2.value|default:'' }}");
+    }
+
+    // Opciones según RIS
+    const opcionesPorRis = {
+        "1": [
+ 
+           { value: 11, text: "C.S. CONDE DE LA VEGA BAJA" },
+{ value: 20, text: "C.S. CONTROL DE ZOONOSIS" },
+{ value: 12, text: "C.S. JUAN PEREZ CARRANZA" },
+{ value: 9,  text: "C.S. MIRONES BAJO" },
+{ value: 17, text: "C.S. MIRONES" },
+{ value: 10, text: "C.S. RAUL PATRUCCO PUIG" },
+{ value: 13, text: "C.S. SAN SEBASTIAN" },
+{ value: 14, text: "C.S. UNIDAD VECINAL N°3" },
+{ value: 15, text: "C.S. VILLA MARIA PERPETUO SOCORRO" },
+{ value: 5,  text: "C.S.M.C. JESUS MARIA" },
+{ value: 19, text: "C.S.M.C. KUYANAKUSUN" },
+{ value: 16, text: "C.S.M.C. MAGDALENA" },
+{ value: 7,  text: "C.S.M.C. MIRONES BAJO" },
+{ value: 18, text: "C.S.M.C. SAN MARCOS" },
+{ value: 4,  text: "C.S.M.C. SURQUILLO" },
+{ value: 8,  text: "C.S.M.C. VILLA CAMPOY" },
+{ value: 3,  text: "P.S. JARDIN ROSA DE SANTA MARIA" },
+{ value: 1,  text: "P.S. PALERMO" },
+{ value: 2,  text: "P.S. RESCATE" },
+{ value: 6,  text: "P.S. SANTA ROSA" }
+],
+        "2": [
+           { value: 24, text: "C.S. BREÑA" },
+{ value: 23, text: "C.S. CHACRA COLORADA" },
+{ value: 26, text: "C.S. JESUS MARIA" },
+{ value: 22, text: "C.S. SAN MIGUEL" },
+{ value: 25, text: "C.S.M.C. HONORIO DELGADO" },
+{ value: 27, text: "C.S.M.C. SAN MIGUEL" },
+{ value: 28, text: "C.S.M.I. MAGDALENA" },
+{ value: 21, text: "P.S. HUACA PANDO" }
+        ],
+        "3": [
+    { value: 31, text: "C.S. LINCE" },
+{ value: 30, text: "C.S. SAN ISIDRO" },
+{ value: 33, text: "C.S. SAN ATANACIO DEL PEDREGAL" },
+{ value: 29, text: "C.S. SANTA CRUZ DE MIRAFLORES" },
+{ value: 32, text: "C.S. VILLA VICTORIA PORVENIR" },
+{ value: 34, text: "C.S.M.C. SAN ISIDRO" },
+{ value: 35, text: "C.S.M.I. SURQUILLO" }      
+    
+    ],
+        "4": [
+   { value: 43, text: "C.S. EL PINO" },
+{ value: 44, text: "C.S. MAX ARIAS SCHREIBER" },
+{ value: 42, text: "C.S. SAN COSME" },
+{ value: 40, text: "C.S. SAN LUIS" },
+{ value: 41, text: "C.S. TODOS LOS SANTOS DE SAN BORJA" },
+{ value: 45, text: "C.S.M.C. LA VICTORIA" },
+{ value: 39, text: "C.S.M.C. SAN BORJA" },
+{ value: 38, text: "C.S.M.C. SAN COSME" },
+{ value: 46, text: "C.S.M.I. EL PORVENIR" },
+{ value: 37, text: "P.S. CLAS EL PINO" },
+{ value: 36, text: "P.S. SAN JUAN MASIAS" }
+
+],
+        "5": [
+   { value: 52, text: "C.S. CAJA DE AGUA" },
+{ value: 61, text: "C.S. CAMPOY" },
+{ value: 57, text: "C.S. CHACARILLA DE OTERO" },
+{ value: 49, text: "C.S. DANIEL ALCIDES CARRION" },
+{ value: 53, text: "C.S. LA HUAYRONA" },
+{ value: 58, text: "C.S. LA LIBERTAD" },
+{ value: 60, text: "C.S. MANGOMARCA" },
+{ value: 54, text: "C.S. SAN FERNANDO" },
+{ value: 55, text: "C.S. SANTA ROSA DE LIMA" },
+{ value: 48, text: "C.S. SANTA FE DE TOTORITA" },
+{ value: 56, text: "C.S. ZARATE" },
+{ value: 50, text: "C.S.M.C. MANGOMARCA" },
+{ value: 51, text: "C.S.M.C. JAVIER MARIATEGUI CHIAPPE" },
+{ value: 59, text: "P.S. 15 DE ENERO" },
+{ value: 47, text: "P.S. AZCARRUNZ ALTO" }
+],
+
+"6": [
+  { value: 66, text: "C.S. BAYOVAR" },
+{ value: 68, text: "C.S. GANIMEDES" },
+{ value: 69, text: "C.S. HUASCAR XV" },
+{ value: 70, text: "C.S. HUASCAR II" },
+{ value: 65, text: "C.S. MEDALLA MILAGROSA" },
+{ value: 67, text: "C.S. SAN HILARION" },
+{ value: 71, text: "C.S.M.C. JAIME ZUBIETA" },
+{ value: 72, text: "C.S.M.C. NUEVO PERU" },
+{ value: 63, text: "P.S. AYACUCHO" },
+{ value: 64, text: "P.S. PROYECTOS ESPECIALES" },
+{ value: 62, text: "P.S. SAGRADA FAMILIA" }
+],
+"8": [
+{ value: 83, text: "C.S. 10 DE OCTUBRE" },
+{ value: 79, text: "C.S. CRUZ DE MOTUPE" },
+{ value: 82, text: "C.S. ENRIQUE MONTENEGRO" },
+{ value: 81, text: "C.S. JAIME ZUBIETA" },
+{ value: 80, text: "C.S. JOSE CARLOS MARIATEGUI" },
+{ value: 78, text: "C.S. SANTA MARIA" },
+{ value: 77, text: "C.S. SU SANTIDAD JUAN PABLO II" },
+{ value: 74, text: "P.S. CESAR VALLEJO" },
+{ value: 73, text: "P.S. JOSE CARLOS MARIATEGUI V ETAPA" },
+{ value: 75, text: "P.S. MARISCAL CACERES" },
+{ value: 76, text: "P.S. TUPAC AMARU II" }
+],
+"9": [
+     { value: 92, text: "Almacén DIRIS", piso: "Sotano" },
+{ value: 93, text: "Archivo y Acervo Documentario", piso: "PISO 12" },
+{ value: 94, text: "Dirección Adjunta", piso: "PISO 10" },
+{ value: 95, text: "Dirección Administrativa", piso: "PISO 10" },
+{ value: 96, text: "Dirección de Medicamentos Insumos y Drogas", piso: "PISO 09" },
+{ value: 97, text: "Dirección De Monitoreo", piso: "PISO 13" },
+{ value: 98, text: "Dirección General", piso: "PISO 10" },
+{ value: 99, text: "Espacio de Monitoreo de Emergencias y Desastres", piso: "PISO 01" },
+{ value: 100, text: "Oficina Infraestructura Y Equipamiento", piso: "PISO 09" },
+{ value: 101, text: "Oficina de Abastecimiento", piso: "PISO 10" },
+{ value: 102, text: "Oficina de Acceso y uso racional de Medicamentos", piso: "PISO 09" },
+{ value: 103, text: "Oficina De Apoyo Al Diagnostico Y Laboratorio De Salud Pública", piso: "PISO 13" },
+{ value: 104, text: "Oficina de Asesoría Jurídica", piso: "PISO 10" },
+{ value: 105, text: "Oficina de Autorizaciones Sanitarias de Establecimientos Farmaceuticos", piso: "PISO 09" },
+{ value: 106, text: "Oficina de Certificaion de Salud Ambiental/ Fiscalizacion y control en Salud Ambiental", piso: "PISO 09" },
+{ value: 107, text: "Oficina De Comunicaciones, E Imagen Institucional", piso: "PISO 10" },
+{ value: 108, text: "Oficina De Contabilidad", piso: "PISO 12" },
+{ value: 109, text: "Oficina de Epidemiología /Inteligencia Sanitaria y Docencia e Investigación", piso: "PISO 12" },
+{ value: 110, text: "Oficina de Fiscalizacion y Monitoreo y Vigilancia Sanitaria", piso: "PISO 09" },
+{ value: 111, text: "Oficina De Gestión De La Calidad", piso: "PISO 13" },
+{ value: 112, text: "Oficina De Gestión De Recursos Humanos", piso: "PISO 13" },
+{ value: 113, text: "Oficina De Gestión De Riesgos Y Desastres", piso: "PISO 01" },
+{ value: 114, text: "Oficina De Gestión De Tecnologias De La Informacion", piso: "PISO 12" },
+{ value: 115, text: "Oficina De Intervenciones Sanitarias", piso: "PISO 13" },
+{ value: 116, text: "Oficina De Planeamiento Y Modernizacion De La Gestion Publica", piso: "PISO 12" },
+{ value: 117, text: "Oficina De Presupuesto Publico", piso: "PISO 12" },
+{ value: 118, text: "Oficina De Proyectos De Inversiones", piso: "PISO 12" },
+{ value: 119, text: "Oficina De Salud Ambiental e Inocuidad Alimentaria", piso: "PISO 09" },
+{ value: 120, text: "Oficina De Seguros", piso: "PISO 09" },
+{ value: 121, text: "Oficina De Servicios De Salud", piso: "PISO 13" },
+{ value: 122, text: "Oficina De Tesorería", piso: "PISO 12" },
+{ value: 123, text: "Oficina de Vigilancia Sanitaria", piso: "PISO 09" },
+{ value: 124, text: "Órgano De Control Institucional", piso: "PISO 10" },
+{ value: 125, text: "Plataforma de Atencio al Usuario", piso: "PISO 01" },
+{ value: 126, text: "Secretaría Técnica", piso: "PISO 12" },
+{ value: 127, text: "Tramite del Publico Usuario", piso: "PISO 01" },
+{ value: 128, text: "Trámite Documentario", piso: "PISO 01" },
+{ value: 129, text: "Unidad Funcional Gestión Compensación", piso: "PISO 12" },
+{ value: 130, text: "Unidad Funcional De Adquisiciones", piso: "PISO 10" },
+{ value: 131, text: "Unidad Funcional De Almacenamiento Y Distribución", piso: "PISO 09" },
+{ value: 132, text: "Unidad Funcional De Área Transmisible", piso: "PISO 13" },
+{ value: 133, text: "Unidad Funcional De Autorización Y Categorización De Ipress", piso: "PISO 13" },
+{ value: 134, text: "Unidad Funcional De Control Previo", piso: "PISO 12" },
+{ value: 135, text: "Unidad Funcional De Gestión De Relaciones Humanas, Sociales, Seguridad Y Salud En El Trabajo", piso: "PISO 12" },
+{ value: 136, text: "Unidad Funcional De Gestión Del Desarrollo, Capacitación Y Del Rendimiento", piso: "PISO 13" },
+{ value: 137, text: "Unidad Funcional De Gestión Del Empleo", piso: "PISO 9" },
+{ value: 138, text: "Unidad Funcional De Integración Contable Y Presupuesto", piso: "PISO 12" },
+{ value: 139, text: "Unidad Funcional De Mantenimiento", piso: "PISO 09" },
+{ value: 140, text: "Unidad Funcional De Modernizacion", piso: "PISO 12" },
+{ value: 141, text: "Unidad Funcional De Organización De La Salud", piso: "PISO 13" },
+{ value: 142, text: "Unidad Funcional De Organización Del Trabajo Y Su Distribución", piso: "PISO 09" },
+{ value: 143, text: "Unidad Funcional De Patrimonio", piso: "PISO 10" },
+{ value: 144, text: "Unidad Funcional De Planificación De Políticas De Rrhh.", piso: "PISO 09" },
+{ value: 145, text: "Unidad Funcional De Programación", piso: "PISO 10" },
+{ value: 146, text: "Unidad Funcional De Referencia Y Contrarreferencia", piso: "PISO 13" },
+{ value: 147, text: "Unidad Funcional De Servicios Generales Y Transporte", piso: "Mezanine" },
+{ value: 148, text: "Unidad Funcional De Soporte Informático/Unidad Funcional de Telecomunicaciones y Redes", piso: "PISO 12" },
+{ value: 149, text: "Unidad Funcional Del Área De Promoción De La Salud", piso: "PISO 13" },
+{ value: 150, text: "Unidad Funcional Del Área Mujer Adolescente Y Joven.", piso: "PISO 13" },
+{ value: 151, text: "Unidad Funcional Del Área Niño", piso: "PISO 13" },
+{ value: 152, text: "Unidad Funcional Del Área No Transmisible, Adulto Y Adulto Mayor.", piso: "PISO 13" },
+{ value: 153, text: "Unidad Funcional Docencia e Investigación", piso: "PISO 12" },
+{ value: 154, text: "Unidad Funcional Infraestructura Y Equipamiento", piso: "PISO 09" }
+     
+],
+"10": [
+    { value: 187, text: "ALMACÉN CENTRAL" },
+    
+    
+]
+};
+
+    // Evento: cambiar RIS
+    function actualizarEntidades() {
+    const risId = risSelect.value;
+    const opciones = opcionesPorRis[risId] || [];
+
+    const valorSeleccionado = entidadSelect.getAttribute("data-seleccionado");
+
+    entidadSelect.innerHTML = "<option value=''>Seleccione un establecimiento</option>";
+
+    opciones.forEach(op => {
+        const option = new Option(op.text, op.value);
+        if (valorSeleccionado && valorSeleccionado == op.value) {
+            option.selected = true;
+        }
+        entidadSelect.add(option);
+    });
+}
+
+risSelect.addEventListener("change", function() {
+    entidadSelect.setAttribute("data-seleccionado", "");
+    actualizarEntidades();
+});
+
+entidadSelect.addEventListener("change", function () {
+    // No es necesario hacer nada adicional aquí si no usamos 'distrito'
+});
+
+actualizarEntidades();
+
+});
+</script>
+
+<script>
+  $('#confirmAtenderModal').on('show.bs.modal', function (e) {
+      var trigger = $(e.relatedTarget); // Botón que abrió el modal
+      var url = trigger.data('href'); // URL para atender
+      $('#confirmAtenderGo').attr('href', url);
+  });
+</script>
+
+    <script>
+
+
+$("#content-id_fecha_reclamo").hide();
+
+        $('input').keyup(function () {
+            if ($(this).attr("type") === 'password' || $(this).attr("name") === 'username') {
+            } else {
+                $(this).val($(this).val().toUpperCase());
+            }
+        });
+
+        $('textarea').keyup(function () {
+            $(this).val($(this).val().toUpperCase());
+        });
+
+
+        $('label[for="id_clasificacion_reclamo_1"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='1' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+        $('label[for="id_clasificacion_reclamo_2"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='2' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+        $('label[for="id_clasificacion_reclamo_3"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='3' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+
+        $(function () {
+
+
+            $('#buscar').keyup(function () {
+
+                // Search text
+                var text = $(this).val();
+
+                // Hide all content class element
+                $('.item-causa').hide();
+
+                // Search
+                $('.item-causa:contains("' + text + '")').closest('.item-causa').show();
+
+                if (text === "") {
+                    $('.item-causa').show();
+                }
+                $("#conent-causas").unhighlight();
+                $("#conent-causas").highlight(text);
+            });
+        });
+
+
+        $("#confirmar").click(function () {
+            $('form#reclamo-new').submit();
+        });
+
+        $(".item-causa").click(function () {
+            const pk = $(this).data("pk")
+
+            $('#clasificacionModal').modal('toggle');
+            {#$('form#prematricula-new').submit();#}
+
+            const numero_causa = $("#numero-causa").val();
+
+            if (numero_causa === '1') {
+                $("#id_clasificacion_reclamo_1").val(pk);
+            }
+            if (numero_causa === '2') {
+                $("#id_clasificacion_reclamo_2").val(pk);
+            }
+            if (numero_causa === '3') {
+                $("#id_clasificacion_reclamo_3").val(pk);
+            }
+
+        });
+
+
+        $('#clasificacionModal').on('show.bs.modal', function (e) {
+            var numero = $(e.relatedTarget).data('numero');
+            $("#numero-causa").val(numero);
+            $('#buscar').val("");
+            $('.item-causa').show();
+            $("#conent-causas").unhighlight();
+        });
+
+        {#   Validando ruc   #}
+
+
+        var usario_validar = (value) => {
+
+
+            $("#content-id_nombres_usuario .danger").remove();
+            $("#content-id_apellido_paterno_usuario .danger").remove();
+            $("#content-id_apellido_materno_usuario .danger").remove();
+            $("#content-id_razon_social_usuario .danger").remove();
+
+            if (value === "8") {
+
+                $("#id_razon_social_usuario").prop('required', true);
+                $('label[for="id_razon_social_usuario"]').append("<span class='danger required_razon_social_usuario' >*</span>");
+
+                $("#id_nombres_usuario").prop('required', false);
+                $("#id_nombres_usuario-error").remove();
+
+                $("#id_apellido_paterno_usuario").prop('required', false);
+                $("#id_apellido_paterno_usuario-error").remove();
+
+                $("#id_apellido_materno_usuario").prop('required', false);
+                $("#id_apellido_materno_usuario-error").remove();
+
+                {#$('#id_numero_documento_usuario').val("");#}
+                $('#id_nombres_usuario').val("");
+                $('#id_apellido_paterno_usuario').val("");
+                $('#id_apellido_materno_usuario').val("");
+
+                // Ocultar Inputs
+                $("#content-id_nombres_usuario").hide();
+                $("#content-id_apellido_paterno_usuario").hide();
+                $("#content-id_apellido_materno_usuario").hide();
+                $("#content-id_razon_social_usuario").show();
+                // FIN ocultar
+
+            } else {
+
+                $("#id_razon_social_usuario").prop('required', false);
+                $("#id_nombres_usuario").prop('required', false);
+                $('label[for="id_nombres_usuario"]').append("<span class='danger required_nombres_usuario'>*</span>");
+                $("#id_apellido_paterno_usuario").prop('required', false);
+                $('label[for="id_apellido_paterno_usuario"]').append("<span class='danger required_apellido_paterno_usuario'>*</span>");
+                $("#id_apellido_materno_usuario").prop('required', false);
+                $('label[for="id_apellido_materno_usuario"]').append("<span class='danger required_apellido_materno_usuario'>*</span>");
+                // Ocultar Inputs
+                $("#content-id_nombres_usuario").show();
+                $("#content-id_apellido_paterno_usuario").show();
+                $("#content-id_apellido_materno_usuario").show();
+                $("#content-id_razon_social_usuario").hide();
+                // FIN ocultar
+            }
+
+        }
+
+
+        var presenta_validar = (value) => {
+
+
+            $("#content-id_nombres_presenta .danger").remove();
+            $("#content-id_apellido_paterno_presenta .danger").remove();
+            $("#content-id_apellido_materno_presenta .danger").remove();
+            $("#content-id_razon_social_presenta .danger").remove();
+
+            if (value === "8") {
+
+                $("#id_razon_social_presenta").prop('required', true);
+                $('label[for="id_razon_social_presenta"]').append("<span class='danger required_razon_social_presenta' >*</span>");
+
+                $("#id_nombres_presenta").prop('required', false);
+                $("#id_nombres_presenta-error").remove();
+
+                $("#id_apellido_paterno_presenta").prop('required', false);
+                $("#id_apellido_paterno_presenta-error").remove();
+
+                $("#id_apellido_materno_presenta").prop('required', false);
+                $("#id_apellido_materno_presenta-error").remove();
+
+                {#$('#id_numero_documento_presenta').val("");#}
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+
+                // Ocultar Inputs
+                $("#content-id_nombres_presenta").hide();
+                $("#content-id_apellido_paterno_presenta").hide();
+                $("#content-id_apellido_materno_presenta").hide();
+                $("#content-id_razon_social_presenta").show();
+                // FIN ocultar
+            } else {
+
+                $("#id_razon_social_presenta").prop('required', false);
+
+                $("#id_nombres_presenta").prop('required', false);
+                $('label[for="id_nombres_presenta"]').append("<span class='danger required_nombres_presenta'>*</span>");
+
+                $("#id_apellido_paterno_presenta").prop('required', false);
+                $('label[for="id_apellido_paterno_presenta"]').append("<span class='danger required_apellido_paterno_presenta'>*</span>");
+
+                $("#id_apellido_materno_presenta").prop('required', false);
+                $('label[for="id_apellido_materno_presenta"]').append("<span class='danger required_apellido_materno_presenta'>*</span>");
+             
+ 
+                // Ocultar Inputs
+                $("#content-id_nombres_presenta").show();
+                $("#content-id_apellido_paterno_presenta").show();
+                $("#content-id_apellido_materno_presenta").show();
+                $("#content-id_razon_social_presenta").hide();
+                // FIN ocultar
+            }
+        }
+
+
+        $('#id_tipo_documento_usuario').change(function () {
+            const id = $(this).val()
+            usario_validar(id);
+        });
+
+        $('#id_tipo_documento_presenta').change(function () {
+            const id = $(this).val()
+            presenta_validar(id);
+        });
+
+
+        $('#id_es_mismo_usuario_afectado').change(function () {
+            if (this.checked) {
+
+                const id_tipo_documento_usuario = $('#id_tipo_documento_usuario').val();
+                const id_numero_documento_usuario = $('#id_numero_documento_usuario').val();
+                const id_razon_social_usuario = $('#id_razon_social_usuario').val();
+                const id_nombres_usuario = $('#id_nombres_usuario').val();
+                const id_apellido_paterno_usuario = $('#id_apellido_paterno_usuario').val();
+                const id_apellido_materno_usuario = $('#id_apellido_materno_usuario').val();
+
+                presenta_validar(id_tipo_documento_usuario);
+
+                $('#id_tipo_documento_presenta').val(id_tipo_documento_usuario);
+                $('#id_numero_documento_presenta').val(id_numero_documento_usuario);
+                $('#id_razon_social_presenta').val(id_razon_social_usuario);
+                $('#id_nombres_presenta').val(id_nombres_usuario);
+                $('#id_apellido_paterno_presenta').val(id_apellido_paterno_usuario);
+                $('#id_apellido_materno_presenta').val(id_apellido_materno_usuario);
+
+
+            } else {
+                $('#id_tipo_documento_presenta').val("");
+                $('#id_numero_documento_presenta').val("");
+                $('#id_razon_social_presenta').val("");
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+            }
+        });
+
+
+        var updateDataUsuarioForm = (dni) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                dataType: 'json',
+                url: "/reclamo/validar-persona/" + dni,
+                data: {},
+                success: function (data) {
+                    if (data) {
+                        if (data.estado === true) {
+                            $('#id_nombres_usuario').val(data.persona.nombres);
+                            $('#id_apellido_paterno_usuario').val(data.persona.apellido_paterno);
+                            $('#id_apellido_materno_usuario').val(data.persona.apellido_materno);
+                        }
+                    }
+                }
+            });
+        };
+
+
+        var updateDataPresentaForm = (dni) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                dataType: 'json',
+                url: "/reclamo/validar-persona/" + dni,
+                data: {},
+                success: function (data) {
+                    if (data) {
+                        if (data.estado === true) {
+                            $('#id_nombres_presenta').val(data.persona.nombres);
+                            $('#id_apellido_paterno_presenta').val(data.persona.apellido_paterno);
+                            $('#id_apellido_materno_presenta').val(data.persona.apellido_materno);
+                        }
+                    }
+                }
+            });
+        };
+
+        $("#id_numero_documento_usuario").keyup(function () {
+            const dni = $(this).val();
+            const id_tipo_documento_usuario = $("#id_tipo_documento_usuario").val();
+
+            if (dni.length === 8) {
+                if (id_tipo_documento_usuario === "8") {
+                    $('#id_nombres_usuario').val("");
+                    $('#id_apellido_paterno_usuario').val("");
+                    $('#id_apellido_materno_usuario').val("");
+                } else {
+                    updateDataUsuarioForm(dni);
+                }
+            } else {
+                $('#id_nombres_usuario').val("");
+                $('#id_apellido_paterno_usuario').val("");
+                $('#id_apellido_materno_usuario').val("");
+            }
+        });
+
+
+        $("#id_numero_documento_presenta").keyup(function () {
+            const dni = $(this).val();
+            const id_tipo_documento_presenta = $("#id_tipo_documento_presenta").val();
+
+            if (dni.length === 8) {
+                if (id_tipo_documento_presenta === "8") {
+                    $('#id_nombres_presenta').val("");
+                    $('#id_apellido_paterno_presenta').val("");
+                    $('#id_apellido_materno_presenta').val("");
+                } else {
+                    updateDataPresentaForm(dni);
+                }
+            } else {
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+            }
+        });
+
+
+        var autorizacion_correo_validar = (value) => {
+            if (value === "0") {
+                $("#id_correo_presenta").prop('required', true);
+                $('label[for="id_correo_presenta"]').append("<span class='danger required_correo_presenta'>*</span>");
+                $("#content-id_correo_presenta").show();
+            } else {
+                $("#id_correo_presenta").prop('required', false);
+                $(".required_correo_presenta").remove();
+                $("#content-id_correo_presenta").hide();
+            }
+        }
+
+        $('#id_autorizacion_notificacion_correo').change(function () {
+            const id = $(this).val()
+            autorizacion_correo_validar(id);
+        });
+
+
+        {#Paso 5 "Gestión del Reclamo"#}
+
+        {#quitar traslado de estado del reclamo#}
+
+        const habilitarTrasladoEstadosReclamo = () => {
+            $('#id_estado_reclamo').append($('<option>', {value: 3, text: 'TRASLADADO'}));
+            $('#id_estado_reclamo option[value="3"]').attr("selected", "selected");
+            $('option', '#id_estado_reclamo').not(':eq(0), :selected').remove();
+        }
+
+
+        const quitandoTrasladoEstadosReclamo = () => {
+            /*
+            var exists = $('#id_estado_reclamo option').filter(function () {
+                return $(this).val() === "3";
+            }).length;
+            if (exists) {
+                $("#id_estado_reclamo option[value='3']").remove();
+            }*/
+            const estados = $('#id_estado_reclamo');
+
+            estados.append($('<option>', {value: 1, text: 'RESUELTO'}));
+            estados.append($('<option>', {value: 2, text: 'EN TRAMITE'}));
+            estados.append($('<option>', {value: 4, text: 'ARCHIVADO POR DUPLICIDAD'}));
+            estados.append($('<option>', {value: 5, text: 'ACUMULADO'}));
+            estados.append($('<option>', {
+                value: 6,
+                text: 'CONCLUIDO (CUANDO EL RESULTADO ES COMUNICADO AL RECLAMANTE O TERCERO LEGITIMADO)'
+            }));
+
+
+        }
+
+        const validarCodigoPrimigenioPorEstado = id => {
+
+
+
+            $("#id_codigo_reclamo_primigenio").attr("required", "required");
+
+
+            $("#content-id_codigo_reclamo_primigenio .danger").remove();
+
+            if (id == "3" || id == "4" || id == "5") {
+
+
+                $("#id_codigo_reclamo_primigenio").prop('required', true);
+                $('label[for="id_codigo_reclamo_primigenio"]').append("<span class='danger required_codigo_reclamo_primigenio'>*</span>");
+                $("#content-id_codigo_reclamo_primigenio").show();
+
+
+                const current_text = $('#reclamo-new-t-4 .current-info').text();
+                if (current_text !== "") {
+                    $('.actions ul ').children().eq(1).css('display', 'none');
+                    $('.actions ul ').children().eq(2).css('display', '');
+                }
+
+
+                $("#content-id_resultado_reclamo .danger").remove();
+                $("#content-id_fecha_resultado_reclamo .danger").remove();
+                $("#id_resultado_reclamo").prop('required', false);
+                $("#id_fecha_resultado_reclamo").prop('required', false);
+
+
+                {#$('.actions ul ').children().eq(1).children("a").text("Finalizar registro");#}
+
+                {#$('.actions ul ').children().eq(1).html("<a href='#finish' role='menuitem'>Finalizar registro</a>");#}
+            } else {
+                $("#id_codigo_reclamo_primigenio").prop('required', false);
+                $(".required_codigo_reclamo_primigenio").remove();
+                $("#content-id_codigo_reclamo_primigenio").hide();
+
+                $('.actions ul ').children().eq(1).css('display', '');
+                $('.actions ul ').children().eq(2).css('display', 'none');
+
+                {#$('.actions ul ').children().eq(1).children("a").prop("href", "#next");#}
+                {#$('.actions ul ').children().eq(1).children("a").text("Siguiente");#}
+            }
+        }
+
+        const validarCompetenciaReclamo = id => {
+
+            $('option', '#id_estado_reclamo').remove();
+            if (id === "2") {
+
+                habilitarTrasladoEstadosReclamo();
+                {#Ocultar inputs y no required#}
+
+                $("#id_etapa_reclamo").prop('required', false);
+                $(".required_etapa_reclamo").remove();
+                $("#content-id_etapa_reclamo").hide();
+
+                {#Habilitar inputs#}
+
+                $("#id_tipo_administrado_traslado").prop('required', true);
+                $('label[for="id_tipo_administrado_traslado"]').append("<span class='danger required_tipo_administrado_traslado'>*</span>");
+                $("#id_codigo_administrado_deriva").prop('required', true);
+                $('label[for="id_codigo_administrado_deriva"]').append("<span class='danger required_codigo_administrado_deriva'>*</span>");
+                $("#content-id_tipo_administrado_traslado").show();
+                $("#content-id_codigo_administrado_deriva").show();
+
+
+                validarCodigoPrimigenio(3);
+
+
+            } else {
+                quitandoTrasladoEstadosReclamo();
+                $("#id_tipo_administrado_traslado").prop('required', false);
+                $(".required_tipo_administrado_traslado").remove();
+                $("#id_codigo_administrado_deriva").prop('required', false);
+                $(".required_codigo_administrado_deriva").remove();
+                $("#content-id_tipo_administrado_traslado").hide();
+                $("#content-id_codigo_administrado_deriva").hide();
+                {#Habilitar inputs#}
+
+                $("#id_etapa_reclamo").prop('required', true);
+                $('label[for="id_etapa_reclamo"]').append("<span class='danger required_etapa_reclamo'>*</span>");
+
+                $("#content-id_etapa_reclamo").show();
+
+            }
+
+
+        }
+
+        const validarResultadoReclamo = id => {
+
+
+            $("#content-id_fecha_resultado_reclamo .danger").remove();
+            $("#id_fecha_resultado_reclamo").prop('required', false);
+
+            if (id == "0") {
+                $("#content-id_motivo_conclusion_anticipada").hide();
+                $("#content-id_fecha_resultado_reclamo").hide();
+                $("#content-id_comunicacion_resultado_reclamo").hide();
+                $("#content-id_fecha_notificacion").hide();
+            } else {
+                $("#content-id_motivo_conclusion_anticipada").show();
+                $("#content-id_fecha_resultado_reclamo").show();
+                $("#content-id_comunicacion_resultado_reclamo").show();
+                $("#content-id_fecha_notificacion").show();
+                    $("#id_fecha_resultado_reclamo").prop('required', true);
+                    $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_codigo_administrado_deriva'>*</span>");
+
+            }
+
+
+        }
+
+
+        const validarResultadoReclamoPorEstado = id => {
+            $("#content-id_resultado_reclamo .danger").remove();
+            $("#content-id_fecha_resultado_reclamo .danger").remove();
+            $("#id_resultado_reclamo").prop('required', false);
+            $("#id_fecha_resultado_reclamo").prop('required', false);
+
+            if (!(id < 6 && id > 3)) {
+                $("#id_resultado_reclamo").prop('required', true);
+
+                $('label[for="id_resultado_reclamo"]').append("<span class='danger required_resultado_reclamo'>*</span>");
+
+                if ($("#id_resultado_reclamo").val() === 5) {
+                    $("#id_fecha_resultado_reclamo").prop('required', true);
+                    $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_fecha_resultado_reclamo'>*</span>");
+
+                }
+            }
+        }
+
+
+        const validandoMedioRecepcionReclamo = (id) => {
+
+
+            $('option', '#id_medio_recepcion_reclamo').remove();
+
+
+            const estados = $('#id_medio_recepcion_reclamo');
+            estados.append($('<option>', {value: "", text: '---------'}));
+
+
+            if (id == 1) {
+                estados.append($('<option>', {value: 1, text: 'LIBRO DE RECLAMACIONES VIRTUAL'}));
+                estados.append($('<option>', {value: 6, text: 'RECLAMO TRASLADO DE OTRA ADMINISTRADA'}));
+                estados.append($('<option>', {value: 7, text: 'RECLAMO COPARTICIPADO CON OTRA ADMINISTRADA'}));
+            }
+
+            if (id == 2) {
+                estados.append($('<option>', {value: 2, text: 'LIBRO DE RECLAMACIONES FÍSICO'}));
+                estados.append($('<option>', {value: 4, text: 'RECLAMO PRESENCIAL'}));
+                estados.append($('<option>', {value: 5, text: 'DOCUMENTO ESCRITO'}));
+                estados.append($('<option>', {value: 6, text: 'RECLAMO TRASLADO DE OTRA ADMINISTRADA'}));
+                estados.append($('<option>', {value: 7, text: 'RECLAMO COPARTICIPADO CON OTRA ADMINISTRADA'}));
+            }
+
+            if (id == 3) {
+                estados.append($('<option>', {value: 3, text: 'LLAMADA TELEFÓNICA'}));
+            }
+
+
+        }
+
+        const validarEtapaPorEstadoReclamo = id => {
+
+
+            $('option', '#id_etapa_reclamo').remove();
+
+            const estados = $('#id_etapa_reclamo');
+
+            estados.append($('<option>', {value: "", text: '---------'}));
+
+
+            if (id == "1") {
+                estados.append($('<option>', {value: 3, text: 'RESULTADO Y NOTIFICACIÓN'}));
+            }
+
+            if (id == "2") {
+                estados.append($('<option>', {value: 1, text: 'ADMISIÓN Y REGISTRO'}));
+                estados.append($('<option>', {value: 2, text: 'EVALUACIÓN E INVESTIGACIÓN'}));
+            }
+
+            if (id == "3" || id == "4" || id == "5" || id == "6") {
+                estados.append($('<option>', {value: 4, text: 'ARCHIVO Y CUSTODIA DEL EXPEDIENTE'}));
+            }
+
+
+        }
+
+
+        const validarResultadoPorEtapa = id => {
+
+
+            $("#content-id_resultado_reclamo").show();
+
+            const id_resultado_reclamo = $("#id_resultado_reclamo").val();
+            $('option', '#id_resultado_reclamo').remove();
+            const estados = $('#id_resultado_reclamo');
+            estados.append($('<option selected>', {value: "", text: '---------'}));
+            if (id == "3" || id == "4") {
+                estados.append($('<option>', {value: 1, text: 'FUNDADO'}));
+                estados.append($('<option>', {value: 2, text: 'FUNDADO PARCIAL'}));
+                estados.append($('<option>', {value: 3, text: 'INFUNDADO'}));
+                estados.append($('<option>', {value: 4, text: 'IMPROCEDENTE'}));
+                estados.append($('<option>', {value: 5, text: 'CONCLUIDO ANTICIPADAMENTE'}));
+            } else if (id == "1" || id == "2") {
+                estados.append($('<option>', {value: 0, text: 'PENDIENTE'}));
+            } else {
+                $("#id_resultado_reclamo").prop('required', false);
+                $(".required_resultado_reclamo").remove();
+                $("#content-id_resultado_reclamo").hide();
+            }
+            if (id_resultado_reclamo) {
+                $("#id_resultado_reclamo").val(id_resultado_reclamo);
+            }
+
+            const id_estado_reclamo = $("#id_estado_reclamo").val()
+
+            if (Number(id_estado_reclamo) > 2 && Number(id_estado_reclamo) <= 5) {
+                if (id == "2" || id == "4") {
+                    $("#id_resultado_reclamo").prop('required', false);
+                    $(".required_resultado_reclamo").remove();
+                    $("#content-id_resultado_reclamo").hide();
+                }
+            }
+
+
+        }
+
+
+        const validarMotivoPorResultado = id => {
+            $("#content-id_motivo_conclusion_anticipada").hide()
+
+            $("#content-id_motivo_conclusion_anticipada .danger").remove();
+            $("#id_motivo_conclusion_anticipada").prop('required', false);
+
+            if (id == 5) {
+                $("#content-id_motivo_conclusion_anticipada").show()
+                $("#id_motivo_conclusion_anticipada").prop('required', true);
+                $('label[for="id_motivo_conclusion_anticipada"]').append("<span class='danger required_motivo_conclusion_anticipada'>*</span>");
+            } else {
+                $('#id_motivo_conclusion_anticipada').val("");
+            }
+
+        }
+
+
+        $('#id_competencia_reclamo').change(function () {
+            const id = $(this).val();
+            validarCompetenciaReclamo(id);
+        });
+
+        $('#id_estado_reclamo').change(function () {
+            const id = $(this).val();
+            validarCodigoPrimigenioPorEstado(id);
+            validarResultadoReclamoPorEstado(id);
+            validarEtapaPorEstadoReclamo(id);
+        });
+
+        $('#id_resultado_reclamo').change(function () {
+            const id = $(this).val();
+            validarResultadoReclamo(id);
+            validarMotivoPorResultado(id);
+        });
+
+
+        $('#id_medio_presentacion').change(function () {
+            const id = $(this).val();
+            validandoMedioRecepcionReclamo(id);
+        });
+
+        $('#id_etapa_reclamo').change(function () {
+            const id = $(this).val();
+            validarResultadoPorEtapa(id);
+        });
+
+
+        // Ejecutar cuando carga la página
+
+        $(document).ready(function () {
+
+            const id_tipo_documento_usuario = $("#id_tipo_documento_usuario").val();
+            const id_tipo_documento_presenta = $("#id_tipo_documento_presenta").val();
+            const id_medio_presentacion = $("#id_medio_presentacion").val();
+
+
+            if (id_medio_presentacion) {
+                validandoMedioRecepcionReclamo(id_medio_presentacion);
+            }
+
+
+            if (id_tipo_documento_usuario) {
+                usario_validar(id_tipo_documento_usuario);
+            }
+
+            if (id_tipo_documento_presenta) {
+                presenta_validar(id_tipo_documento_presenta);
+            }
+
+            const id_autorizacion_notificacion_correo = $('#id_autorizacion_notificacion_correo').val();
+            if (id_autorizacion_notificacion_correo) {
+                autorizacion_correo_validar(id_autorizacion_notificacion_correo);
+            }
+
+            const id_competencia_reclamo = $('#id_competencia_reclamo').val();
+            if (id_competencia_reclamo) {
+                validarCompetenciaReclamo(id_competencia_reclamo);
+            }
+
+            const id_estado_reclamo = $('#id_estado_reclamo').val();
+            if (id_estado_reclamo) {
+                validarCodigoPrimigenioPorEstado(id_estado_reclamo);
+                validarEtapaPorEstadoReclamo(id_estado_reclamo);
+            }
+
+            const id_etapa_reclamo = $('#id_etapa_reclamo').val();
+            if (id_etapa_reclamo) {
+                validarResultadoPorEtapa(id_etapa_reclamo);
+            }
+
+
+            const id_resultado_reclamo = $('#id_resultado_reclamo').val();
+            if (id_resultado_reclamo) {
+                validarResultadoReclamo(id_resultado_reclamo);
+                validarMotivoPorResultado(id_resultado_reclamo);
+            }
+
+
+        });
+
+
+    </script>
+
+
+    {% if form.instance.pk %}
+        <script>
+            $(document).ready(function () {
+                var estado_reclamo = $('#id_estado_reclamo').val("{{ form.estado_reclamo.value }}");
+
+
+                validarResultadoReclamoPorEstado(estado_reclamo);
+
+
+                $('.actions ul li a').click(function () {
+                    const current_text = $('#reclamo-new-t-4 .current-info').text();
+                    if (current_text !== "") {
+                        const id_estado_reclamo = $('#id_estado_reclamo').val();
+                        if (id_estado_reclamo) {
+                            validarCodigoPrimigenioPorEstado(id_estado_reclamo);
+                            validarEtapaPorEstadoReclamo(id_estado_reclamo);
+
+                             setTimeout(() => {
+                                 $("#id_etapa_reclamo").val("{{ form.etapa_reclamo.value }}");
+                                 $("#id_medio_recepcion_reclamo").val("{{ form.medio_recepcion_reclamo.value }}");
+                }, 150)
+                        }
+                    }
+                });
+
+
+                setTimeout(() => {
+                    $("#id_etapa_reclamo").val("{{ form.etapa_reclamo.value }}");
+                    $("#id_medio_recepcion_reclamo").val("{{ form.medio_recepcion_reclamo.value }}");
+                }, 1500)
+
+            });
+        </script>
+    {% else %}
+        <script>
+            $("#id_resultado_reclamo").prop('required', true);
+            $("#id_fecha_resultado_reclamo").prop('required', true);
+            $('label[for="id_resultado_reclamo"]').append("<span class='danger required_resultado_reclamo'>*</span>");
+            $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_fecha_resultado_reclamo'>*</span>");
+        </script>
+    {% endif %}
+
+
+
+
+{% endblock static %}

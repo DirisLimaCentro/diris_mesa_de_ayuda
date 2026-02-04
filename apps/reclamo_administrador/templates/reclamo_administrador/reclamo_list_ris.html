@@ -1,0 +1,138 @@
+{% extends 'dashboard.html' %}
+{% load paginator i18n %}
+{% block  container %}
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-12 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Gestión de reclamos</li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class=" float-md-right">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+
+                <section>
+                    <form class="form" method="get" role="form"
+                          action="{% url 'administrador:reclamo-list' %}">
+                        {% include 'util/cabecera_filtro.html' with tipo="ADMINISTRADOR_RIS"  %}
+                    </form>
+                </section>
+
+                <section>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title">{{ title }}
+                                        <strong class="text-primary">({{ page_obj.paginator.count }})</strong></h2>
+                                </div>
+
+                                <div class="card-body collapse show">
+                                    <div class="row">
+                                        <div class="col-md-2" hidden>
+                                            {% include 'genericfilters/filter_list.html' %}
+                                        </div>
+                                        <div class="col-md-12">
+
+                                            <div hidden>
+                                                {% trans "Usuarios" as placeholder %}
+                                                {% include 'genericfilters/query_filter.html' %}
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>IPRESS</th>
+                                                        <th>Fecha de reclamo</th>
+                                                        <th>Usuario afectado</th>
+                                                        <th>Usuario que <br> presenta el reclamo</th>
+                                                        <th>Resultado</th>
+                                                        <th>Estado</th>
+                                                        <th>Fecha de <br>registro</th>
+                                                        <th>Expediente</th>
+                                                        <th>OPC</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for object in object_list %}
+                                                        <tr>
+                                                            <th>{{ forloop.counter0|add:page_obj.start_index }}</th>
+                                                            <td>{{ object.entidad.nombre }}</td>
+                                                            <td>{{ object.fecha_reclamo|default_if_none:"" }}</td>
+                                                            {#                                                            <td>{{ object.codigo_administrador|default_if_none:"" }}</td>#}
+                                                            <td>{{ object.numero_documento_usuario|default_if_none:"" }}
+                                                                -
+                                                                {{ object.razon_social_usuario|default_if_none:"" }}
+                                                                {{ object.nombres_usuario|default_if_none:"" }}
+                                                                {{ object.apellido_paterno_usuario|default_if_none:"" }}
+                                                                {{ object.apellido_materno_usuario|default_if_none:"" }}
+                                                            </td>
+                                                            <td>{{ object.numero_documento_presenta|default_if_none:"" }}
+                                                                -
+                                                                {{ object.razon_social_presenta|default_if_none:"" }}
+                                                                {{ object.nombres_presenta|default_if_none:"" }}
+                                                                {{ object.apellido_paterno_presenta|default_if_none:"" }}
+                                                                {{ object.apellido_materno_presenta|default_if_none:"" }}
+                                                            </td>
+                                                            <td>{{ object.get_resultado_reclamo_display }}</td>
+                                                            <td>
+                                                                {% if object.get_estado %}
+                                                                    <span class="badge badge-pill badge-success">Atendido</span>
+                                                                {% else %}
+                                                                    <span class="badge badge-pill badge-danger">Sin atender</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>{{ object.created_at }}</td>
+                                                            <td>
+                                                                {% if object.expediente %}
+                                                                    <a href="{{ object.expediente.url }}"
+                                                                       target="_blank"> Expediente</a>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <a data-toggle="tooltip" data-placement="top"
+                                                                   title="Ver reclamos"
+                                                                   class="btn btn-warning btn-sm"
+                                                                   href="{% url  'administrador:reclamo-detail' object.id %}">
+                                                                    <i class="ft ft-eye font-medium-2"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% paginator %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
+
+{% block static %}
+
+{% endblock static %}

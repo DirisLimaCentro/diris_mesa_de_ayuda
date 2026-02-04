@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Programaciones</title>
+    <style>
+   @page {
+    size: A4 landscape; /* 👈 ahora es horizontal */
+    margin: 1cm;
+}
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+
+        /* Estilos generales */
+        .header { text-align: left; margin-bottom: 6px; }
+        h2 { text-align: center; margin-top: 0; }
+
+        /* Cada registro */
+        .record { margin-bottom: 18px; page-break-inside: avoid; }
+        .record .meta { text-align: left; margin-bottom: 6px; }
+        .record .meta strong { display: inline-block; width: 150px; }
+
+        /* Tabla por registro */
+        table.report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            table-layout: fixed;
+        }
+        table.report-table th,
+        table.report-table td {
+            border: 1px solid #000;
+            padding: 5px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        /* 🔹 Encabezados centrados */
+        table.report-table th { 
+            background: #ddd; 
+            text-align: center; 
+            vertical-align: middle; 
+        }
+
+        /* 🔹 Campo ACTIVIDADES ocupa el 50% de la tabla */
+        table.report-table th.actividades,
+        table.report-table td.actividades {
+            width: 50%;
+        }
+
+    #nombre_anio {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    text-align: right; /* 👈 cambio aquí */
+    font-size: 10px;
+    font-style: italic;
+    padding-right: 20px; /* 👈 opcional: espacio desde el borde derecho */
+}
+    </style>
+</head>
+<body>
+      <div id="nombre_anio">
+    "Año de la recuperación y consolidación de la economía peruana"
+</div>
+    <!-- Encabezado -->
+    <div class="header">
+        <img src="https://dirisls.pe/libroreclamaciones.dirisls.pe/vistas/img/plantilla/logo-dirisls-bloque%20copy.png"
+             alt="Encabezado Acta" style="width:400px; height:auto;">
+
+    </div>
+
+<h2><u>PROGRAMACIÓN<br>REDES Y COMUNICACIONES - OGTI - DIRIS LIMA CENTRO</u></h2>
+    <!-- Recorremos cada registro -->
+    {% for fila in datos %}
+        <div class="record">
+            <!-- Datos fuera de la tabla -->
+            <div class="meta">
+                <strong>CÓDIGO:</strong> {{ fila.CODIGO }}<br>
+                <strong>FECHA PROGRAMADA:</strong> {{ fila.FECHA }}<br>
+                <strong>PERSONAL ASIGNADO:</strong> {{ fila.SOPORTE }}<br>
+                <strong>PERSONAL DE MOVILIDAD:</strong> {{ fila.MOVILIDAD }}<br>
+                 <strong>VEHICULO:</strong> {{ fila.VEHICULO }}<br>
+                 <strong>DIRECCIÓN:</strong> {{ fila.DIRECCION }}
+
+            </div>
+
+            <!-- Tabla -->
+            <table class="report-table">
+    <thead>
+        <tr>
+            {% for columna in fila.keys %}
+                {% if columna != "CODIGO" and columna != "FECHA" and columna != "SOPORTE" and columna != "MOVILIDAD" and columna != "VEHICULO" and columna != "DIRECCION" %}
+                    {% if columna == "ACTIVIDADES" %}
+                        <th class="actividades">{{ columna }}</th>
+                    {% else %}
+                        <th>{{ columna }}</th>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for clave, valor in fila.items %}
+                {% if clave != "CODIGO" and clave != "FECHA" and clave != "SOPORTE" and clave != "MOVILIDAD" and clave != "VEHICULO" and  clave != "DIRECCION" %}
+                    {% if clave == "ACTIVIDADES" %}
+                        <td class="actividades">{{ valor|linebreaksbr }}</td>
+                    {% else %}
+                        <td>{{ valor }}</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+        </div>
+    {% empty %}
+        <p>No se encontraron registros en el rango de fechas.</p>
+    {% endfor %}
+     
+</body>
+</html>

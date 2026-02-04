@@ -1,0 +1,1062 @@
+{% extends 'dashboard.html' %}
+{% load  paginator i18n %}
+
+{% block  container %}
+<style>
+    #leyenda {
+            margin-left: 20px;
+            background-color: grey; 
+            color: white; 
+        }
+        .prioridad-1 {
+            background-color: rgb(245, 11, 11); /* Color para Prioridad I */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-2 {
+            background-color: rgb(243, 161, 10); /* Color para Prioridad II */
+            color: black; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-3 {
+            background-color: rgb(247, 243, 27); /* Color para Prioridad III */
+            color: black; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-4 {
+            background-color: green; /* Color para Prioridad III */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-5 {
+            background-color: rgb(79, 148, 238); /* Color para Prioridad III */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .custom-margin {
+    margin-right: 50px; /* Ajusta este valor según sea necesario */
+}
+/* Estilo general */
+.table-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+/* Encabezado */
+.table thead th {
+  background-color: #78a0dd;
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Filas */
+.table tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f5ff;
+  transform: scale(1.01);
+}
+
+/* Celdas */
+.table td {
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+/* Código de ticket resaltado */
+.table td:nth-child(3) {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+/* Botones de opciones */
+.table .btn {
+  border-radius: 30px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+
+/* Responsive scroll */
+.table-responsive {
+  border-radius: 12px;
+}
+</style>
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+    <!-- FORMULARIO PRINCIPAL CON CAMPOS DE FECHAS -->
+    <!--<div class="row mt-2 g-2">
+        <div class="col-md-5">
+            <label for="fecha_inicio" class="form-label text-white">Desde:</label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+        </div>
+        <div class="col-md-5">
+            <label for="fecha_fin" class="form-label text-white">Hasta:</label>
+            <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" required>
+        </div>-->
+
+        <!-- BOTÓN EXCEL -->
+        <!-- <div class="col-md-1 d-flex align-items-end">
+            <form method="get" action="{% url 'reclamo:reporte-monitoreo-internet-excel' %}">
+                <input type="hidden" name="fecha_inicio" id="excel_fecha_inicio">
+                <input type="hidden" name="fecha_fin" id="excel_fecha_fin">
+                <button type="submit" 
+                    class="btn btn-success d-flex align-items-center justify-content-center w-100" 
+                    style="padding: 12px 16px;"
+                    title="Exportar Excel">
+                    <i class="la la-file-excel-o" style="font-size: 1.2rem;"></i>
+                </button>
+            </form>
+        </div>-->
+
+        <!-- BOTÓN PDF -->
+        <!--<div class="col-md-1 d-flex align-items-end">
+            <form method="get" action="{% url 'reclamo:reporte-monitoreo-pdf' %}">
+                <input type="hidden" name="fecha_inicio" id="pdf_fecha_inicio">
+                <input type="hidden" name="fecha_fin" id="pdf_fecha_fin">
+                <button type="submit" 
+                    class="btn btn-danger d-flex align-items-center justify-content-center w-100" 
+                    style="padding: 12px 16px;"
+                     title="Exportar PDF">
+                    <i class="la la-file-pdf-o" style="font-size: 1.2rem;"></i>
+                </button>
+            </form>
+        </div>
+    </div>-->
+</div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class=" float-md-right">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+                            <a href="{% url 'reclamo:entidad-reclamo-new-monitoreo-general' %}" class="btn btn-success btn-block">
+                                <i class="la la-plus font-small-2"></i>
+                                Nuevo Ticket</a>
+                               
+
+                            
+                        </div>
+                        <div class="col-sm-12 col-lg-12 col-xl-12 mt-1">
+           
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <section id="patients-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+
+                                              <div class="card-header" style="background-color:rgb(89, 190, 86) ">
+                                    <h1 class=""><b>SEGUIMIENTO DE TICKET DE RED </b>
+                                        <strong class="text-primary">   </strong>
+                                        <!--AÑO: <strong class="text-primary">{{ anio }} </strong>, MES:
+                                        <strong class="text-primary">
+                                            {% for a in meses %}
+                                                {% if mes == a.0 %}
+                                                    {{ a.1 }}
+                                                {% endif %}
+                                            {% endfor %}-->
+                                        </strong></h1>
+                                        <!--<div style="margin-left: auto; margin-right: 20px;">
+                                             <table id="leyenda" style="border: 1px solid black; width: 40%; margin-left: auto;">
+                                                <thead>
+                                                    
+                                                        <th >LEYENDA:</th>
+                                                        
+                                                    
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="prioridad-1">PRIORIDAD CRITICA</td>
+                                                        <td class="prioridad-2">PRIORIDAD MUY ALTA</td>
+                                                        <td class="prioridad-3">PRIORIDAD ALTA</td>
+                                                        <td class="prioridad-4">PRIORIDAD MEDIA</td>
+                                                        <td class="prioridad-5">PRIORIDAD BAJA</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>-->
+                                         
+                                </div>
+                                <form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+       <label for="cod_ticket_monitoreo" style="font-size: 1.1rem; font-weight: bold; color: #000; margin-left: 25px;">
+        <br>
+    INGRESE SU CÓDIGO DE TICKET
+</label>
+        <input type="text"
+               class="form-control"
+               id="cod_ticket_monitoreo"
+               name="cod_ticket_monitoreo"
+               value="{{ request.GET.cod_ticket_monitoreo|default:'' }}"
+               placeholder="Ejemplo: TKMR-000000X"
+               style="margin-left: 25px;">
+    </div>
+    <div class="col-md-1 d-flex align-items-end">
+        <button class="btn btn-primary" type="submit">{% trans "Buscar" %}</button>
+    </div>
+</form>
+                  
+                                <div class="card-body collapse show" style="background-color:rgb(204, 200, 200) ">
+                                    <div class="row">
+                                        {#                                        <div class="col-md-2">#}
+                                        {#                                            {% include 'genericfilters/filter_list.html' %}#}
+                                        {#                                        </div>#}
+                                        <div class="col-md-12">
+
+                                            <form class="form-search" type="GET">
+                                               <!-- <div class="row">
+                                                    <div class="col-md-2">
+                                                        <label class="" for="inlineFormInput">AÑO</label>
+                                                        <select class="form-control mb-2"
+                                                                name="anio" id="anio" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in anios %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if anio == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.0 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="" for="mes">MES</label>
+                                                        <select class="form-control" name="mes" id="mes" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in meses %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if mes == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.1 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="" for="query">Buscar por ESTABLECIMIENTO o CÓDIGO DE PROGRAMACIÓN</label>
+                                                        <input class="form-control" id="query" name="query"
+                                                               value="{{ query }}">
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <label class="text-white" for="">|</label></br>
+                                                        <button class="btn btn-primary"
+                                                                type="submit">{% trans "Buscar" %}</button>
+                                                    </div>
+                                                    <div class="col-md-1">
+    <label class="text-white" for="">|</label><br>
+    <button class="btn btn-primary p-0 d-flex align-items-center justify-content-center" 
+            type="button" onclick="location.reload();" 
+            title="ACTUALIZAR"
+            style="width: 40px; height: 40px; font-size: 28px; line-height: 1;">
+        🔄
+    </button>
+</div>
+                                                    <div class="col-md-4 text-right">
+                                                        <label class="text-white" for="">|</label></br>-->
+                                                        <!--<a class="btn btn-danger text-white"
+                                                           style="margin: 1px !important;"
+                                                           data-placement="top"
+                                                           title="Agregar documento sin reclamos"
+                                                           data-toggle="modal"
+                                                           data-target="#sinReclamoModal">
+                                                            {% if sin_reclamo %}
+                                                                ACTUALIZAR -
+                                                            {% else %}
+                                                                AGREGAR -
+                                                            {% endif %}
+                                                            Sin Reclamo
+                                                        </a>-->
+                                                        {% if sin_reclamo %}
+                                                            </br><a style="font-size: 17px!important;"
+                                                                    href="{{ sin_reclamo.archivo.url }}" download>
+                                                            <i class="ft-file-plus"> Ver archivo </i></a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </form>
+{% if cod_ticket_monitoreo %}
+                                            <div class="table-responsive mt-2">
+                                                <table class="table table-striped table-bordered ">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th class="text-center">Código de Ticket</th>
+                                                        <th class="text-center">RIS</th>
+                                                        <th class="text-center">Establecimiento</th>
+                                                        <th class="text-center">Dirección</th>
+                                                        <th class="text-center">Velocidad<br>internet (mbps)</th>
+                                                        <th class="text-center">N° de anexos</th>
+
+                                                        <th class="text-center">Tipo de incidencia</th>
+                                                        <th class="text-center">Fecha y Hora<br>de inicio de la incidencia</th>
+                                                        <th class="text-center">Evidencia</th>
+
+                                                        <th class="text-center">Fecha y Hora<br>que se reestableció la conectividad</th>
+
+                                                        <!--<th>Periodo</th>-->
+                                                        
+                                                         <th class="text-center">Tiempo calculado<br>sin servicio (Horas)</th>
+                                                         
+
+                                                          <th class="text-center">Estado actual</th>
+                                                        <th class="text-center">Observación</th>
+                                                         
+                                                        <!--<th>Usuario que <br> presenta el reclamo</th>-->
+                                                        <!--<th>Medio</th>-->
+                                                         
+                                                        
+                                                        <!--<th>Evidencia</th>-->
+                                                        <!--<th>Documento</th>-->
+                                                        <!--<th class="text-center">OPCIONES</th>-->
+                                                    </tr>
+                                                  </thead> 
+                                                    <tbody>
+            {% for p in monitoreo %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="text-center">{{ p.cod_ticket_monitoreo  |default_if_none:"" }}</td>
+                <td class="text-center">{{ p.ris }}</td>
+                <td class="text-center">{% if p.entidad2 == 1 %}
+        C.S.M.C. BARRANCO
+    {% elif p.entidad2 == 2 %}
+        C.S. GAUDENCIO BERNASCONI
+    {% elif p.entidad2 == 3 %}
+        C.S. ALICIA LASTRES DE LA TORRE
+    {% elif p.entidad2 == 4 %}
+        C.S. GUSTAVO LANATTA LUJAN
+    {% elif p.entidad2 == 5 %}
+        C.M.I. VIRGEN DEL CARMEN
+    {% elif p.entidad2 == 6 %}
+        P.S. ARMATAMBO
+    {% elif p.entidad2 == 7 %}
+        C.E. SAN PEDRO DE LOS CHORRILL
+    {% elif p.entidad2 == 8 %}
+        C.M.I. BUENOS AIRES DE VILLA
+    {% elif p.entidad2 == 9 %}
+        C.S. DELICIAS DE VILLA
+    {% elif p.entidad2 == 10 %}
+        C.S. SAN GENARO DE VILLA
+    {% elif p.entidad2 == 11 %}
+        P.S. VISTA ALEGRE DE VILLA
+    {% elif p.entidad2 == 12 %}
+        P.S. SANTA ISABEL DE VILLA
+    {% elif p.entidad2 == 13 %}
+        C.S. TUPAC AMARU DE VILLA
+    {% elif p.entidad2 == 14 %}
+        P.S. SAN JUAN DE LA LIBERTAD
+    {% elif p.entidad2 == 15 %}
+        P.S. MATEO PUMACAHUA
+    {% elif p.entidad2 == 16 %}
+        P.S. SANTA TERESA DE CHORRILLOS
+    {% elif p.entidad2 == 17 %}
+        P.S. VILLA VENTURO
+    {% elif p.entidad2 == 18 %}
+        P.S. NUEVA CALEDONIA
+    {% elif p.entidad2 == 19 %}
+        P.S. LOS INCAS
+    {% elif p.entidad2 == 20 %}
+        P.S. DEFENSORES DE LIMA
+    {% elif p.entidad2 == 21 %}
+        C.S.M.C. SAN SEBASTIAN
+    {% elif p.entidad2 == 22 %}
+        C.S.M.C. COMUNITARIO NANCY REYES BAHAMONETE
+    {% elif p.entidad2 == 23 %}
+        C.S. SANTIAGO DE SURCO
+    {% elif p.entidad2 == 24 %}
+        P.S. SAN CARLOS
+    {% elif p.entidad2 == 25 %}
+        P.S. SAN ROQUE
+    {% elif p.entidad2 == 26 %}
+        P.S. LOS VIÑEDOS DE SURCO
+    {% elif p.entidad2 == 27 %}
+        P.S. LAS FLORES
+    {% elif p.entidad2 == 28 %}
+        P.S. LAS DUNAS
+    {% elif p.entidad2 == 132 %}
+        C.S.M.C. CRL. SAN. WILELMO PEDRO ZORRILLA HUAMAN
+    {% elif p.entidad2 == 138 %}
+        C.S.M.C. SAN IGNACIO DE SURCO
+    {% elif p.entidad2 == 102 %} C.M.I. LURÍN
+  {% elif p.entidad2 == 103 %} P.S. BUENA VISTA
+  {% elif p.entidad2 == 104 %} CLAS JULIO C TELLO
+  {% elif p.entidad2 == 105 %} C.S. VILLA ALEJANDRO
+  {% elif p.entidad2 == 106 %} P.S. MARTHA MILAGROS BAJA
+  {% elif p.entidad2 == 107 %} C.S. NUEVO LURIN KM. 40 (CLAS)
+  {% elif p.entidad2 == 111 %} P.S. VILLA LIBERTAD (CLAS)
+  {% elif p.entidad2 == 124 %} C.S. SAN BARTOLO
+  {% elif p.entidad2 == 125 %} C.S. PUCUSANA
+  {% elif p.entidad2 == 126 %} C.S. BENJAMÍN DOIG
+  {% elif p.entidad2 == 127 %} P.S. PUNTA HERMOSA
+  {% elif p.entidad2 == 128 %} C.S. PUNTA NEGRA
+  {% elif p.entidad2 == 129 %} P.S. VILLA MERCEDES
+  {% elif p.entidad2 == 134 %} CSMC BALNEARIOS DEL SUR
+  {% elif p.entidad2 == 137 %} CSMC SAN PEDRO DE LURIN
+  {% elif p.entidad2 == 108 %} C.S.M.C. LA MEDALLA MILAGROSA
+  {% elif p.entidad2 == 109 %} C.S.M.C. SANTA ROSA DE MANCHAY
+  {% elif p.entidad2 == 110 %} C.S. PACHACAMAC
+  {% elif p.entidad2 == 112 %} P.S. PAMPA GRANDE
+  {% elif p.entidad2 == 113 %} P.S. QUEBRADA VERDE
+  {% elif p.entidad2 == 114 %} P.S. GUAYABO
+  {% elif p.entidad2 == 115 %} P.S. PICA PIEDRA
+  {% elif p.entidad2 == 116 %} P.S. CARDAL
+  {% elif p.entidad2 == 117 %} P.S. MANCHAY ALTO
+  {% elif p.entidad2 == 118 %} P.S. TAMBO INGA
+  {% elif p.entidad2 == 119 %} C.S. PORTADA DE MANCHAY
+  {% elif p.entidad2 == 120 %} P.S. HUERTOS DE MANCHAY
+  {% elif p.entidad2 == 121 %} C.S. CLAS JUAN PABLO II
+  {% elif p.entidad2 == 122 %} P.S. COLLANAC
+  {% elif p.entidad2 == 123 %} P.S. PARQUES DE MANCHAY
+  {% elif p.entidad2 == 135 %} P.S. BELLA ESMERALDA
+  {% elif p.entidad2 == 29 %} C.S. SAN JUAN DE MIRAFLORES
+  {% elif p.entidad2 == 30 %} P.S. DESIDERIO MOSCOSO CASTILLO
+  {% elif p.entidad2 == 31 %} P.S. VILLA SOLIDARIDAD
+  {% elif p.entidad2 == 32 %} P.S. VALLE SHARON
+  {% elif p.entidad2 == 33 %} P.S. PAMPAS DE SAN JUAN
+  {% elif p.entidad2 == 34 %} C.S. TRÉBOL AZUL
+  {% elif p.entidad2 == 35 %} P.S. HÉROES DEL PACÍFICO
+  {% elif p.entidad2 == 36 %} P.S. PARAÍSO
+  {% elif p.entidad2 == 37 %} P.S. SANTA URSULA
+  {% elif p.entidad2 == 38 %} P.S. RICARDO PALMA
+  {% elif p.entidad2 == 39 %} P.S. LADERAS DE VILLA
+  {% elif p.entidad2 == 40 %} C.S. VILLA SAN LUIS
+  {% elif p.entidad2 == 41 %} C.S. LEONOR SAAVEDRA
+  {% elif p.entidad2 == 42 %} C.S. JESÚS PODEROSO
+  {% elif p.entidad2 == 43 %} P.S. EL BRILLANTE
+  {% elif p.entidad2 == 44 %} P.S. 6 DE JULIO
+  {% elif p.entidad2 == 45 %} C.M.I. MANUEL BARRETO
+  {% elif p.entidad2 == 46 %} P.S. VIRGEN DEL BUEN PASO
+  {% elif p.entidad2 == 47 %} P.S. SAN FRANCISCO DE LA CRUZ
+  {% elif p.entidad2 == 48 %} P.S. MARIANNE PREUSS DE STARK
+  {% elif p.entidad2 == 49 %} C.M.I. OLLANTAY
+  {% elif p.entidad2 == 50 %} P.S. LA RINCONADA
+  {% elif p.entidad2 == 51 %} P.S. LEONCIO PRADO
+  {% elif p.entidad2 == 52 %} P.S. JOSÉ M. ARGUEDAS
+  {% elif p.entidad2 == 53 %} P.S. 5 DE MAYO
+  {% elif p.entidad2 == 63 %} C.S.M.C. 12 DE NOVIEMBRE
+  {% elif p.entidad2 == 136 %} CSMC RICARDO PALMA
+  {% elif p.entidad2 == 82 %} C.M.I. SAN JOSÉ
+  {% elif p.entidad2 == 83 %} P.S. SEÑOR DE LOS MILAGROS
+  {% elif p.entidad2 == 84 %} P.S. LLANAVILLA
+  {% elif p.entidad2 == 85 %} C.S.M.C. EL SOL DE VILLA
+  {% elif p.entidad2 == 86 %} C.S.M.C. VILLA EL SALVADOR
+  {% elif p.entidad2 == 87 %} C.S. SAN MARTÍN DE PORRES
+  {% elif p.entidad2 == 88 %} P.S. VIRGEN DE LA ASUNCIÓN
+  {% elif p.entidad2 == 89 %} P.S. SAGRADA FAMILIA
+  {% elif p.entidad2 == 90 %} C.M.I. JUAN PABLO II
+  {% elif p.entidad2 == 91 %} P.S. FERNANDO LUYO SIERRA
+  {% elif p.entidad2 == 92 %} P.S. CRISTO SALVADOR
+  {% elif p.entidad2 == 93 %} P.S. SARITA COLONIA
+  {% elif p.entidad2 == 94 %} P.S. OASIS DE VILLA
+  {% elif p.entidad2 == 95 %} P.S. SASBI
+  {% elif p.entidad2 == 96 %} C.M.I. CÉSAR LOPEZ SILVA
+  {% elif p.entidad2 == 97 %} P.S. PRÍNCIPE DE ASTURIAS
+  {% elif p.entidad2 == 98 %} P.S. PACHACAMAC
+  {% elif p.entidad2 == 99 %} P.S. EDILBERTO RAMOS
+  {% elif p.entidad2 == 100 %} C.S. HÉROES DEL CENEPA
+  {% elif p.entidad2 == 101 %} C.S. BRISAS DE PACHACAMAC
+  {% elif p.entidad2 == 131 %} C.S.M.C. VIRGEN DE LA MERCED
+  {% elif p.entidad2 == 54 %} C.M.I. VILLA MARÍA DEL TRIUNFO
+  {% elif p.entidad2 == 55 %} P.S. 12 DE JUNIO
+  {% elif p.entidad2 == 56 %} P.S. SANTA ROSA DE BELÉN
+  {% elif p.entidad2 == 57 %} C.M.I. JOSÉ CARLOS MARIÁTEGUI
+  {% elif p.entidad2 == 58 %} P.S. VILLA LIMATAMBO
+  {% elif p.entidad2 == 59 %} P.S. JUAN CARLOS SOBERON
+  {% elif p.entidad2 == 60 %} P.S. BUENOS AIRES
+  {% elif p.entidad2 == 61 %} P.S. VALLE ALTO
+  {% elif p.entidad2 == 62 %} P.S. PARAÍSO ALTO
+  {% elif p.entidad2 == 64 %} P.S. VALLE BAJO
+  {% elif p.entidad2 == 65 %} C.M.I. JOSÉ GALVEZ
+  {% elif p.entidad2 == 66 %} P.S. MÓDULO I
+  {% elif p.entidad2 == 67 %} P.S. NUEVO PROGRESO
+  {% elif p.entidad2 == 68 %} P.S. CIUDAD DE GOSEN
+  {% elif p.entidad2 == 69 %} C.S. NUEVA ESPERANZA
+  {% elif p.entidad2 == 70 %} P.S. VIRGEN DE LOURDES
+  {% elif p.entidad2 == 71 %} P.S. CÉSAR VALLEJO II
+  {% elif p.entidad2 == 72 %} P.S. NUEVA ESPERANZA ALTA
+  {% elif p.entidad2 == 73 %} C.M.I. DANIEL A. CARRIÓN
+  {% elif p.entidad2 == 74 %} P.S. TORRES DE MELGAR
+  {% elif p.entidad2 == 75 %} P.S. MICAELA BASTIDAS
+  {% elif p.entidad2 == 76 %} C.M.I. TABLADA DE LURÍN
+  {% elif p.entidad2 == 77 %} P.S. SANTA ROSA DE LAS CONCHITAS
+  {% elif p.entidad2 == 78 %} C.S.M.C. SAN GABRIEL ALTO
+  {% elif p.entidad2 == 79 %} CAM. TAYTA WASI
+  {% elif p.entidad2 == 80 %} P.S. DAVID GUERRERO DUARTE
+  {% elif p.entidad2 == 81 %} C.S.M.C. MONSEÑOR JOSÉ RAMÓN GURRUCHAGA
+    {% elif p.entidad2 == 176 %} C.S.M.C. VIKTOR FRANKL 
+     {% elif p.entidad2 == 177 %} C.S.M.C. QHALI KAY
+          {% elif p.entidad2 == 178 %} C.S.M.C. YUYAY WASI
+                    {% elif p.entidad2 == 179 %} C.S.M.C. LEÓN XIV
+                 {% elif p.entidad2 == 180 %}LABORATORIO PS PUNTA HERMOSA
+ {% elif p.entidad2 == 181 %}LOCAL ARCHIVO CENTRAL
+         {% elif p.entidad2 == 182 %}C.S JOSE OLAYA BALANDRA
+          {% elif p.entidad2 == 183 %}HOGAR PROTEGIDO CHORRILLOS
+          {% elif p.entidad2 == 184 %}HOGAR PROTEGIDO VILLA MARIA DEL TRIUNFO
+
+                    {% elif p.entidad2 == 170 %}RIS BCO-CHO-SCO
+          {% elif p.entidad2 == 171 %}RIS SAN JUAN DE MIRAFLORES
+          {% elif p.entidad2 == 172 %}RIS VILLA MARIA DEL TRIUNFO
+          {% elif p.entidad2 == 173 %}RIS VILLA EL SALVADOR
+          {% elif p.entidad2 == 174 %}RIS LURIN Y BALNEARIOS
+          {% elif p.entidad2 == 175 %}RIS PACHACAMAC
+           {% elif p.entidad2 == 185 %}SEDE ADMINISTRATIVA - I (LOCAL PINILLOS)
+            {% elif p.entidad2 == 186 %}SEDE ADMINISTRATIVA - II  (LOCAL FAP)
+             {% elif p.entidad2 == 187 %}ALMACÉN CENTRAL
+             {% elif p.entidad2 == 141 %}ALMACÉN ESPECIALIZADO DE MEDICAMENTOS
+
+
+  
+
+
+
+    {% else %}
+         
+    {% endif %}</td>
+                <td  class="text-center">{{ p.distrito |default_if_none:"" }}</td> <!-- Ajusta según tu modelo Ris -->
+                <td  class="text-center">{{ p.velocidad_inter |default_if_none:"" }}
+    
+</td><!-- Ojo: parece que solo guardas id -->
+                <td class="text-center">{{ p.anexos |default_if_none:"" }}</td>
+                <td class="text-center">{% if p.tipo_incidencia == 1 %}
+ <a>Caida de Red</a>
+    {% elif p.tipo_incidencia == 2 %}
+        <a>Intermitencia</a>
+        {% elif p.tipo_incidencia == 3 %}
+        <a>Lentitud</a>
+    {% else %}
+        <a> </a>
+{% endif %}
+                </td>
+                <td class="text-center">{{ p.fecha_hora_perdida|default_if_none:""  }}</td>
+                <td class="text-center"> {% if p.evidencia %}
+                                                                    <a href="{{ p.evidencia.url }}"
+                                                                       target="_blank">Evidencia</a>
+                                                                {% endif %}</td>
+                <td class="text-center">{{ p.fecha_hora_reestablecido|default_if_none:"" }}</td>
+                 
+
+ 
+                 <td class="text-center">{{ p.tiempo_sin_serv |default_if_none:""}} </td>
+                 
+                 <td class="text-center">
+    {% if p.estado == 0 %}
+        <span class="badge badge-pill badge-danger"> Sin servicio </span>
+    {% elif p.estado == 1 %}
+        <span class="badge badge-pill badge-success">Reestablecido</span>
+        {% elif p.estado == 2 %}
+        <span class="badge badge-pill badge-warning">Inestable</span>
+    {% else %}
+        <a> </a>
+    {% endif %}
+</td>
+                <td class="text-center">
+                    {{ p.observacion|default_if_none:"" }}
+                </td>
+               
+                <!--<td class="text-center">
+                     
+                         <a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-warning btn-sm" title="Editar"
+                                                                   href="{% url  'reclamo:monitoreo-edit-nuevos' p.id %}">
+                                                                    <i class="ft-edit font-medium-2"></i></a>
+                                                                    <a href="{% url 'reclamo:entidad-reclamo-delete-monitoreo' p.id %}"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-danger btn-sm"
+                                                                   data-placement="top" data-toggle="tooltip"
+                                                                   title="Eliminar">
+                                                                    <i class="ft ft-delete font-medium-2  "> </i>
+                                                                </a>  
+                                                                  <a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-info btn-sm" title="Asignar personal de soporte"
+                                                                   href="{% url  'reclamo:medida-adoptada-new' p.id %}">
+                                                                    <i class="ft-user  font-medium-2"></i></a> 
+                                                                
+                                                                     <a class="btn btn-primary btn-sm text-white"
+                                                                       style="margin: 1px !important;"
+                                                                       data-placement="top"
+                                                                       title="Agregar evidencia"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ p.id }}"
+                                                                       data-target="#expedienteModal">
+                                                                        <i class="ft-image font-medium-2"></i>
+                                                                     </a>     
+                                                                     <a class="btn btn-sm text-white"
+                                                                       style="margin: 1px !important; background-color: #795548; border-color: #795548;"
+                                                                       data-placement="top"
+                                                                       title="Cargar documento"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ p.id }}"
+                                                                       data-target="#expedienteModal2">
+                                                                        <i class="ft-file-plus font-medium-2"></i>
+                                                                    </a>
+                                                                              
+                                                           {% if p.evidencia and p.documento  %}
+                                                                        <a  
+                                                                            style="margin: 1px !important;"
+                                                                            class="btn btn-success btn-sm"
+                                                                            data-placement="top" 
+                                                                            title="Confirmar atención"
+                                                                            data-toggle="modal"
+                                                                            data-id="{{ p.id }}"
+                                                                            data-target="#expedienteModal3">
+                                                                            <i class="ft-check font-medium-2"></i>
+                                                                        </a> 
+                                                                    {% endif %}       -->
+  <!-- Botón -->
+  <!--<a  
+    style="margin: 1px !important; background-color: #FFD700; color: black; border-color: #FFD700;"
+    class="btn btn-sm"
+    title="Editar detalle de atención"
+    data-toggle="modal"
+    data-target="#programacionModal{{ p.id }}">
+    <i class="ft-message-circle font-medium-2"></i>
+  </a>-->
+  <!-- Botón para exportar en PDF -->
+<!--<a
+  href="{% url 'reclamo:exportar-programacion-pdf' p.id %}"
+  target="_blank"
+style="margin: 1px !important; background-color: #ac391d; color: black; border-color: #ac391d;"  class="btn btn-sm"
+  title="Exportar detalle a PDF"
+>
+  <i class="ft-file font-medium-2"></i>
+</a>-->
+
+  <!-- Modal TRABAJOS , RECOMENDAC -->
+  <div class="modal fade" id="programacionModal{{ p.id }}" tabindex="-1" role="dialog" aria-labelledby="programacionModalLabel{{ p.id }}" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 60%; height: 90%;">
+      <div class="modal-content" style="height: 100%;">
+    <div class="modal-body" style="overflow-y: auto;">
+
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="programacionModalLabel{{ p.id }}"><strong>Detalle de la atención</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <form method="POST" action="{% url 'reclamo:guardar-trabajo' %}">
+          {% csrf_token %}
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="trabajo_realizado{{ obj.id }}">Trabajos realizados</label>
+<textarea class="form-control" id="trabajo_realizado{{ p.id }}" name="trabajo_realizado" rows="7">{{ p.trabajo_realizado|default_if_none:"" }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="recomendaciones{{ obj.id }}">Recomendaciones</label>
+              <textarea class="form-control" id="recomendaciones{{ p.id }}" name="recomendaciones" rows="7" required>{{ p.recomendaciones |default_if_none:""}}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="observaciones{{ obj.id }}">Observaciones</label>
+              <textarea class="form-control" id="observaciones{{ p.id }}" name="observaciones" rows=7" required>{{ p.observaciones |default_if_none:"" }}</textarea>
+            </div>
+
+            <!-- Campo oculto para enviar el ID -->
+            <input type="hidden" name="id" value="{{ p.id }}">
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning">Guardar</button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="11" class="text-center">No hay registros disponibles</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+                                                </table>
+                                            </div>
+                                            {% paginator %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>    {% else %}
+    <!-- 🚫 Mensaje cuando no se ha ingresado un código -->
+    <div class="alert alert-info mt-3 text-center">
+        Ingrese un código de ticket para visualizar los resultados.
+    </div>
+{% endif %}  
+ 
+
+            </div>    
+        </div>
+    </div> 
+
+    <!-- Modal 1 -->
+<div class="modal fade" id="expedienteModal" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm" action="{% url 'reclamo:guardar-expediente-programacion' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar evidencia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo1" hidden>
+                    <input type="file" name="expediente" id="expediente" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar1">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="expedienteModal2" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm2" action="{% url 'reclamo:guardar-expediente-programacion2' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo2" hidden>
+                    <input type="file" name="expediente2" id="expediente2" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar2">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<!-- Modal 3 -->
+<div class="modal fade" id="expedienteModal3" tabindex="-1" role="dialog">
+    <form method="post" id="expedienteForm3" action="{% url 'reclamo:atender-programacion' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-4"></h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="id_reclamo3">
+                    <p style="font-size: 1.5rem; text-align: center;">¿Desea dar por ATENDIDO esta PROGRAMACIÓN? </p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar3">Sí</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+    <div class="modal fade" id="sinReclamoModal" tabindex="-1" role="dialog">
+        <form class="" method="post" role="form"
+              enctype="multipart/form-data" id="sinReclamoForm" action="{% url 'reclamo:guardar-sin-reclamo' %}">
+            {% csrf_token %}
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% if sin_reclamo %}
+                            <h5 class="modal-title">Actualizar archivo</h5>
+                        {% else %}
+                            <h5 class="modal-title">Agregar archivo</h5>
+                        {% endif %}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input name="id" id="id" hidden>
+
+
+                        {#                        {% if page_obj.paginator.count > 0 %}#}
+                        {#                            <h3 class="text-danger text-bold-700"> No procede declarar SIN RECLAMOS puesto que cuenta#}
+                        {#                                con registros agregados para este período</h3>#}
+                        {#                        {% else %}#}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="" for="inlineFormInput">AÑO</label>
+                                <select class="form-control mb-2"
+                                        name="anio" id="anio" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in anios %}
+                                        <option value="{{ a.0 }}"
+                                                {% if anio == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.0 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="" for="mes">MES</label>
+                                <select class="form-control" name="mes" id="mes" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in meses %}
+                                        <option value="{{ a.0 }}"
+                                                {% if mes == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input type="file" name="archivo" id="archivo" required>
+
+                                {% if sin_reclamo %}
+                                    </br><a style="font-size: 17px!important;"
+                                            href="{{ sin_reclamo.archivo.url }}" download>
+                                    <i class="ft-file-plus"> Ver archivo </i></a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        {#                        {% endif %}#}
+                    </div>
+                    <div class="modal-footer">
+                        {#                        {% if page_obj.paginator.count == 0 %}#}
+                        <button type="submit" class="btn btn-primary" id="buttonGuardarSinReclamo">Guardar</button>
+                        {#                        {% endif %}#}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+
+
+
+    <!--//MODAL QUE MUESTRA EL CODIGO DE TICKET RECIEN CREADO-->
+{% if messages %}
+  <!-- Modal Bootstrap -->
+  <div class="modal fade" id="mensajeModal" tabindex="-1" aria-labelledby="mensajeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="mensajeModalLabel"> </h5>
+          <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+        </div>
+
+        <div class="modal-body">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}"" style="font-size: 2rem;">
+              {{ message }}
+            </div>
+          {% endfor %}
+         </div>
+
+        <div class="modal-footer">
+           
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Script para mostrar el modal automáticamente -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var mensajeModal = new bootstrap.Modal(document.getElementById('mensajeModal'));
+      mensajeModal.show();
+    });
+  </script>
+{% endif %}
+{% endblock container %}
+
+
+{% block static %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fechaInicio = document.getElementById('fecha_inicio');
+        const fechaFin = document.getElementById('fecha_fin');
+
+        const excelFechaInicio = document.getElementById('excel_fecha_inicio');
+        const excelFechaFin = document.getElementById('excel_fecha_fin');
+
+        const pdfFechaInicio = document.getElementById('pdf_fecha_inicio');
+        const pdfFechaFin = document.getElementById('pdf_fecha_fin');
+
+        function updateHiddenFields() {
+            excelFechaInicio.value = fechaInicio.value;
+            excelFechaFin.value = fechaFin.value;
+            pdfFechaInicio.value = fechaInicio.value;
+            pdfFechaFin.value = fechaFin.value;
+        }
+
+        // Actualiza los hidden cada vez que se cambian las fechas
+        fechaInicio.addEventListener('change', updateHiddenFields);
+        fechaFin.addEventListener('change', updateHiddenFields);
+
+        // Inicializa los campos ocultos al cargar
+        updateHiddenFields();
+    });
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Referencias a elementos
+    const fechaInicioInput = document.getElementById("fecha_inicio");
+    const fechaFinInput = document.getElementById("fecha_fin");
+
+    const excelForm = document.querySelector("form[action*='reporte-monitoreo-internet-excel']");
+    const pdfForm = document.querySelector("form[action*='reporte-monitoreo-pdf']");
+
+    const excelFechaInicio = document.getElementById("excel_fecha_inicio");
+    const excelFechaFin = document.getElementById("excel_fecha_fin");
+
+    const pdfFechaInicio = document.getElementById("pdf_fecha_inicio");
+    const pdfFechaFin = document.getElementById("pdf_fecha_fin");
+
+    // Función de validación
+    function validarFechas(e, formType) {
+      const fechaInicio = fechaInicioInput.value;
+      const fechaFin = fechaFinInput.value;
+
+      if (!fechaInicio || !fechaFin) {
+        alert("Debe seleccionar ambas fechas.");
+        e.preventDefault();
+        return;
+      }
+
+      if (fechaInicio > fechaFin) {
+        alert("La fecha de inicio no puede ser mayor que la fecha de fin.");
+        e.preventDefault();
+        return;
+      }
+
+      // Asignar valores a inputs ocultos según el tipo de formulario
+      if (formType === "excel") {
+        excelFechaInicio.value = fechaInicio;
+        excelFechaFin.value = fechaFin;
+      } else if (formType === "pdf") {
+        pdfFechaInicio.value = fechaInicio;
+        pdfFechaFin.value = fechaFin;
+      }
+    }
+
+    // Asociar validación al envío de formularios
+    excelForm.addEventListener("submit", function (e) {
+      validarFechas(e, "excel");
+    });
+
+    pdfForm.addEventListener("submit", function (e) {
+      validarFechas(e, "pdf");
+    });
+  });
+</script>
+
+
+
+
+    <script>
+        // Modal 1
+$('#expedienteModal').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo1").val(id);
+});
+
+$("#expedienteForm").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar1").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar1").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+// Modal 2
+$('#expedienteModal2').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo2").val(id);
+});
+
+$("#expedienteForm2").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar2").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar2").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+
+        $("#sinReclamoForm").submit(function (e) {
+            e.preventDefault();
+            $("#buttonGuardarSinReclamo").prop('disabled', true);
+            setTimeout(function () {
+                $("#buttonGuardarSinReclamo").prop('disabled', false);
+            }, 6000)
+            e.currentTarget.submit();
+        });
+
+
+//Modal 3
+$('#expedienteModal3').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo3").val(id);
+});
+
+
+
+
+  $('#programacionModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); 
+    var id = button.data('id'); 
+    var modal = $(this);
+    modal.find('#id_programacion').val(id);
+  });
+    </script>
+{% endblock static %}
+
+
+
+ 

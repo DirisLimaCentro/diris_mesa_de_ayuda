@@ -1,0 +1,295 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_monitoreo_por_fecha_de_perdida`(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE,
+    IN tipo_incidencia_param INT
+)
+BEGIN
+    SELECT 
+        r.denominacion AS RIS, 
+        e.nombre AS EESS, 
+        m.distrito AS DIRECCION,  
+        m.velocidad_inter AS VELOCIDAD_INTERNET_MBPS, 
+        m.anexos AS ANEXOS,  
+        DATE_SUB(m.fecha_hora_perdida, INTERVAL 5 HOUR) AS FECHA_HORA_PERDIDA_CONECTIVIDAD,  
+        DATE_SUB(m.fecha_hora_reestablecido, INTERVAL 5 HOUR) AS FECHA_HORA_REESTABL_CONECTIVIDAD,  
+        m.tiempo_sin_serv AS TIEMPO_PROMEDIO_CALCULADO_SIN_SERVICIO_HORAS,  
+        CASE 
+            WHEN m.estado = 0 THEN 'Sin servicio'
+            WHEN m.estado = 1 THEN 'Reestablecido'
+            WHEN m.estado = 2 THEN 'Inestable'
+            ELSE ''
+        END AS ESTADO,  
+        m.observacion AS OBSERVACION,
+        CASE 
+            WHEN m.tipo_incidencia = 1 THEN 'Caida de Red'
+            WHEN m.tipo_incidencia = 2 THEN 'Intermitencia'
+            WHEN m.tipo_incidencia = 3 THEN 'Lentitud'
+            ELSE ''
+        END AS TIPO_INCIDENCIA,
+        m.evidencia_2 AS evidencia,
+        m.evidencia as evidencia_inicial,
+        m.cod_ticket_gtd as ticket
+    FROM reclamo_monitoreo_internet AS m
+    LEFT JOIN setup_entidad AS e ON e.id = m.entidad2
+    LEFT JOIN setup_ris AS r ON r.id = m.ris_id
+    WHERE 
+        DATE(m.fecha_hora_perdida) BETWEEN fecha_inicio AND fecha_fin
+        AND (
+            tipo_incidencia_param IS NULL 
+            OR m.tipo_incidencia = tipo_incidencia_param
+        )
+    ORDER BY m.fecha_hora_perdida;
+END
+
+
+***********************************
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_personal_programacion`(IN prog_id INT)
+BEGIN
+    SELECT 
+        GROUP_CONCAT(CONCAT('- ', u.first_name, ' ', u.last_name, CHAR(10)) SEPARATOR '') AS personal
+    FROM reclamo_programacion AS p
+    INNER JOIN reclamo_medidaadoptada AS m 
+        ON p.id = m.entidad_reclamo_id
+    INNER JOIN setup_usuario AS u 
+        ON m.usuario_soporte = u.id
+    WHERE p.id = prog_id;
+
+END
+
+*************************************
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_programaciones`(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE
+)
+BEGIN
+ SELECT 
+        p.codigo_programacion AS CODIGO,
+        DATE(DATE_SUB(p.fecha_programada, INTERVAL 5 HOUR)) AS FECHA,
+        r.denominacion AS RIS,
+        IFNULL(e.nombre, '   -   ') AS EESS,
+        IFNULL(p.distrito, '') AS DIRECCION,
+        p.descripcion_general AS DESCRIPCION,
+        p.detalle_programacion AS ACTIVIDADES,
+       CONCAT_WS(' / Cel: ', c.nombre ,c.celular) AS MOVILIDAD,
+        CONCAT_WS(' - ', a.placa, a.marca, a.modelo) AS VEHICULO,
+        GROUP_CONCAT(CONCAT(u.first_name, ' ', u.last_name) SEPARATOR ' - ') AS SOPORTE
+    FROM reclamo_programacion AS p 
+    left JOIN setup_ris AS r ON r.id = p.ris_id
+    left JOIN setup_entidad AS e ON e.id = p.entidad2
+    left JOIN setup_chofer AS c ON c.id = p.chofer_id
+    left JOIN reclamo_medidaadoptada AS m ON m.entidad_reclamo_id = p.id
+    left JOIN setup_usuario AS u ON u.id = m.usuario_soporte
+    left JOIN setup_auto AS a ON a.id = p.auto_id
+    WHERE DATE(DATE_SUB(p.fecha_programada, INTERVAL 5 HOUR)) BETWEEN fecha_inicio AND fecha_fin 
+      AND p.estado_programacion = 0
+    GROUP BY 
+        p.codigo_programacion, 
+        r.denominacion, 
+        e.nombre, 
+        p.distrito, 
+        DATE(DATE_SUB(p.fecha_programada, INTERVAL 5 HOUR)), 
+        p.descripcion_general, 
+        p.detalle_programacion, 
+        c.nombre,c.celular,
+        a.placa, a.marca, a.modelo
+    ORDER BY p.codigo_programacion DESC;
+END
+
+
+********************************************
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_programaciones_atendidas`(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE
+)
+BEGIN
+    SELECT 
+        p.codigo_programacion AS CODIGO,
+        CASE 
+            WHEN p.estado_programacion = 1 THEN 'Atendido'
+            ELSE 'Otro estado'
+        END AS ESTADO,
+        DATE(p.fecha_programada) AS FECHA_PROGRAMADA,
+        r.denominacion AS RIS,
+        e.nombre AS UNIDAD_ORGANICA,
+        p.distrito AS DIRECCION,
+        p.descripcion_general AS DESCRIPCION,
+        p.detalle_programacion AS ACTIVIDADES,
+        c.nombre AS MOVILIDAD_ASIGNADA,
+        CONCAT_WS(' - ', a.placa, a.marca, a.modelo) AS VEHICULO,
+        GROUP_CONCAT(CONCAT(u.first_name, ' ', u.last_name) SEPARATOR ', ') AS PERSONAL_SOPORTE_ASIGNADO,
+        p.fecha_atencion as FECHA_ATENCION,
+        p.trabajo_realizado as TRABAJO_REALIZADO,p.recomendaciones as RECOMENDACIONES ,p.observaciones as OBSERVACIONES
+    FROM reclamo_programacion AS p 
+    INNER JOIN setup_ris AS r ON r.id = p.ris_id
+    INNER JOIN setup_entidad AS e ON e.id = p.entidad2
+    INNER JOIN setup_chofer AS c ON c.id = p.chofer_id
+    left JOIN setup_auto AS a ON a.id = p.auto_id
+    left JOIN reclamo_medidaadoptada AS m ON m.entidad_reclamo_id = p.id
+    left JOIN setup_usuario AS u ON u.id = m.usuario_soporte
+    WHERE DATE(p.fecha_programada) BETWEEN fecha_inicio AND fecha_fin 
+        AND p.estado_programacion = 1
+    GROUP BY 
+        p.codigo_programacion, 
+        p.estado_programacion,
+        r.denominacion, 
+        e.nombre, 
+        p.distrito, 
+        DATE(p.fecha_programada), 
+        p.descripcion_general, 
+        p.detalle_programacion,
+        c.nombre,a.placa, a.marca, a.modelo, p.fecha_atencion,
+        p.trabajo_realizado,p.recomendaciones,p.observaciones
+    ORDER BY p.codigo_programacion DESC;
+
+END
+******************************************
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_reporte_tickets`(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE,
+    IN soporte INT
+)
+BEGIN
+
+SELECT 
+     CONCAT(
+        DAY(DATE_SUB(t.created_at, INTERVAL 5 HOUR)), ' de ',
+        CASE MONTH(DATE_SUB(t.created_at, INTERVAL 5 HOUR))
+            WHEN 1 THEN 'enero'
+            WHEN 2 THEN 'febrero'
+            WHEN 3 THEN 'marzo'
+            WHEN 4 THEN 'abril'
+            WHEN 5 THEN 'mayo'
+            WHEN 6 THEN 'junio'
+            WHEN 7 THEN 'julio'
+            WHEN 8 THEN 'agosto'
+            WHEN 9 THEN 'septiembre'
+            WHEN 10 THEN 'octubre'
+            WHEN 11 THEN 'noviembre'
+            WHEN 12 THEN 'diciembre'
+        END,
+        ' del ', YEAR(DATE_SUB(t.created_at, INTERVAL 5 HOUR)),
+        ' a las ', DATE_FORMAT(DATE_SUB(t.created_at, INTERVAL 5 HOUR), '%H:%i')
+    ) AS fecha_creacion_formato,
+
+   
+
+    CASE 
+        WHEN t.estado_reclamo = 0 THEN 'Nuevo'
+        WHEN t.estado_reclamo = 1 THEN 'En curso'
+        WHEN t.estado_reclamo = 2 THEN 'Atendido'
+        WHEN t.estado_reclamo = 3 THEN 'Cerrado'
+        ELSE ''
+    END AS estado,
+    t.codigo_ticket, 
+    CONCAT_WS(' ', t.nombres, t.apellidos) AS usuario,
+    e.nombre AS dependencia,
+    r.denominacion AS ris,
+    CASE 
+        WHEN t.tipo_incidencia = 1 THEN 'Problemas con computadoras'
+        WHEN t.tipo_incidencia = 2 THEN 'Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)'
+        WHEN t.tipo_incidencia = 3 THEN 'Conectividad y Redes'
+        WHEN t.tipo_incidencia = 4 THEN 'Impresoras y escáner'
+        WHEN t.tipo_incidencia = 5 THEN 'Software de Ofimática (Word, Excel, etc)'
+		WHEN t.tipo_incidencia = 6 THEN 'Problemas con SIHCE'
+        ELSE ''
+    END AS tipo_incidencia,
+    t.detalle_atencion, 
+    CONCAT_WS(' ',  u.first_name, u.last_name) AS personal_soporte,
+      CONCAT(
+        DAY(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)), ' de ',
+        CASE MONTH(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR))
+            WHEN 1 THEN 'enero'
+            WHEN 2 THEN 'febrero'
+            WHEN 3 THEN 'marzo'
+            WHEN 4 THEN 'abril'
+            WHEN 5 THEN 'mayo'
+            WHEN 6 THEN 'junio'
+            WHEN 7 THEN 'julio'
+            WHEN 8 THEN 'agosto'
+            WHEN 9 THEN 'septiembre'
+            WHEN 10 THEN 'octubre'
+            WHEN 11 THEN 'noviembre'
+            WHEN 12 THEN 'diciembre'
+        END,
+        ' del ', YEAR(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)),
+        ' a las ', DATE_FORMAT(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR), '%H:%i')
+    ) AS fecha_atencion_formato,
+    t.expediente
+FROM reclamo_entidadreclamo AS t
+LEFT JOIN setup_entidad AS e ON e.id = t.entidad2
+LEFT JOIN setup_ris AS r ON r.id = t.ris_id
+LEFT JOIN setup_usuario AS u ON u.id = t.id_user
+WHERE DATE(t.created_at) BETWEEN fecha_inicio AND fecha_fin
+  AND soporte = u.id
+  AND t.estado_reclamo IN (1,2,3)
+ORDER BY t.created_at;
+
+END
+
+*******************************************
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_reporte_tickets_nuevos`(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE 
+ )
+BEGIN
+
+SELECT 
+     CONCAT(
+        DAY(DATE_SUB(t.created_at, INTERVAL 5 HOUR)), ' de ',
+        CASE MONTH(DATE_SUB(t.created_at, INTERVAL 5 HOUR))
+            WHEN 1 THEN 'enero'
+            WHEN 2 THEN 'febrero'
+            WHEN 3 THEN 'marzo'
+            WHEN 4 THEN 'abril'
+            WHEN 5 THEN 'mayo'
+            WHEN 6 THEN 'junio'
+            WHEN 7 THEN 'julio'
+            WHEN 8 THEN 'agosto'
+            WHEN 9 THEN 'septiembre'
+            WHEN 10 THEN 'octubre'
+            WHEN 11 THEN 'noviembre'
+            WHEN 12 THEN 'diciembre'
+        END,
+        ' del ', YEAR(DATE_SUB(t.created_at, INTERVAL 5 HOUR)),
+        ' a las ', DATE_FORMAT(DATE_SUB(t.created_at, INTERVAL 5 HOUR), '%H:%i')
+    ) AS fecha_creacion_formato,
+
+   
+
+    CASE 
+        WHEN t.estado_reclamo = 0 THEN 'Nuevo'
+        WHEN t.estado_reclamo = 1 THEN 'En curso'
+        WHEN t.estado_reclamo = 2 THEN 'Atendido'
+        WHEN t.estado_reclamo = 3 THEN 'Cerrado'
+        ELSE ''
+    END AS estado,
+    t.codigo_ticket, 
+    CONCAT_WS(' ', t.nombres, t.apellidos) AS usuario,
+    t.celular,
+    e.nombre AS dependencia,
+    r.denominacion AS ris,
+    CASE 
+        WHEN t.tipo_incidencia = 1 THEN 'Problemas con computadoras'
+        WHEN t.tipo_incidencia = 2 THEN 'Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)'
+        WHEN t.tipo_incidencia = 3 THEN 'Conectividad y Redes'
+        WHEN t.tipo_incidencia = 4 THEN 'Impresoras y escáner'
+        WHEN t.tipo_incidencia = 5 THEN 'Software de Ofimática (Word, Excel, etc)'
+        ELSE ''
+    END AS tipo_incidencia,
+    t.detalle_solicitud
+     
+ FROM reclamo_entidadreclamo AS t
+LEFT JOIN setup_entidad AS e ON e.id = t.entidad2
+LEFT JOIN setup_ris AS r ON r.id = t.ris_id
+LEFT JOIN setup_usuario AS u ON u.id = t.id_user
+WHERE DATE(t.created_at) BETWEEN fecha_inicio AND fecha_fin
+   AND t.estado_reclamo=0
+ORDER BY t.created_at;
+
+END

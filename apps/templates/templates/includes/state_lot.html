@@ -1,0 +1,18 @@
+<span class="badge badge_customized"
+
+        {% if state == 1 %}
+      style="background:  #0e1abb;"
+        {% elif state == 2 %}
+      style="background:  #ea09d4;"
+        {% elif state == 3 %}
+      style="background:  #d4a709;"
+        {% elif state == 4 %}
+      style="background:  #1fce0c;"
+        {% elif state == 5 %}
+      style="background:  #c20a19;"
+        {% endif %}
+
+      data-toggle="tooltip"
+      data-placement="top" title="{{ state_name }}"
+
+>{{ state_name }} </span>

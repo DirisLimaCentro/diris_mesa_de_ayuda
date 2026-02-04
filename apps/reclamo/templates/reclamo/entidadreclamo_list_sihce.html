@@ -1,0 +1,931 @@
+{% extends 'dashboard.html' %}
+{% load  paginator i18n %}
+
+{% block  container %}
+
+<style>
+     #leyenda {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prioridad-1 {
+  background-color: #d9534f; /* rojo fuerte */
+}
+
+.prioridad-2 {
+  background-color: #f0ad4e; /* naranja */
+}
+
+.prioridad-3 {
+  background-color: #e5f136; /* amarillo */
+}
+
+.prioridad-4 {
+  background-color:#5cb85c; /* celeste */
+}
+
+.prioridad-5 {
+  background-color: #5bc0de; /* verde */
+}
+
+#leyenda th {
+  background-color: #6a7079 !important; /* azul bootstrap */
+  color: white;
+}
+        .custom-margin {
+    margin-right: 50px; /* Ajusta este valor según sea necesario */
+}
+/* Estilo general */
+.table-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+/* Encabezado */
+.table thead th {
+  background-color: #78a0dd;
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Filas */
+.table tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f5ff;
+  transform: scale(1.01);
+}
+
+/* Celdas */
+.table td {
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+/* Código de ticket resaltado */
+.table td:nth-child(5) {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+/* Botones de opciones */
+.table .btn {
+  border-radius: 30px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+
+/* Responsive scroll */
+.table-responsive {
+  border-radius: 12px;
+}
+</style>
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+           <!-- <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Tickets</li>
+                                <li class="breadcrumb-item active">Mis tickets</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class=" float-md-right">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+                            <a href="{% url 'reclamo:entidad-reclamo-new' %}" class="btn btn-success btn-block">
+                                <i class="la la-plus font-small-2"></i>
+                                Nuevo ticket</a>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+
+            <div class="content-body">
+                <section id="patients-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                 <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="background-color: rgb(243, 241, 238);">
+    
+    <!-- Texto principal a la izquierda -->
+    <h1 class="mb-0">
+        <strong>Tickets Abiertos</strong>
+        <strong class="text-primary">({{ page_obj.paginator.count }}) - </strong>
+        AÑO: <strong class="text-primary">{{ anio }}</strong>, MES:
+        <strong class="text-primary">
+            {% for a in meses %}
+                {% if mes == a.0 %}
+                    {{ a.1 }}
+                {% endif %}
+            {% endfor %}
+        </strong>
+    </h1>
+
+    <!-- Tabla leyenda a la derecha -->
+    <table id="leyenda" class="table table-bordered table-hover align-middle shadow-sm mb-0" style="width: 45%;">
+        <thead class="table-primary text-center">
+            <tr>
+                <th colspan="5" class="fs-6 fw-bold py-2">CUADRO DE PRIORIDADES</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            <tr>
+                <td class="prioridad-1 fw-semibold text-white py-2">CRÍTICA</td>
+                <td class="prioridad-2 fw-semibold text-white py-2">MUY ALTA</td>
+                <td class="prioridad-3 fw-semibold text-dark py-2">ALTA</td>
+                <td class="prioridad-4 fw-semibold text-dark py-2">MEDIA</td>
+                <td class="prioridad-5 fw-semibold text-dark py-2">BAJA</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+                                <div class="card-body collapse show" style="background-color:rgb(204, 200, 200) ">
+                                    <div class="row">
+                                        {#                                        <div class="col-md-2">#}
+                                        {#                                            {% include 'genericfilters/filter_list.html' %}#}
+                                        {#                                        </div>#}
+                                        <div class="col-md-12">
+
+                                            <div class="mt-2 p-2 border rounded bg-light">
+    <form id="reporteForm" method="POST" action="{% url 'reclamo:reporte-tickets-nuevos-excel' %}" class="row g-2 align-items-end">
+        {% csrf_token %}
+
+        <!-- Fecha inicio -->
+        <div class="col-md-2">
+            <label for="fecha_inicio" class="form-label mb-0"><strong>Fecha de inicio</strong></label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control w-51" required>
+        </div>
+
+        <!-- Fecha fin -->
+        <div class="col-md-2">
+            <label for="fecha_fin" class="form-label mb-0"><strong>Fecha de fin</strong></label>
+            <input type="date" id="fecha_fin" name="fecha_fin" class="form-control w-51" required>
+        </div>
+
+        <!-- Botón Exportar Excel -->
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success w-60">
+                <i class="la la-file-excel-o"></i> Exportar Excel
+            </button>
+        </div>
+    </form>
+</div>
+
+<br>
+
+                                            <form class="form-search" type="GET">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <label class="" for="inlineFormInput">AÑO</label>
+                                                        <select class="form-control mb-2"
+                                                                name="anio" id="anio" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in anios %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if anio == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.0 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="" for="mes">MES</label>
+                                                        <select class="form-control" name="mes" id="mes" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in meses %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if mes == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.1 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="" for="query">Buscar por NOMBRE o CÓDIGO DE TICKET</label>
+                                                        <input class="form-control" id="query" name="query"
+                                                               value="{{ query }}">
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <label class="text-white" for="">|</label></br>
+                                                        <button class="btn btn-primary"
+                                                                type="submit">{% trans "Buscar" %}</button>
+                                                    </div>
+                                                    <div class="col-md-1">
+    <label class="text-white" for="">|</label><br>
+    <button class="btn btn-primary p-0 d-flex align-items-center justify-content-center" 
+            type="button" onclick="location.reload();" 
+            title="ACTUALIZAR"
+            style="width: 40px; height: 40px; font-size: 28px; line-height: 1;">
+        🔄
+    </button>
+</div>
+                                                  
+                                                </div>
+                                            </form>
+
+                                            <div class="table-responsive mt-2">
+                                                <table class="table table-striped table-bordered ">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Prioridad</th>
+                                                        <th>Fecha y hora de registro</th>
+                                                        <th class="text-center">Estado</th>
+                                                        <th class="text-center">Código de ticket</th>
+                                                        <!--<th>Periodo</th>-->
+                                                        
+                                                        <th class="text-center">Usuario</th>
+                                                        <th class="text-center">Celular</th>
+                                                        <th class="text-center">Dependencia</th>
+                                                        <th class="text-center">Sede</th>
+                                                        
+                                                        <!--<th>Usuario que <br> presenta el reclamo</th>-->
+                                                        <!--<th>Medio</th>-->
+                                                        <th class="text-center">Tipo de incidencia</th>
+                                                        
+                                                        
+                                                        <!--<th>Evidencia</th>-->
+                                                        <!--<th>Documento</th>-->
+                                                        <th class="text-center">OPCIONES</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for object in object_list %}
+                                                        <tr>
+                                                            <th>{{ forloop.counter0|add:page_obj.start_index }}</th>
+                                                            <td style="text-align: center; vertical-align: middle;">
+                                                                {% if object.entidad_id == 147 %}
+                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
+                                                                {% elif object.entidad_id == 142 %}
+                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
+                                                               {% elif object.entidad_id == 144 %}
+                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
+                                                               {% elif object.entidad_id == 146 %}
+                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
+                                                               
+                                                                {% elif object.cargo == 1 %}
+                                                                   <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(243, 161, 10);"></span>
+                                                                 {% elif object.cargo == 3 %}
+                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(247, 243, 27);"></span>
+                                                        {% elif object.cargo == 2 %}
+                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: green;"></span>
+                                                     {% elif object.cargo == 4 %}
+                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(79, 148, 238);"></span>
+                                                       
+                                                    
+
+                                                                   {% endif %}</td>
+
+                                                            <td>{{ object.created_at }}</td>
+                                                            <td class="text-center">
+                                                             {% if object.resultado_reclamo == 0 %}
+                                                                    <span class="badge badge-pill badge-danger">Sin atender</span>
+                                                                {% else %}
+                                                                    <span class="badge badge-pill badge-primary">Nuevo</span>
+                                                                {% endif %}
+
+{#                                                                {% if object.get_medio_presentacion_display %}#}
+{#                                                                    <span class="badge badge-pill badge-success">Atendido</span>#}
+{#                                                                {% else %}#}
+{#                                                                    <span class="badge badge-pill badge-danger">Sin atender</span>#}
+{#                                                                {% endif %}#}</td>
+                                                            <td class="text-center">{{ object.codigo_ticket }}</td>
+                                                            
+                                                            <!--<td>{{ object.periodo|default_if_none:"" }}</td>-->
+                                                            {#                                                            <td>{{ object.codigo_administrador|default_if_none:"" }}</td>#}
+                                                            <td class="text-center">{{ object.nombres }} 
+                                                            <td class="text-center">
+                                                       {{ object.celular|default:'' }}
+                                                            </td>
+ 
+                                                             <td class="text-center"> {% if object.entidad2 == 1 %}
+    P.S PALERMO
+{% elif object.entidad2 == 2 %}
+    P.S RESCATE
+{% elif object.entidad2 == 3 %}
+    P.S JARDIN ROSA DE SANTA MARIA
+{% elif object.entidad2 == 4 %}
+    C.S.M.C SURQUILLO
+{% elif object.entidad2 == 5 %}
+    C.S.M.C JESUS MARIA
+{% elif object.entidad2 == 6 %}
+    P.S SANTA ROSA
+{% elif object.entidad2 == 7 %}
+    C.S.M.C MIRONES BAJO
+{% elif object.entidad2 == 8 %}
+    C.S.M.C VILLA CAMPOY
+{% elif object.entidad2 == 9 %}
+    C.S MIRONES BAJO
+{% elif object.entidad2 == 10 %}
+    C.S RAUL PATRUCCO PUIG
+{% elif object.entidad2 == 11 %}
+    C.S CONDE DE LA VEGA BAJA
+{% elif object.entidad2 == 12 %}
+    C.S JUAN PEREZ CARRANZA
+{% elif object.entidad2 == 13 %}
+    C.S SAN SEBASTIAN
+{% elif object.entidad2 == 14 %}
+    C.S UNIDAD VECINAL N°3
+{% elif object.entidad2 == 15 %}
+    C.S VILLA MARIA PERPETUO SOCORRO
+{% elif object.entidad2 == 16 %}
+    C.S.M.C MAGDALENA
+{% elif object.entidad2 == 17 %}
+    C.S MIRONES
+{% elif object.entidad2 == 18 %}
+    C.S.M.C SAN MARCOS
+{% elif object.entidad2 == 19 %}
+    C.S.M.C KUYANAKUSUN
+{% elif object.entidad2 == 20 %}
+    C.S CONTROL DE ZOONOSIS
+{% elif object.entidad2 == 21 %}
+    P.S HUACA PANDO
+{% elif object.entidad2 == 22 %}
+    C.S SAN MIGUEL
+{% elif object.entidad2 == 23 %}
+    C.S CHACRA COLORADA
+{% elif object.entidad2 == 24 %}
+    C.S BREÑA
+{% elif object.entidad2 == 25 %}
+    C.S.M.C HONORIO DELGADO
+{% elif object.entidad2 == 26 %}
+    C.S JESUS MARIA
+{% elif object.entidad2 == 27 %}
+    C.S.M.C SAN MIGUEL
+{% elif object.entidad2 == 28 %}
+    C.S.M.I MAGDALENA
+{% elif object.entidad2 == 29 %}
+    C.S SANTA CRUZ DE MIRAFLORES
+{% elif object.entidad2 == 30 %}
+    C.S SAN ISIDRO
+{% elif object.entidad2 == 31 %}
+    C.S LINCE
+{% elif object.entidad2 == 32 %}
+    C.S VILLA VICTORIA PORVENIR
+{% elif object.entidad2 == 33 %}
+    C.S SAN ATANACIO DEL PEDREGAL
+{% elif object.entidad2 == 34 %}
+    C.S.M.C SAN ISIDRO
+{% elif object.entidad2 == 35 %}
+    C.S.M.I SURQUILLO
+{% elif object.entidad2 == 36 %}
+    P.S SAN JUAN MASIAS
+{% elif object.entidad2 == 37 %}
+    P.S CLAS EL PINO
+
+    {% elif object.entidad2 == 38 %}
+    C.S.M.C SAN COSME
+{% elif object.entidad2 == 39 %}
+    C.S.M.C SAN BORJA
+{% elif object.entidad2 == 40 %}
+    C.S SAN LUIS
+{% elif object.entidad2 == 41 %}
+    C.S TODOS LOS SANTOS DE SAN BORJA
+{% elif object.entidad2 == 42 %}
+    C.S SAN COSME
+{% elif object.entidad2 == 43 %}
+    C.S EL PINO
+{% elif object.entidad2 == 44 %}
+    C.S MAX ARIAS SCHREIBER
+{% elif object.entidad2 == 45 %}
+    C.S.M.C LA VICTORIA
+{% elif object.entidad2 == 46 %}
+    C.S.M.I EL PORVENIR
+{% elif object.entidad2 == 47 %}
+    P.S AZCARRUNZ ALTO
+{% elif object.entidad2 == 48 %}
+    C.S SANTA FE DE TOTORITA
+{% elif object.entidad2 == 49 %}
+    C.S DANIEL ALCIDES CARRION
+{% elif object.entidad2 == 50 %}
+    C.S.M.C MANGOMARCA
+{% elif object.entidad2 == 51 %}
+    C.S.M.C JAVIER MARIATEGUI CHIAPPE
+{% elif object.entidad2 == 52 %}
+    C.S CAJA DE AGUA
+{% elif object.entidad2 == 53 %}
+    C.S LA HUAYRONA
+{% elif object.entidad2 == 54 %}
+    C.S SAN FERNANDO
+{% elif object.entidad2 == 55 %}
+    C.S SANTA ROSA DE LIMA
+{% elif object.entidad2 == 56 %}
+    C.S ZARATE
+{% elif object.entidad2 == 57 %}
+    C.S CHACARILLA DE OTERO
+{% elif object.entidad2 == 58 %}
+    C.S LA LIBERTAD
+{% elif object.entidad2 == 59 %}
+    P.S 15 DE ENERO
+{% elif object.entidad2 == 60 %}
+    C.S MANGOMARCA
+{% elif object.entidad2 == 61 %}
+    C.S CAMPOY
+{% elif object.entidad2 == 62 %}
+    P.S SAGRADA FAMILIA
+{% elif object.entidad2 == 63 %}
+    P.S AYACUCHO
+{% elif object.entidad2 == 64 %}
+    P.S PROYECTOS ESPECIALES
+{% elif object.entidad2 == 65 %}
+    C.S MEDALLA MILAGROSA
+{% elif object.entidad2 == 66 %}
+    C.S BAYOVAR
+{% elif object.entidad2 == 67 %}
+    C.S SAN HILARION
+{% elif object.entidad2 == 68 %}
+    C.S GANIMEDES
+{% elif object.entidad2 == 69 %}
+    C.S HUASCAR XV
+{% elif object.entidad2 == 70 %}
+    C.S HUASCAR II
+{% elif object.entidad2 == 71 %}
+    C.S.M.C JAIME ZUBIETA
+{% elif object.entidad2 == 72 %}
+    C.S.M.C NUEVO PERU
+{% elif object.entidad2 == 73 %}
+    P.S JOSE CARLOS MARIATEGUI V ETAPA
+{% elif object.entidad2 == 74 %}
+    P.S CESAR VALLEJO
+{% elif object.entidad2 == 75 %}
+    P.S MARISCAL CACERES
+    {% elif object.entidad2 == 76 %}
+    P.S TUPAC AMARU II
+{% elif object.entidad2 == 77 %}
+    C.S SU SANTIDAD JUAN PABLO II
+{% elif object.entidad2 == 78 %}
+    C.S SANTA MARIA
+{% elif object.entidad2 == 79 %}
+    C.S CRUZ DE MOTUPE
+{% elif object.entidad2 == 80 %}
+    C.S JOSE CARLOS MARIATEGUI
+{% elif object.entidad2 == 81 %}
+    C.S JAIME ZUBIETA
+{% elif object.entidad2 == 82 %}
+    C.S ENRIQUE MONTENEGRO
+{% elif object.entidad2 == 83 %}
+    C.S 10 DE OCTUBRE
+{% elif object.entidad2 == 84 %}
+    HOSPITAL SAN JUAN DE LURIGANCHO
+{% elif object.entidad2 == 85 %}
+    HOSPITAL VICTOR LARCO HERRERA
+{% elif object.entidad2 == 86 %}
+    HOSPITAL DE APOYO SANTA ROSA
+{% elif object.entidad2 == 87 %}
+    HOSPITAL DOS DE MAYO
+{% elif object.entidad2 == 88 %}
+    HOSPITAL ARZOBISPO LOAYZA
+{% elif object.entidad2 == 89 %}
+    HOSPITAL DE EMERGENCIAS JOSE CASIMIRO ULLOA
+{% elif object.entidad2 == 90 %}
+    HOSPITAL DE EMERGENCIAS PEDIATRICAS
+{% elif object.entidad2 == 91 %}
+    HOSPITAL NACIONAL DOCENTE MADRE NIÑO SAN BARTOLOME
+                                                                {% elif object.entidad2 == 92 %}
+    Almacén DIRIS
+{% elif object.entidad2 == 93 %}
+    Archivo y Acervo Documentario
+{% elif object.entidad2 == 94 %}
+    Dirección Adjunta
+{% elif object.entidad2 == 95 %}
+    Dirección Administrativa
+{% elif object.entidad2 == 96 %}
+    Dirección de Medicamentos Insumos y Drogas
+{% elif object.entidad2 == 97 %}
+    Dirección De Monitoreo
+{% elif object.entidad2 == 98 %}
+    Dirección General
+{% elif object.entidad2 == 99 %}
+    Espacio de Monitoreo de Emergencias y Desastres
+{% elif object.entidad2 == 100 %}
+    Oficina Infraestructura Y Equipamiento
+{% elif object.entidad2 == 101 %}
+    Oficina de Abastecimiento
+{% elif object.entidad2 == 102 %}
+    Oficina de Acceso y uso racional de Medicamentos
+{% elif object.entidad2 == 103 %}
+    Oficina De Apoyo Al Diagnostico Y Laboratorio De Salud Pública
+{% elif object.entidad2 == 104 %}
+    Oficina de Asesoria Juridica
+{% elif object.entidad2 == 105 %}
+    Oficina de Autorizaciones Sanitarias de Establecimientos Farmaceuticos
+{% elif object.entidad2 == 106 %}
+    Oficina de Certificaion de Salud Ambiental/ Fiscalizacion y control en Salud Ambiental
+{% elif object.entidad2 == 107 %}
+    Oficina De Comunicaciones, E Imagen Institucional
+{% elif object.entidad2 == 108 %}
+    Oficina De Contabilidad
+{% elif object.entidad2 == 109 %}
+    Oficina de Epidemiología /Inteligencia Sanitaria y Docencia e Investigación
+{% elif object.entidad2 == 110 %}
+    Oficina de Fiscalizacion y Monitoreo y Vigilancia Sanitaria
+{% elif object.entidad2 == 111 %}
+    Oficina De Gestion De La Calidad
+{% elif object.entidad2 == 112 %}
+    Oficina De Gestion De Recursos Humanos
+{% elif object.entidad2 == 113 %}
+    Oficina De Gestion De Riesgos Y Desastres
+{% elif object.entidad2 == 114 %}
+    Oficina De Gestion De Tecnologias De La Informacion
+{% elif object.entidad2 == 115 %}
+    Oficina De Intervenciones Sanitarias
+{% elif object.entidad2 == 116 %}
+    Oficina De Planeamiento Y Modernizacion De La Gestion Publica
+{% elif object.entidad2 == 117 %}
+    Oficina De Presupuesto Publico
+{% elif object.entidad2 == 118 %}
+    Oficina De Proyectos De Inversiones
+{% elif object.entidad2 == 119 %}
+    Oficina De Salud Ambiental e Inocuidad Alimentaria
+{% elif object.entidad2 == 120 %}
+    Oficina De Seguros
+{% elif object.entidad2 == 121 %}
+    Oficina De Servicios De Salud
+{% elif object.entidad2 == 122 %}
+    Oficina De Tesorería
+{% elif object.entidad2 == 123 %}
+    Oficina de Vigilancia Sanitaria
+{% elif object.entidad2 == 124 %}
+    Órgano De Control Institucional
+{% elif object.entidad2 == 125 %}
+    Plataforma de Atencio al Usuario
+{% elif object.entidad2 == 126 %}
+    Secretaría Técnica
+{% elif object.entidad2 == 127 %}
+    Tramite del Publico Usuario
+{% elif object.entidad2 == 128 %}
+    Trámite Documentario
+{% elif object.entidad2 == 129 %}
+    Unidad Funcional Gestión Compensación
+{% elif object.entidad2 == 130 %}
+    Unidad Funcional De Adquisiciones
+{% elif object.entidad2 == 131 %}
+    Unidad Funcional De Almacenamiento Y Distribución
+{% elif object.entidad2 == 132 %}
+    Unidad Funcional De Area Transmisible
+{% elif object.entidad2 == 133 %}
+    Unidad Funcional De Autorización Y Categorización De Ipress
+{% elif object.entidad2 == 134 %}
+    Unidad Funcional De Control Previo
+{% elif object.entidad2 == 135 %}
+    Unidad Funcional De Gestión De Relaciones Humanas, Sociales, Seguridad Y Salud En El Trabajo
+{% elif object.entidad2 == 136 %}
+    Unidad Funcional De Gestión Del Desarrollo, Capacitación Y Del Rendimiento
+{% elif object.entidad2 == 137 %}
+    Unidad Funcional De Gestión Del Empleo
+{% elif object.entidad2 == 138 %}
+    Unidad Funcional De Integración Contable Y Presupuesto
+{% elif object.entidad2 == 139 %}
+    Unidad Funcional De Mantenimiento
+{% elif object.entidad2 == 140 %}
+    Unidad Funcional De Modernizacion
+{% elif object.entidad2 == 141 %}
+    Unidad Funcional De Organización De La Salud
+{% elif object.entidad2 == 142 %}
+    Unidad Funcional De Organización Del Trabajo Y Su Distribución
+{% elif object.entidad2 == 143 %}
+    Unidad Funcional De Patrimonio
+{% elif object.entidad2 == 144 %}
+    Unidad Funcional De Planificación De Políticas De Rrhh.
+{% elif object.entidad2 == 145 %}
+    Unidad Funcional De Programación
+{% elif object.entidad2 == 146 %}
+    Unidad Funcional De Referencia Y Contrarreferencia
+{% elif object.entidad2 == 147 %}
+    Unidad Funcional De Servicios Generales Y Transporte
+{% elif object.entidad2 == 148 %}
+    Unidad Funcional De Soporte Informático/Unidad Funcional de Telecomunicaciones y Redes
+{% elif object.entidad2 == 149 %}
+    Unidad Funcional Del Area De Promoción De La Salud
+{% elif object.entidad2 == 150 %}
+    Unidad Funcional Del Area Mujer Adolescente Y Joven.
+{% elif object.entidad2 == 151 %}
+    Unidad Funcional Del Area Niño
+{% elif object.entidad2 == 152 %}
+    Unidad Funcional Del Area No Transmisible, Adulto Y Adulto Mayor.
+{% elif object.entidad2 == 153 %}
+    Unidad Funcional Docencia e Investigación
+{% elif object.entidad2 == 154 %}
+    Unidad Funcional Infraestructura Y Equipamiento
+ 
+   
+
+
+
+    {% else %}
+         
+    {% endif %} 
+                                                            </td>
+                                                             <td class="text-center"> {{ object.ris|default:'' }} 
+                                                            </td>
+                                                            <!--<td>{{ object.numero_documento_presenta|default_if_none:"" }}
+                                                                -
+                                                                {{ object.razon_social_presenta|default_if_none:"" }}
+                                                                {{ object.nombres_presenta|default_if_none:"" }}
+                                                                {{ object.apellido_paterno_presenta|default_if_none:"" }}
+                                                                {{ object.apellido_materno_presenta|default_if_none:"" }}
+                                                            </td>-->
+                                                            <!--<td> {{ object.get_medio_presentacion_display }}
+                                                                {% if object.servicio_hecho_reclamo  == '77' and object.medio_presentacion == 1 %}
+                                                                    <h4 style="background-color: red;"
+                                                                        class="text-white">PROCESO</h4>
+                                                                {% endif %}
+                                                            </td>-->
+                                                            
+                                                           <td class="text-center">
+    {% if object.tipo_incidencia == 1 %}
+        <span>Problemas con computadoras</span>
+    {% elif object.tipo_incidencia == 2 %}
+        <span>Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)</span>
+    {% elif object.tipo_incidencia == 3 %}
+        <span>Conectividad y Redes</span>
+    {% elif object.tipo_incidencia == 4 %}
+        <span>Impresoras y escáner</span>
+    {% elif object.tipo_incidencia == 5 %}
+        <span>Software de Ofimática</span>
+    {% elif object.tipo_incidencia == 6 %}
+        <span>Problemas con SIHCE</span>
+    {% else %}
+        <span class="badge badge-pill badge-primary"></span>
+    {% endif %}
+</td>
+                                                             
+                                                            <!-- <td>
+                                                                {% if object.expediente %}
+                                                                    <a href="{{ object.expediente.url }}"
+                                                                       target="_blank">Evidencia</a>
+                                                                {% endif %}
+                                                            </td> -->
+                                                             <!-- <td>
+                                                                {% if object.expediente2 %}
+                                                                    <a href="{{ object.expediente2.url }}"
+                                                                       target="_blank">Documento</a>
+                                                                {% endif %}
+                                                            </td> -->
+                                                            <td class="text-center">
+                                                                <a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-warning btn-sm" title="Ver detalle"
+                                                                   href="{% url  'reclamo:entidad-reclamo-edit-soporte-sihce' object.id %}">
+                                                                    <i class="ft-eye font-medium-2"></i></a>
+                                                                <!--<a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-info btn-sm" title="Medidas adoptadas"
+                                                                   href="{% url  'reclamo:medida-adoptada-new' object.id %}">
+                                                                    <i class="ft-activity font-medium-2"></i></a>-->
+                                                               <!-- <a href="{% url 'reclamo:entidad-reclamo-delete' object.id %}"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-danger btn-sm"
+                                                                   data-placement="top" data-toggle="tooltip"
+                                                                   title="Eliminar Reclamo">
+                                                                    <i class="ft ft-delete font-medium-2  "> </i>
+                                                                </a>-->
+                                                             <!--    {% if not object.expediente %}
+                                                                    <a class="btn btn-primary btn-sm text-white"
+                                                                       style="margin: 1px !important;"
+                                                                       data-placement="top"
+                                                                       title="Cargar evidencia"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ object.id }}"
+                                                                       data-target="#expedienteModal">
+                                                                        <i class="ft-image -plus font-medium-2"></i>
+                                                                    </a>
+                                                                {% endif %} 
+                                                                {% if not object.expediente2 %}
+                                                                    <a class="btn btn-sm text-white"
+                                                                       style="margin: 1px !important; background-color: #795548; border-color: #795548;"
+                                                                       data-placement="top"
+                                                                       title="Cargar documento (opcional)"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ object.id }}"
+                                                                       data-target="#expedienteModal2">
+                                                                        <i class="ft-file-plus font-medium-2"></i>
+                                                                    </a>
+                                                                {% endif %} -->
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% paginator %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1 -->
+<div class="modal fade" id="expedienteModal" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm" action="{% url 'reclamo:guardar-expediente' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar evidencia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo1" hidden>
+                    <input type="file" name="expediente" id="expediente" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar1">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="expedienteModal2" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm2" action="{% url 'reclamo:guardar-expediente2' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo2" hidden>
+                    <input type="file" name="expediente2" id="expediente2" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar2">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+    <div class="modal fade" id="sinReclamoModal" tabindex="-1" role="dialog">
+        <form class="" method="post" role="form"
+              enctype="multipart/form-data" id="sinReclamoForm" action="{% url 'reclamo:guardar-sin-reclamo' %}">
+            {% csrf_token %}
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% if sin_reclamo %}
+                            <h5 class="modal-title">Actualizar archivo</h5>
+                        {% else %}
+                            <h5 class="modal-title">Agregar archivo</h5>
+                        {% endif %}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input name="id" id="id" hidden>
+
+
+                        {#                        {% if page_obj.paginator.count > 0 %}#}
+                        {#                            <h3 class="text-danger text-bold-700"> No procede declarar SIN RECLAMOS puesto que cuenta#}
+                        {#                                con registros agregados para este período</h3>#}
+                        {#                        {% else %}#}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="" for="inlineFormInput">AÑO</label>
+                                <select class="form-control mb-2"
+                                        name="anio" id="anio" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in anios %}
+                                        <option value="{{ a.0 }}"
+                                                {% if anio == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.0 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="" for="mes">MES</label>
+                                <select class="form-control" name="mes" id="mes" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in meses %}
+                                        <option value="{{ a.0 }}"
+                                                {% if mes == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input type="file" name="archivo" id="archivo" required>
+
+                                {% if sin_reclamo %}
+                                    </br><a style="font-size: 17px!important;"
+                                            href="{{ sin_reclamo.archivo.url }}" download>
+                                    <i class="ft-file-plus"> Ver archivo </i></a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        {#                        {% endif %}#}
+                    </div>
+                    <div class="modal-footer">
+                        {#                        {% if page_obj.paginator.count == 0 %}#}
+                        <button type="submit" class="btn btn-primary" id="buttonGuardarSinReclamo">Guardar</button>
+                        {#                        {% endif %}#}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock container %}
+
+
+{% block static %}
+<script>
+document.getElementById('reporteForm').addEventListener('submit', function(event) {
+    const fechaInicio = document.getElementById('fecha_inicio').value;
+    const fechaFin = document.getElementById('fecha_fin').value;
+
+    if (fechaInicio && fechaFin) {
+        if (new Date(fechaInicio) > new Date(fechaFin)) {
+            alert('La fecha de inicio no puede ser mayor que la fecha de fin.');
+            event.preventDefault(); // Evita que se envíe el formulario
+        }
+    }
+});
+</script>
+    <script>
+        // Modal 1
+$('#expedienteModal').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo1").val(id);
+});
+
+$("#expedienteForm").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar1").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar1").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+// Modal 2
+$('#expedienteModal2').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo2").val(id);
+});
+
+$("#expedienteForm2").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar2").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar2").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+
+        $("#sinReclamoForm").submit(function (e) {
+            e.preventDefault();
+            $("#buttonGuardarSinReclamo").prop('disabled', true);
+            setTimeout(function () {
+                $("#buttonGuardarSinReclamo").prop('disabled', false);
+            }, 6000)
+            e.currentTarget.submit();
+        });
+    </script>
+{% endblock static %}
+
+
+
+

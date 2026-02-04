@@ -1,0 +1,125 @@
+{% extends 'dashboard.html' %}
+{% load static format_item %}
+{% block  container %}
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Reportes</li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class=" mt-2">{{ title }}</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body" style="padding-top: 0 !important;">
+                                    <div class="row justify-content-md-center">
+                                        <div class="card" style="margin-bottom: 0 !important;">
+                                            <div class="card-content collapse show">
+                                                <div class="card-body"
+                                                     style="padding-top: 0 !important; margin-bottom: 0 !important;     padding-bottom: 0 !important;">
+                                                    <form class="form" method="post" role="form" id="form-generar-txt"
+                                                          action="{% url 'trama-txt:medidas-diris' %}">
+                                                        {% csrf_token %}
+                                                        <div class="form-row align-items-center">
+                                                            <div class="col-auto">
+                                                                <label class="" for="inlineFormInput">AÑO</label>
+                                                                <select class="form-control mb-2"
+                                                                        name="anio" id="anio" required>
+                                                                    <option value=""> -- Selecionar --
+                                                                    </option>
+                                                                    {% for a in anios %}
+                                                                        <option value="{{ a.0 }}"
+                                                                                {% if anio == a.0 %}
+                                                                                selected
+                                                                                {% endif %}
+                                                                        >{{ a.0 }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-auto">
+                                                                <label class="" for="inlineFormInput">Periodo
+                                                                    (Mes)</label>
+                                                                <select class="form-control mb-2"
+                                                                        name="mes" id="mes" required>
+                                                                    <option value=""> -- Selecionar --
+                                                                    </option>
+                                                                    {% for a in meses %}
+                                                                        <option value="{{ a.0 }}"
+                                                                                {% if mes == a.0 %}
+                                                                                selected
+                                                                                {% endif %}
+                                                                        >{{ a.1 }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-auto">
+                                                                <button type="submit" class="btn btn-success"
+                                                                        id="buscar">
+                                                                    <i class="la la-file-o"></i>
+                                                                    <span>GENERAR TXT</span>
+                                                                    <i class="la la-hand-o-down"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if list_final %}
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
+
+{% block static %}
+
+    <script>
+        $('#buscar').on('click', function () {
+
+            let buscar = $(this);
+
+            if ($("#form-generar-txt").valid()) {
+                buscar.attr('disabled', 'disabled');
+                $("#buscar span").text("Generando....");
+                $("#buscar").removeClass("btn-success");
+                $("#buscar").addClass("btn-danger");
+                $("#form-generar-txt").submit();
+                setTimeout(function () {
+                    buscar.removeAttr('disabled');
+                    $("#buscar span").text("GENERAR TXT");
+                    $("#buscar").removeClass("btn-danger");
+                    $("#buscar").addClass("btn-success");
+                }, 4000);
+            }
+
+
+        });
+    </script>
+
+{% endblock static %}

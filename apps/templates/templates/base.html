@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+ 
+    <meta name="description" content="TICKETS - DIRIS LIMA CENTRO">
+     <meta name="author" content="DIRIS TI">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CQuicksand:300,400,500,700"
+          rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/vendors.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/app.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/core/menu/menu-types/vertical-menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/core/colors/palette-gradient.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/pages/chat-application.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/core/colors/palette-gradient.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/pages/hospital.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/pages/chat-application.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/spinner.css' %}">
+    <link href="{% static 'css/bootstrap-multiselect.css' %}" rel="stylesheet">
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">
+
+    <!-- BEGIN Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/plugins/forms/wizard.css' %}">
+    <!-- END Custom CSS-->
+
+    <link rel="icon" type="image/vnd.microsoft.icon" href="{% static 'img/favicon.ico' %}">
+    {#    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">#}
+
+    <style>
+        [data-notify="progressbar"] {
+            margin-bottom: 0px;
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
+            height: 5px;
+        }
+
+        .alert {
+            width: 90% !important;
+            border: 4px solid #fff !important;
+        }
+
+    </style>
+
+</head>
+
+<body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click"
+      style="background-image: url({% static 'img/fondo2_dlc.jpg' %});"
+      data-menu="vertical-menu" data-col="2-columns">
+
+<div class="content-spinner" style="z-index: 90000;
+    position: absolute;
+    width: 100%;
+    background: #3bb73640;
+    height: 100%;">
+    <div class="loader">Loading...</div>
+</div>
+
+
+{% block main %}
+{% endblock main %}
+
+
+
+
+<script src="{% static 'app-assets/vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'app-assets/js/core/app-menu.js' %}"></script>
+<script src="{% static 'app-assets/js/core/app.js' %}"></script>
+
+
+<script src="{% static 'js/bootstrap-notify.min.js' %} "></script>
+<script src="{% static 'js/jquery-ui.js' %} "></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="{% static 'js/bootstrap-multiselect.js' %} "></script>
+<script src="{% static 'js/jquery.formset.min.js' %} "></script>
+{#<script src="{% static 'app-assets/vendors/js/forms/validation/jquery.validate.min.js' %} "></script>#}
+
+
+<script src="{% static 'app-assets/vendors/js/extensions/jquery.steps.min.js' %} "></script>
+{#<script src="{% static 'app-assets/vendors/js/pickers/dateTime/moment-with-locales.min.js' %} "></script>#}
+<script src="{% static 'app-assets/vendors/js/pickers/daterange/daterangepicker.js' %} "></script>
+<script src="{% static 'app-assets/vendors/js/forms/validation/jquery.validate.min.js' %} "></script>
+
+
+<script src="{% static 'app-assets/js/scripts/forms/wizard-steps.js' %} "></script>
+<script src="{% static 'js/jquery.highlight.js' %} "></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DMXHCXNGZ8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DMXHCXNGZ8');
+</script>
+
+{#<script src="https://cdn.jsdelivr.net/npm/vue"></script>#}
+{#<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.min.js"></script>#}
+{#<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>#}
+
+{#<script async src="https://www.googletagmanager.com/gtag/js?id=UA-125078262-4"></script>#}
+{#<script>#}
+{#    window.dataLayer = window.dataLayer || [];#}
+{##}
+{#    function gtag() {#}
+{#        dataLayer.push(arguments);#}
+{#    }#}
+{##}
+{#    gtag('js', new Date());#}
+{#    gtag('config', 'UA-125078262-4');#}
+{#</script>#}
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        $( ".content-spinner" ).hide();
+
+        $(".btnSubmit").click(function () {
+            setTimeout(function () {
+                disableButton();
+            }, 10);
+        });
+
+        function disableButton() {
+
+            $(".btnSubmit").prop('disabled', true);
+
+            setTimeout(function () {
+                $(".btnSubmit").prop('disabled', false);
+            }, 9500);
+        }
+
+
+    });
+</script>
+
+<script type="application/javascript">
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#photo')
+                    .attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function search_submit() {
+        $("#search_form #id_query").val($("#query").val());
+        $("#search_form").submit();
+    }
+
+    $('#search_form select:not("[data-auto-submit=\'no\']")').change(search_submit);
+
+
+    $('.multiselect').multiselect({
+        enableFiltering: true,
+        includeSelectAllOption: true,
+        maxHeight: 400,
+        minHeight: 250,
+        dropUp: true,
+        buttonText: function (options, select) {
+            if (options.length === 0) {
+                return 'Seleccionar opción';
+            } else if (options.length > 3) {
+                return 'Más de tres.';
+            } else {
+                var labels = [];
+                options.each(function () {
+                    if ($(this).attr('label') !== undefined) {
+                        labels.push($(this).attr('label'));
+                    } else {
+                        labels.push($(this).html());
+                    }
+                });
+                return labels.join(', ') + '';
+            }
+        }
+    });
+
+    $('.multiselectChekbox').multiselect({
+        templates: {
+            button: '',
+            ul: '<ul class="multiselect-container checkbox-list"></ul>',
+        }
+    });
+
+
+</script>
+
+
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            $.notify({
+                title: '<strong>Mensaje: </strong>',
+                message: '{{ message|safe }}.'
+            }, {
+                type: '{{ message.tags }}'
+            });
+        </script>
+    {% endfor %}
+{% endif %}
+
+
+{% if form.non_field_errors %}
+    <script>
+        $.notify({
+            title: '<strong>Mensaje: </strong>',
+            message: '{{ form.non_field_errors }}'
+        }, {
+            type: 'danger'
+        });
+    </script>
+{% endif %}
+
+
+{#{% include 'snippets/sockets.html' %}#}
+
+{% block static %}
+{% endblock static %}
+
+
+</body>
+</html>

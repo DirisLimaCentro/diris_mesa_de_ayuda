@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Monitoreo</title>
+   <style>
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        color: #333;
+        margin: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        table-layout: fixed;
+        word-wrap: break-word;
+        font-size: 10px;
+    }
+
+    th, td {
+        border: 1px solid #aaa;
+        padding: 4px;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    th {
+    background-color: #2c3e50;
+    color: white;
+    font-size: 9px;
+    text-align: center;    
+    vertical-align: middle;
+}
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* 👇 Columnas específicas */
+    .col-numero {
+        width: 30px;
+        text-align: center;
+    }
+
+    .col-primera {
+        width: 100px;
+    }
+
+    .col-segunda {
+        width: 130px;
+    }
+
+    .col-velocidad {
+        width: 65px;
+        text-align: center;
+    }
+
+    .col-anexos {
+        width: 70px;
+        text-align: center;
+    }
+
+    .col-fecha-perdida {
+        width: 120px;
+    }
+
+    .col-fecha-reestablecida {
+        width: 120px;
+    }
+
+    .col-tiempo {
+        width: 80px;
+        text-align: center;
+    }
+
+    .col-estado {
+        width: 70px;
+        text-align: center;
+    }
+
+    .no-datos {
+        text-align: center;
+        margin-top: 50px;
+        font-style: italic;
+        color: #888;
+    }
+
+    .total {
+        width: 90%;
+        margin: 15px auto;
+        text-align: right;
+        font-weight: bold;
+        font-size: 11px;
+        color: #2c3e50;
+    }
+
+    #nombre_anio {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 20px;
+        text-align: right;
+        font-size: 10px;
+        font-style: italic;
+        padding-right: 20px;
+    }
+ .col-observacion,
+td.col-observacion {
+    width: 170px;           /* 🔹 reducido para que la tabla encaje mejor */
+    text-align: left !important;
+    vertical-align: top;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 9px;
+}
+
+th.col-observacion {
+    text-align: center !important;  /* centra el encabezado */
+    vertical-align: middle;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+td.col-observacion {
+    text-align: left !important;
+    vertical-align: top;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 9px;
+}
+
+
+
+ .page-break {
+    page-break-before: always;
+}
+.imagen-bloque {
+    margin-bottom: 45px;
+}
+.imagen-bloque img {
+    width: 420px;
+    height: auto;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+}
+ </style>
+</head>
+<body>
+
+    
+    <!-- Encabezado -->
+    <div class="header">
+      
+        <img src="https://dirisls.pe/libroreclamaciones.dirisls.pe/vistas/img/plantilla/logo-dirisls-bloque%20copy.png"
+             alt="Encabezado Acta" style="width:400px; height:auto;">
+    </div>
+
+    <h1>
+      <u>REPORTE DE MONITOREO DE SERVICIO DE INTERNET EN ESTABLECIMIENTOS <br>
+        <strong>DESDE:</strong> {{ fecha_inicio }} &nbsp;&nbsp;&nbsp;
+        <strong>HASTA:</strong> {{ fecha_fin }}<br>
+      OFICINA DE GESTIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN - DIRIS LIMA CENTRO</u>
+    </h1> 
+
+   {% if datos %}
+    <table>
+   <thead>
+    <tr>
+        <th class="col-numero">N°</th>
+
+        {% for key in datos.0.keys %}
+           {% if forloop.counter == 12 %}
+            {# No mostrar columna 12 #}
+
+            {% elif forloop.counter == 1 %}
+                <th class="col-primera">{{ key|upper }}</th>
+
+            {% elif forloop.counter == 2 %}
+                <th class="col-segunda">{{ key|upper }}</th>
+
+            {% elif forloop.counter == 3 %}
+                {# OMITIR esta columna #}
+
+            {% elif forloop.counter == 4 %}
+                <th class="col-velocidad">Velocidad mbps</th>
+
+            {% elif forloop.counter == 5 %}
+                <th class="col-anexos">Anexos</th>
+
+            {% elif forloop.counter == 11 %}
+                {# Ya no se usa aquí, la movemos abajo #}
+
+            {% elif forloop.counter == 6 %}
+                {# Insertamos aquí el tipo de incidencia, justo después de Anexos #}
+                <th class="col-tipo-incidencia">Tipo de incidencia</th>
+                <th class="col-fecha-perdida">Fecha y Hora de inicio de la incidencia</th>
+
+            {% elif forloop.counter == 7 %}
+                <th class="col-fecha-reestablecida">Fecha y hora reestablecida</th>
+
+            {% elif forloop.counter == 8 %}
+                <th class="col-tiempo">Tiempo sin servicio (h)</th>
+
+            {% elif forloop.counter == 9 %}
+                <th class="col-estado">Estado actual</th>
+
+            {% elif forloop.counter == 10 %}
+                 {# No mostrar columna 10 #}
+
+                 {% elif forloop.counter == 13 %}
+                 {# No mostrar columna 13 #}
+
+            {% else %}
+                <th>{{ key|upper }}</th>
+            {% endif %}
+        {% endfor %}
+    </tr>
+</thead>
+
+   <tbody>
+    {% for fila in datos %}
+        <tr>
+            <td class="col-numero">{{ forloop.counter }}</td>
+
+              {% for valor in fila.values %}
+                {% if forloop.counter == 12 %}
+                    {# 👈 OMITIR COLUMNA 12 #}
+
+                {% elif forloop.counter != 3 %}
+                    {% if forloop.counter == 4 %}
+                        <td class="col-velocidad">{{ valor|default_if_none:'' }}</td>
+
+                    {% elif forloop.counter == 5 %}
+                        <td class="col-anexos">{{ valor|default_if_none:'0' }}</td>
+
+                    {% elif forloop.counter == 11 %}
+                        {# Ya no se usa aquí, movido abajo #}
+
+                    {% elif forloop.counter == 6 %}
+                        {# Tipo incidencia + fecha pérdida #}
+                        <td class="col-tipo-incidencia">{{ fila.TIPO_INCIDENCIA|default_if_none:'' }}</td>
+                        <td class="col-fecha-perdida">{{ valor }}</td>
+
+                    {% elif forloop.counter == 7 %}
+                        <td class="col-fecha-reestablecida">{{ valor|default_if_none:'' }}</td>
+
+                    {% elif forloop.counter == 8 %}
+                        <td class="col-tiempo">{{ valor|default_if_none:'' }}</td>
+
+                    {% elif forloop.counter == 9 %}
+                        <td class="col-estado">{{ valor }}</td>
+
+                    {% elif forloop.counter == 10 %}
+                        {# 👈 OMITIR COLUMNA 10 #}
+
+                        {% elif forloop.counter == 13 %}
+                        {# 👈 OMITIR COLUMNA 13 #}
+
+                    {% else %}
+                        <td>{{ valor }}</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+<!-- 👇 Mostrar total calculado en la vista -->
+<div class="total">
+    TOTAL DE HORAS SIN SERVICIO: {{ total_tiempo }} {{ total_tiempo_texto }}
+</div>
+{% else %}
+    <div class="no-datos">
+        No se encontraron datos para el rango de fechas seleccionado.
+    </div>
+{% endif %}
+
+ 
+
+<div class="imagenes-hoja">
+    {% for fila in datos %}
+        {% if fila.evidencia or fila.evidencia_inicial %}
+
+        <div style="page-break-before: always; margin-top:40px; text-align:center;">
+
+            <h2><em>Anexo {{ forloop.counter }}: TICKET {{ fila.ticket|default:'' }}</em></h2>
+
+            <table width="100%" border="0" cellspacing="0" cellpadding="5" style="margin-top:20px;">
+                <tr>
+                    <!-- COLUMNA IZQUIERDA -->
+                    <td width="50%" align="center" valign="top">
+                        <p><span style="font-size:12pt;"><em>Evidencia de caída</em></span></p>
+
+                        {% if fila.evidencia_inicial %}
+                        <img src="https://mesadeayuda.dirislimasur.gob.pe/media/{{ fila.evidencia_inicial }}"
+                             width="500" height="600"
+                             style="border:1px solid #444;">
+                        {% endif %}
+                    </td>
+
+                    <!-- COLUMNA DERECHA -->
+                    <td width="50%" align="center" valign="top">
+                        <p><span style="font-size:12pt;"><em>Evidencia de restablecimiento</em></span></p>
+
+                        {% if fila.evidencia %}
+                        <img src="https://mesadeayuda.dirislimasur.gob.pe/media/{{ fila.evidencia }}"
+                             width="500" height="600"
+                             style="border:1px solid #444;">
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        {% endif %}
+    {% endfor %}
+</div>
+</body>
+</html>
+
+

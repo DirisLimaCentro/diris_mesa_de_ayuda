@@ -1,0 +1,671 @@
+{% extends 'dashboard.html' %}
+{% load  paginator i18n %}
+
+{% block  container %}
+<style>
+    #leyenda {
+            margin-left: 20px;
+            background-color: grey; 
+            color: white; 
+        }
+        .prioridad-1 {
+            background-color: rgb(245, 11, 11); /* Color para Prioridad I */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-2 {
+            background-color: rgb(243, 161, 10); /* Color para Prioridad II */
+            color: black; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-3 {
+            background-color: rgb(247, 243, 27); /* Color para Prioridad III */
+            color: black; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-4 {
+            background-color: green; /* Color para Prioridad III */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .prioridad-5 {
+            background-color: rgb(79, 148, 238); /* Color para Prioridad III */
+            color: white; /* Texto en blanco para mejor visibilidad */
+        }
+        .custom-margin {
+    margin-right: 50px; /* Ajusta este valor según sea necesario */
+}
+</style>
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active"> </li>
+                                <li class="breadcrumb-item active">   </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class=" float-md-right">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+                           <!-- <a href="{% url 'reclamo:entidad-reclamo-new-programacion' %}" class="btn btn-success btn-block">
+                                <i class="la la-plus font-small-2"></i>
+                                Nueva Programación</a>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <section id="patients-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header" style="background-color:rgb(28, 230, 230) ">
+                                    <h1 class=""><strong>Programaciones Atendidas</strong>
+                                        <strong class="text-primary">({{ page_obj.paginator.count }})   </strong>
+                                        <!--AÑO: <strong class="text-primary">{{ anio }} </strong>, MES:
+                                        <strong class="text-primary">
+                                            {% for a in meses %}
+                                                {% if mes == a.0 %}
+                                                    {{ a.1 }}
+                                                {% endif %}
+                                            {% endfor %}-->
+                                        </strong></h1>
+                                        <!--<div style="margin-left: auto; margin-right: 20px;">
+                                             <table id="leyenda" style="border: 1px solid black; width: 40%; margin-left: auto;">
+                                                <thead>
+                                                    
+                                                        <th >LEYENDA:</th>
+                                                        
+                                                    
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="prioridad-1">PRIORIDAD CRITICA</td>
+                                                        <td class="prioridad-2">PRIORIDAD MUY ALTA</td>
+                                                        <td class="prioridad-3">PRIORIDAD ALTA</td>
+                                                        <td class="prioridad-4">PRIORIDAD MEDIA</td>
+                                                        <td class="prioridad-5">PRIORIDAD BAJA</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>-->
+                                         
+                                </div>
+                                <div class="card-body collapse show" style="background-color:rgb(204, 200, 200) ">
+                                    <div class="row">
+                                        {#                                        <div class="col-md-2">#}
+                                        {#                                            {% include 'genericfilters/filter_list.html' %}#}
+                                        {#                                        </div>#}
+                                        <div class="col-md-12">
+
+                                            <form class="form-search" type="GET">
+                                               <!-- <div class="row">
+                                                    <div class="col-md-2">
+                                                        <label class="" for="inlineFormInput">AÑO</label>
+                                                        <select class="form-control mb-2"
+                                                                name="anio" id="anio" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in anios %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if anio == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.0 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="" for="mes">MES</label>
+                                                        <select class="form-control" name="mes" id="mes" required="">
+                                                            <option value=""> -- Selecionar --</option>
+                                                            {% for a in meses %}
+                                                                <option value="{{ a.0 }}"
+                                                                        {% if mes == a.0 %}
+                                                                        selected
+                                                                        {% endif %}
+                                                                >{{ a.1 }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="" for="query">Buscar por ESTABLECIMIENTO o CÓDIGO DE PROGRAMACIÓN</label>
+                                                        <input class="form-control" id="query" name="query"
+                                                               value="{{ query }}">
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <label class="text-white" for="">|</label></br>
+                                                        <button class="btn btn-primary"
+                                                                type="submit">{% trans "Buscar" %}</button>
+                                                    </div>
+                                                    <div class="col-md-1">
+    <label class="text-white" for="">|</label><br>
+    <button class="btn btn-primary p-0 d-flex align-items-center justify-content-center" 
+            type="button" onclick="location.reload();" 
+            title="ACTUALIZAR"
+            style="width: 40px; height: 40px; font-size: 28px; line-height: 1;">
+        🔄
+    </button>
+</div>
+                                                    <div class="col-md-4 text-right">
+                                                        <label class="text-white" for="">|</label></br>-->
+                                                        <!--<a class="btn btn-danger text-white"
+                                                           style="margin: 1px !important;"
+                                                           data-placement="top"
+                                                           title="Agregar documento sin reclamos"
+                                                           data-toggle="modal"
+                                                           data-target="#sinReclamoModal">
+                                                            {% if sin_reclamo %}
+                                                                ACTUALIZAR -
+                                                            {% else %}
+                                                                AGREGAR -
+                                                            {% endif %}
+                                                            Sin Reclamo
+                                                        </a>-->
+                                                        {% if sin_reclamo %}
+                                                            </br><a style="font-size: 17px!important;"
+                                                                    href="{{ sin_reclamo.archivo.url }}" download>
+                                                            <i class="ft-file-plus"> Ver archivo </i></a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <div class="table-responsive mt-2">
+                                                <table class="table table-striped table-bordered ">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th class="text-center"> Código<br>programación</th>
+                                                        <th  class="text-center">Estado</th>
+                                                        <th  class="text-center">RIS</th>
+                                                        <th  class="text-center">Establecimiento</th>
+                                                        <th class="text-center">Dirección</th>
+                                                        <th class="text-center">Fecha Programada</th>
+                                                        <!--<th>Periodo</th>-->
+                                                        
+                                                        <th class="text-center">Personal de soporte asignado</th>
+                                                        <th class="text-center">Personal de movilidad asignado</th>
+                                                        <th class="text-center">Evidencia</th>
+                                                        <th class="text-center">Acta</th>
+                                                        <th class="text-center">Fecha y hora que se atendió</th>
+
+                                                        
+                                                        <!--<th>Usuario que <br> presenta el reclamo</th>-->
+                                                        <!--<th>Medio</th>-->
+                                                         
+                                                        
+                                                        <!--<th>Evidencia</th>-->
+                                                        <!--<th>Documento</th>-->
+                                                        <th class="text-center">OPCIONES</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+            {% for p in programaciones %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="text-center">{{ p.codigo_programacion |default_if_none:"" }}</td>
+                <td>{% if p.estado_programacion == 0 %}
+         <span class="badge badge-pill badge-primary">Nuevo</span>
+ {% elif p.estado_programacion == 1 %}
+         <span class="badge badge-pill badge-success">Atendido</span>
+    {% endif %}</td>
+                <td  class="text-center">{{ p.ris }}</td> <!-- Ajusta según tu modelo Ris -->
+                <td  class="text-center">
+    {% if p.entidad2 == 1 %}
+        C.S.M.C. BARRANCO
+    {% elif p.entidad2 == 2 %}
+        C.S. GAUDENCIO BERNASCONI
+    {% elif p.entidad2 == 3 %}
+        C.S. ALICIA LASTRES DE LA TORRE
+    {% elif p.entidad2 == 4 %}
+        C.S. GUSTAVO LANATTA LUJAN
+    {% elif p.entidad2 == 5 %}
+        C.M.I. VIRGEN DEL CARMEN
+    {% elif p.entidad2 == 6 %}
+        P.S. ARMATAMBO
+    {% elif p.entidad2 == 7 %}
+        C.E. SAN PEDRO DE LOS CHORRILL
+    {% elif p.entidad2 == 8 %}
+        C.M.I. BUENOS AIRES DE VILLA
+    {% elif p.entidad2 == 9 %}
+        C.S. DELICIAS DE VILLA
+    {% elif p.entidad2 == 10 %}
+        C.S. SAN GENARO DE VILLA
+    {% elif p.entidad2 == 11 %}
+        P.S. VISTA ALEGRE DE VILLA
+    {% elif p.entidad2 == 12 %}
+        P.S. SANTA ISABEL DE VILLA
+    {% elif p.entidad2 == 13 %}
+        C.S. TUPAC AMARU DE VILLA
+    {% elif p.entidad2 == 14 %}
+        P.S. SAN JUAN DE LA LIBERTAD
+    {% elif p.entidad2 == 15 %}
+        P.S. MATEO PUMACAHUA
+    {% elif p.entidad2 == 16 %}
+        P.S. SANTA TERESA DE CHORRILLOS
+    {% elif p.entidad2 == 17 %}
+        P.S. VILLA VENTURO
+    {% elif p.entidad2 == 18 %}
+        P.S. NUEVA CALEDONIA
+    {% elif p.entidad2 == 19 %}
+        P.S. LOS INCAS
+    {% elif p.entidad2 == 20 %}
+        P.S. DEFENSORES DE LIMA
+    {% elif p.entidad2 == 21 %}
+        C.S.M.C. SAN SEBASTIAN
+    {% elif p.entidad2 == 22 %}
+        C.S.M.C. COMUNITARIO NANCY REYES BAHAMONETE
+    {% elif p.entidad2 == 23 %}
+        C.S. SANTIAGO DE SURCO
+    {% elif p.entidad2 == 24 %}
+        P.S. SAN CARLOS
+    {% elif p.entidad2 == 25 %}
+        P.S. SAN ROQUE
+    {% elif p.entidad2 == 26 %}
+        P.S. LOS VIÑEDOS DE SURCO
+    {% elif p.entidad2 == 27 %}
+        P.S. LAS FLORES
+    {% elif p.entidad2 == 28 %}
+        P.S. LAS DUNAS
+    {% elif p.entidad2 == 132 %}
+        C.S.M.C. CRL. SAN. WILELMO PEDRO ZORRILLA HUAMAN
+    {% elif p.entidad2 == 138 %}
+        C.S.M.C. SAN IGNACIO DE SURCO
+    {% elif p.entidad2 == 102 %} C.M.I. LURÍN
+  {% elif p.entidad2 == 103 %} P.S. BUENA VISTA
+  {% elif p.entidad2 == 104 %} CLAS JULIO C TELLO
+  {% elif p.entidad2 == 105 %} C.S. VILLA ALEJANDRO
+  {% elif p.entidad2 == 106 %} P.S. MARTHA MILAGROS BAJA
+  {% elif p.entidad2 == 107 %} C.S. NUEVO LURIN KM. 40 (CLAS)
+  {% elif p.entidad2 == 111 %} P.S. VILLA LIBERTAD (CLAS)
+  {% elif p.entidad2 == 124 %} C.S. SAN BARTOLO
+  {% elif p.entidad2 == 125 %} C.S. PUCUSANA
+  {% elif p.entidad2 == 126 %} C.S. BENJAMÍN DOIG
+  {% elif p.entidad2 == 127 %} P.S. PUNTA HERMOSA
+  {% elif p.entidad2 == 128 %} C.S. PUNTA NEGRA
+  {% elif p.entidad2 == 129 %} P.S. VILLA MERCEDES
+  {% elif p.entidad2 == 134 %} CSMC BALNEARIOS DEL SUR
+  {% elif p.entidad2 == 137 %} CSMC SAN PEDRO DE LURIN
+  {% elif p.entidad2 == 108 %} C.S.M.C. LA MEDALLA MILAGROSA
+  {% elif p.entidad2 == 109 %} C.S.M.C. SANTA ROSA DE MANCHAY
+  {% elif p.entidad2 == 110 %} C.S. PACHACAMAC
+  {% elif p.entidad2 == 112 %} P.S. PAMPA GRANDE
+  {% elif p.entidad2 == 113 %} P.S. QUEBRADA VERDE
+  {% elif p.entidad2 == 114 %} P.S. GUAYABO
+  {% elif p.entidad2 == 115 %} P.S. PICA PIEDRA
+  {% elif p.entidad2 == 116 %} P.S. CARDAL
+  {% elif p.entidad2 == 117 %} P.S. MANCHAY ALTO
+  {% elif p.entidad2 == 118 %} P.S. TAMBO INGA
+  {% elif p.entidad2 == 119 %} C.S. PORTADA DE MANCHAY
+  {% elif p.entidad2 == 120 %} P.S. HUERTOS DE MANCHAY
+  {% elif p.entidad2 == 121 %} C.S. CLAS JUAN PABLO II
+  {% elif p.entidad2 == 122 %} P.S. COLLANAC
+  {% elif p.entidad2 == 123 %} P.S. PARQUES DE MANCHAY
+  {% elif p.entidad2 == 135 %} P.S. BELLA ESMERALDA
+  {% elif p.entidad2 == 29 %} C.S. SAN JUAN DE MIRAFLORES
+  {% elif p.entidad2 == 30 %} P.S. DESIDERIO MOSCOSO CASTILLO
+  {% elif p.entidad2 == 31 %} P.S. VILLA SOLIDARIDAD
+  {% elif p.entidad2 == 32 %} P.S. VALLE SHARON
+  {% elif p.entidad2 == 33 %} P.S. PAMPAS DE SAN JUAN
+  {% elif p.entidad2 == 34 %} C.S. TRÉBOL AZUL
+  {% elif p.entidad2 == 35 %} P.S. HÉROES DEL PACÍFICO
+  {% elif p.entidad2 == 36 %} P.S. PARAÍSO
+  {% elif p.entidad2 == 37 %} P.S. SANTA URSULA
+  {% elif p.entidad2 == 38 %} P.S. RICARDO PALMA
+  {% elif p.entidad2 == 39 %} P.S. LADERAS DE VILLA
+  {% elif p.entidad2 == 40 %} C.S. VILLA SAN LUIS
+  {% elif p.entidad2 == 41 %} C.S. LEONOR SAAVEDRA
+  {% elif p.entidad2 == 42 %} C.S. JESÚS PODEROSO
+  {% elif p.entidad2 == 43 %} P.S. EL BRILLANTE
+  {% elif p.entidad2 == 44 %} P.S. 6 DE JULIO
+  {% elif p.entidad2 == 45 %} C.M.I. MANUEL BARRETO
+  {% elif p.entidad2 == 46 %} P.S. VIRGEN DEL BUEN PASO
+  {% elif p.entidad2 == 47 %} P.S. SAN FRANCISCO DE LA CRUZ
+  {% elif p.entidad2 == 48 %} P.S. MARIANNE PREUSS DE STARK
+  {% elif p.entidad2 == 49 %} C.M.I. OLLANTAY
+  {% elif p.entidad2 == 50 %} P.S. LA RINCONADA
+  {% elif p.entidad2 == 51 %} P.S. LEONCIO PRADO
+  {% elif p.entidad2 == 52 %} P.S. JOSÉ M. ARGUEDAS
+  {% elif p.entidad2 == 53 %} P.S. 5 DE MAYO
+  {% elif p.entidad2 == 63 %} C.S.M.C. 12 DE NOVIEMBRE
+  {% elif p.entidad2 == 136 %} CSMC RICARDO PALMA
+  {% elif p.entidad2 == 82 %} C.M.I. SAN JOSÉ
+  {% elif p.entidad2 == 83 %} P.S. SEÑOR DE LOS MILAGROS
+  {% elif p.entidad2 == 84 %} P.S. LLANAVILLA
+  {% elif p.entidad2 == 85 %} C.S.M.C. EL SOL DE VILLA
+  {% elif p.entidad2 == 86 %} C.S.M.C. VILLA EL SALVADOR
+  {% elif p.entidad2 == 87 %} C.S. SAN MARTÍN DE PORRES
+  {% elif p.entidad2 == 88 %} P.S. VIRGEN DE LA ASUNCIÓN
+  {% elif p.entidad2 == 89 %} P.S. SAGRADA FAMILIA
+  {% elif p.entidad2 == 90 %} C.M.I. JUAN PABLO II
+  {% elif p.entidad2 == 91 %} P.S. FERNANDO LUYO SIERRA
+  {% elif p.entidad2 == 92 %} P.S. CRISTO SALVADOR
+  {% elif p.entidad2 == 93 %} P.S. SARITA COLONIA
+  {% elif p.entidad2 == 94 %} P.S. OASIS DE VILLA
+  {% elif p.entidad2 == 95 %} P.S. SASBI
+  {% elif p.entidad2 == 96 %} C.M.I. CÉSAR LOPEZ SILVA
+  {% elif p.entidad2 == 97 %} P.S. PRÍNCIPE DE ASTURIAS
+  {% elif p.entidad2 == 98 %} P.S. PACHACAMAC
+  {% elif p.entidad2 == 99 %} P.S. EDILBERTO RAMOS
+  {% elif p.entidad2 == 100 %} C.S. HÉROES DEL CENEPA
+  {% elif p.entidad2 == 101 %} C.S. BRISAS DE PACHACAMAC
+  {% elif p.entidad2 == 131 %} C.S.M.C. VIRGEN DE LA MERCED
+  {% elif p.entidad2 == 54 %} C.M.I. VILLA MARÍA DEL TRIUNFO
+  {% elif p.entidad2 == 55 %} P.S. 12 DE JUNIO
+  {% elif p.entidad2 == 56 %} P.S. SANTA ROSA DE BELÉN
+  {% elif p.entidad2 == 57 %} C.M.I. JOSÉ CARLOS MARIÁTEGUI
+  {% elif p.entidad2 == 58 %} P.S. VILLA LIMATAMBO
+  {% elif p.entidad2 == 59 %} P.S. JUAN CARLOS SOBERON
+  {% elif p.entidad2 == 60 %} P.S. BUENOS AIRES
+  {% elif p.entidad2 == 61 %} P.S. VALLE ALTO
+  {% elif p.entidad2 == 62 %} P.S. PARAÍSO ALTO
+  {% elif p.entidad2 == 64 %} P.S. VALLE BAJO
+  {% elif p.entidad2 == 65 %} C.M.I. JOSÉ GALVEZ
+  {% elif p.entidad2 == 66 %} P.S. MÓDULO I
+  {% elif p.entidad2 == 67 %} P.S. NUEVO PROGRESO
+  {% elif p.entidad2 == 68 %} P.S. CIUDAD DE GOSEN
+  {% elif p.entidad2 == 69 %} C.S. NUEVA ESPERANZA
+  {% elif p.entidad2 == 70 %} P.S. VIRGEN DE LOURDES
+  {% elif p.entidad2 == 71 %} P.S. CÉSAR VALLEJO II
+  {% elif p.entidad2 == 72 %} P.S. NUEVA ESPERANZA ALTA
+  {% elif p.entidad2 == 73 %} C.M.I. DANIEL A. CARRIÓN
+  {% elif p.entidad2 == 74 %} P.S. TORRES DE MELGAR
+  {% elif p.entidad2 == 75 %} P.S. MICAELA BASTIDAS
+  {% elif p.entidad2 == 76 %} C.M.I. TABLADA DE LURÍN
+  {% elif p.entidad2 == 77 %} P.S. SANTA ROSA DE LAS CONCHITAS
+  {% elif p.entidad2 == 78 %} C.S.M.C. SAN GABRIEL ALTO
+  {% elif p.entidad2 == 79 %} CAM. TAYTA WASI
+  {% elif p.entidad2 == 80 %} P.S. DAVID GUERRERO DUARTE
+  {% elif p.entidad2 == 81 %} C.S.M.C. MONSEÑOR JOSÉ RAMÓN GURRUCHAGA
+      {% elif p.entidad2 == 176 %} C.S.M.C. VIKTOR FRANKL
+     {% elif p.entidad2 == 177 %} C.S.M.C. QHALI KAY
+          {% elif p.entidad2 == 178 %} C.S.M.C. YUYAY WASI
+                    {% elif p.entidad2 == 179 %} C.S.M.C. LEÓN XIV
+                    {% elif p.entidad2 == 180 %}LABORATORIO PS PUNTA HERMOSA
+                                                                              {% elif p.entidad2 == 181 %}LOCAL ARCHIVO CENTRAL
+             {% elif p.entidad2 == 182 %}C.S JOSE OLAYA BALANDRA
+              {% elif p.entidad2 == 183 %}HOGAR PROTEGIDO CHORRILLOS
+                        {% elif p.entidad2 == 184 %}HOGAR PROTEGIDO VILLA MARIA DEL TRIUNFO
+                        {% elif p.entidad2 == 185 %}SEDE ADMINISTRATIVA - I (LOCAL PINILLOS)
+            {% elif p.entidad2 == 186 %}SEDE ADMINISTRATIVA - II  (LOCAL FAP)
+             {% elif p.entidad2 == 187 %}ALMACÉN CENTRAL
+              
+
+
+
+
+    {% else %}
+         
+    {% endif %}
+</td><!-- Ojo: parece que solo guardas id -->
+                <td class="text-center">{{ p.distrito |default_if_none:"" }}</td>
+                <td class="text-center">{{ p.fecha_programada|date:"d/m/Y H:i" }}</td>
+                <td class="text-center">{{ p.cantidad_personal|default_if_none:""  }}</td>
+                <td class="text-center">{{ p.chofer |default_if_none:""}} <br>{{ p.auto |default_if_none:""}}</td>
+                 <td>{{ p.personal|linebreaksbr }}</td>
+                <td class="text-center">
+                    {% if p.evidencia %}
+                        <a href="{{ p.evidencia.url }}" target="_blank">Ver</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if p.documento %}
+                        <a href="{{ p.documento.url }}" target="_blank">Ver</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+ <td class="text-center">{{ p.fecha_atencion|default_if_none:"" }}</td>
+                <td class="text-center">
+                    
+                     
+                         <a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-warning btn-sm" title="Ver/Editar"
+                                                                   href="{% url  'reclamo:entidad-reclamo-edit-programacion-atendidas' p.id %}">
+                                                                    <i class="ft-eye font-medium-2"></i></a>
+                                                                 <!--<a data-toggle="tooltip" data-placement="top"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-info btn-sm" title="Asignar personal de soporte"
+                                                                   href="{% url  'reclamo:medida-adoptada-new' p.id %}">
+                                                                    <i class="ft-user  font-medium-2"></i></a> 
+                                                                <a href="{% url 'reclamo:entidad-reclamo-delete-programacion' p.id %}"
+                                                                   style="margin: 1px !important;"
+                                                                   class="btn btn-danger btn-sm"
+                                                                   data-placement="top" data-toggle="tooltip"
+                                                                   title="Eliminar Programación">
+                                                                    <i class="ft ft-delete font-medium-2  "> </i>
+                                                                </a> -->
+                                                                {% if not p.evidencia %}
+                                                                    <a class="btn btn-primary btn-sm text-white"
+                                                                       style="margin: 1px !important;"
+                                                                       data-placement="top"
+                                                                       title="Agregar evidencia"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ p.id }}"
+                                                                       data-target="#expedienteModal">
+                                                                        <i class="ft-image font-medium-2"></i>
+                                                                        {% endif %}
+                                                                    </a>     
+                                                                     {% if not p.documento %}
+                                                                    <a class="btn btn-sm text-white"
+                                                                       style="margin: 1px !important; background-color: #795548; border-color: #795548;"
+                                                                       data-placement="top"
+                                                                       title="Cargar documento"
+                                                                       data-toggle="modal"
+                                                                       data-id="{{ p.id }}"
+                                                                       data-target="#expedienteModal2">
+                                                                        <i class="ft-file-plus font-medium-2"></i>
+                                                                    </a>
+                                                       
+                                                                {% endif %}                                   
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="11" class="text-center">No hay registros disponibles</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+                                                </table>
+                                            </div>
+                                            {% paginator %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1 -->
+<div class="modal fade" id="expedienteModal" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm" action="{% url 'reclamo:guardar-expediente-programacion' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar evidencia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo1" hidden>
+                    <input type="file" name="expediente" id="expediente" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar1">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal fade" id="expedienteModal2" tabindex="-1" role="dialog">
+    <form method="post" enctype="multipart/form-data" id="expedienteForm2" action="{% url 'reclamo:guardar-expediente-programacion2' %}">
+        {% csrf_token %}
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input name="id" id="id_reclamo2" hidden>
+                    <input type="file" name="expediente2" id="expediente2" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="buttonGuardar2">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+    <div class="modal fade" id="sinReclamoModal" tabindex="-1" role="dialog">
+        <form class="" method="post" role="form"
+              enctype="multipart/form-data" id="sinReclamoForm" action="{% url 'reclamo:guardar-sin-reclamo' %}">
+            {% csrf_token %}
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {% if sin_reclamo %}
+                            <h5 class="modal-title">Actualizar archivo</h5>
+                        {% else %}
+                            <h5 class="modal-title">Agregar archivo</h5>
+                        {% endif %}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input name="id" id="id" hidden>
+
+
+                        {#                        {% if page_obj.paginator.count > 0 %}#}
+                        {#                            <h3 class="text-danger text-bold-700"> No procede declarar SIN RECLAMOS puesto que cuenta#}
+                        {#                                con registros agregados para este período</h3>#}
+                        {#                        {% else %}#}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="" for="inlineFormInput">AÑO</label>
+                                <select class="form-control mb-2"
+                                        name="anio" id="anio" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in anios %}
+                                        <option value="{{ a.0 }}"
+                                                {% if anio == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.0 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="" for="mes">MES</label>
+                                <select class="form-control" name="mes" id="mes" required="">
+                                    <option value=""> -- Selecionar --</option>
+                                    {% for a in meses %}
+                                        <option value="{{ a.0 }}"
+                                                {% if mes == a.0 %}
+                                                selected
+                                                {% endif %}
+                                        >{{ a.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <input type="file" name="archivo" id="archivo" required>
+
+                                {% if sin_reclamo %}
+                                    </br><a style="font-size: 17px!important;"
+                                            href="{{ sin_reclamo.archivo.url }}" download>
+                                    <i class="ft-file-plus"> Ver archivo </i></a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        {#                        {% endif %}#}
+                    </div>
+                    <div class="modal-footer">
+                        {#                        {% if page_obj.paginator.count == 0 %}#}
+                        <button type="submit" class="btn btn-primary" id="buttonGuardarSinReclamo">Guardar</button>
+                        {#                        {% endif %}#}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock container %}
+
+
+{% block static %}
+
+    <script>
+        // Modal 1
+$('#expedienteModal').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo1").val(id);
+});
+
+$("#expedienteForm").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar1").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar1").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+// Modal 2
+$('#expedienteModal2').on('show.bs.modal', function (e) {
+    var id = $(e.relatedTarget).data('id');
+    $("#id_reclamo2").val(id);
+});
+
+$("#expedienteForm2").submit(function (e) {
+    e.preventDefault();
+    $("#buttonGuardar2").prop('disabled', true);
+    setTimeout(function () {
+        $("#buttonGuardar2").prop('disabled', false);
+    }, 6000);
+    e.currentTarget.submit();
+});
+
+
+        $("#sinReclamoForm").submit(function (e) {
+            e.preventDefault();
+            $("#buttonGuardarSinReclamo").prop('disabled', true);
+            setTimeout(function () {
+                $("#buttonGuardarSinReclamo").prop('disabled', false);
+            }, 6000)
+            e.currentTarget.submit();
+        });
+    </script>
+{% endblock static %}
+
+
+
+

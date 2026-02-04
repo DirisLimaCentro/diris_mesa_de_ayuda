@@ -1,0 +1,108 @@
+{% extends 'dashboard.html' %}
+{% block  container %}
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-12 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Configuraciones</li>
+                                <li class="breadcrumb-item active">Entidades</li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'entidad:list' %}">Todas las entidades</a></li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'administrador:reclamo-list' %}?entidad_id={{ object.entidad.id }}">Lista de
+                                        reclamos</a>
+                                </li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right col-md-6 col-12">
+                    <div class=" float-md-right">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">{{ title }}</h2>
+                            </div>
+
+                            <div class="card-body collapse show">
+
+                                <span class="badge badge-primary">Creado el {{ object.created_at }}</span>
+                                <hr class="divider">
+                                <form class="text-left was-validated form-validate" id="reclamo-detail">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        {% include 'includes/bs4_form.html' with form=reclamo_form col=4 include=inputs_show exclude="" start_tabindex="0" hidden="" %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Medidas adoptadas</h2>
+                            </div>
+
+                            <div class="card-body collapse show">
+
+                                {% for i in list_zip %}
+
+                                    <span class="badge badge-primary">Creado el {{ i.1.created_at }}</span>
+                                    <hr class="divider">
+                                    <form class="text-left was-validated form-validate medida_adoptada_form">
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            {% include 'includes/bs4_form.html' with form=i.0 col=4 include=inputs_show_medida_adoptada exclude="" start_tabindex="0" hidden="" %}
+                                        </div>
+                                    </form>
+                                    <hr class="divider">
+                                    <hr class="divider">
+                                {% endfor %}
+
+                                <div class="form-group m-2">
+                                    <div class="text-right">
+                                        <a class="btn btn-danger"
+                                           href="{% url 'administrador:reclamo-list'  %}?entidad_id={{ object.entidad.id }}">
+                                            Atras</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock container %}
+
+{% block static %}
+
+    <script type="application/javascript">
+        $("#reclamo-detail :input").prop("disabled", true);
+        $(".medida_adoptada_form :input").prop("disabled", true);
+    </script>
+
+{% endblock static %}

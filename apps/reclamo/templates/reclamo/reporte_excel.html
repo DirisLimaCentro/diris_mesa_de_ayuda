@@ -1,0 +1,220 @@
+{% extends 'dashboard.html' %}
+{% load static format_item %}
+
+{% block  container %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/selectize.bootstrap4.css' %}">
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Reportes</li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class=" mt-2">{{ title }}</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body" style="padding-top: 0 !important;">
+
+                                    <div class="row justify-content-md-center">
+                                        <div class="card" style="margin-bottom: 0 !important;">
+                                            <div class="card-content collapse show">
+                                                <div class="card-body"
+                                                     style="padding-top: 0 !important; margin-bottom: 0 !important;     padding-bottom: 0 !important;">
+                                                    <form class="form" method="post" role="form"
+                                                          action="{% url 'reclamo:reporte-excel' %}">
+
+                                                        <div class="card">
+    <div class="card-header">Filtro</div>
+    <div class="card-body">
+        <div class="form-row align-items-center">
+
+            <!-- 🔁 Campo oculto con el user_id del usuario logueado -->
+            <input type="hidden" name="user_id" value="{{ request.user.id }}">
+
+            <!-- ✅ Fecha de inicio -->
+            <div class="col-auto">
+                <label for="fecha_inicio">Fecha de inicio</label>
+                <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control mb-2" required>
+            </div>
+
+            <!-- ✅ Fecha de fin -->
+            <div class="col-auto">
+                <label for="fecha_fin">Fecha de fin</label>
+                <input type="date" name="fecha_fin" id="fecha_fin" class="form-control mb-2" required>
+            </div>
+
+            <!-- ✅ Botón de búsqueda -->
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary" id="buscar">
+                    <i class="la la-search"></i> BUSCAR
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-body" id="content-report">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
+
+
+{% block static %}
+
+    <script src="{% static 'js/selectize.js' %} "></script>
+    <script src="{% static 'js/main_select.js' %} "></script>
+
+    <script type="application/javascript">
+
+        // Enviando formulario
+
+        $(document).on('click', 'form button[type=submit]', function (e) {
+
+            $( ".content-spinner" ).show();
+
+
+            var isValid = $(e.target).parents('form').valid();
+
+            if (isValid) {
+                var fecha_inicio = new Date($("#fecha_inicio").val());
+                var fecha_fin = new Date($("#fecha_fin").val());
+
+
+                if (fecha_inicio < fecha_fin) {
+                    $.ajax({
+                        type: "POST",
+                        url: $(e.target).parents('form').attr('action'),
+                        data: $(e.target).parents('form').serialize(),
+                        success: function (response) {
+                            $( ".content-spinner" ).hide();
+                            $("#content-report").html(response)
+                            $.notify({
+                                // options
+                                title: '',
+                                message: 'Consulta realizada exitosamente'
+                            }, {
+                                // settings
+                                type: 'success'
+                            });
+                        },
+                        error: function (request, status, error) {
+                           $( ".content-spinner" ).hide();
+                            $.notify({
+                                // options
+                                title: 'ERROR, ',
+                                message: 'UPS, algo salió mal'
+                            }, {
+                                // settings
+                                type: 'danger'
+                            });
+                        }
+                    });
+                    {#e.preventDefault(); //prevent the default action#}
+                } else {
+                    $( ".content-spinner" ).hide();
+                    $.notify({
+                        // options
+                        title: 'ERROR, ',
+                        message: 'La fecha de inicio no puede ser mayor a la fecha de fin.'
+                    }, {
+                        // settings
+                        type: 'danger'
+                    });
+                }
+            } else {
+                $( ".content-spinner" ).hide();
+                $.notify({
+                    // options
+                    title: 'ERROR, ',
+                    message: 'Ingrese todos los campos requeridos.'
+                }, {
+                    // settings
+                    type: 'danger'
+                });
+            }
+
+
+            return false;
+
+        });
+
+
+        var getSelectIpressByRis = (ris_id) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                {#dataType: 'json',#}
+                url: "{% url 'entidad:get-select' %}",
+                data: {
+                    'ris_id': ris_id
+                },
+                success: function (data) {
+                    console.log("SSS");
+                    $("#ipress").html(data);
+                },
+                error: function (request, status, error) {
+                    console.log(status)
+                    console.log(error)
+                    console.log(request.responseText);
+                }
+            });
+        };
+
+
+        $('#ris').on('change', function () {
+            const valor = $(this).val();
+            getSelectIpressByRis(valor);
+        });
+
+    </script>
+
+
+    {% if list_ris|length == 1 %}
+        <script>
+            $('#ris').val("{{ ris_list.0.0 }}");
+            $("#ris option[value='0']").remove();
+            {#getSelectIpressByRis("{{ ris_list.0.0 }}");#}
+        </script>
+    {% endif %}
+
+        {% if list_ipress|length == 1 %}
+        <script>
+            $('#ipress').val("{{ list_ipress.0.0 }}");
+            $("#ipress option[value='0']").remove();
+            {#getSelectIpressByRis("{{ ris_list.0.0 }}");#}
+        </script>
+    {% endif %}
+
+{% endblock static %}

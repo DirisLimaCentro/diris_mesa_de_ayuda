@@ -1,0 +1,192 @@
+DELIMITER $$
+
+CREATE PROCEDURE obtener_reporte_tickets(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE,
+    IN soporte INT
+)
+BEGIN
+
+SELECT 
+     CONCAT(
+        DAY(DATE_SUB(t.created_at, INTERVAL 5 HOUR)), ' de ',
+        CASE MONTH(DATE_SUB(t.created_at, INTERVAL 5 HOUR))
+            WHEN 1 THEN 'enero'
+            WHEN 2 THEN 'febrero'
+            WHEN 3 THEN 'marzo'
+            WHEN 4 THEN 'abril'
+            WHEN 5 THEN 'mayo'
+            WHEN 6 THEN 'junio'
+            WHEN 7 THEN 'julio'
+            WHEN 8 THEN 'agosto'
+            WHEN 9 THEN 'septiembre'
+            WHEN 10 THEN 'octubre'
+            WHEN 11 THEN 'noviembre'
+            WHEN 12 THEN 'diciembre'
+        END,
+        ' del ', YEAR(DATE_SUB(t.created_at, INTERVAL 5 HOUR)),
+        ' a las ', DATE_FORMAT(DATE_SUB(t.created_at, INTERVAL 5 HOUR), '%H:%i')
+    ) AS fecha_creacion_formato,
+
+   
+
+    CASE 
+        WHEN t.estado_reclamo = 0 THEN 'Nuevo'
+        WHEN t.estado_reclamo = 1 THEN 'En curso'
+        WHEN t.estado_reclamo = 2 THEN 'Atendido'
+        WHEN t.estado_reclamo = 3 THEN 'Cerrado'
+        ELSE ''
+    END AS estado,
+    t.codigo_ticket, 
+    CONCAT_WS(' ', t.nombres, t.apellidos) AS usuario,
+    e.nombre AS dependencia,
+    r.denominacion AS ris,
+    CASE 
+        WHEN t.tipo_incidencia = 1 THEN 'Problemas con computadoras'
+        WHEN t.tipo_incidencia = 2 THEN 'Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)'
+        WHEN t.tipo_incidencia = 3 THEN 'Conectividad y Redes'
+        WHEN t.tipo_incidencia = 4 THEN 'Impresoras y escáner'
+        WHEN t.tipo_incidencia = 5 THEN 'Software de Ofimática (Word, Excel, etc)'
+		WHEN t.tipo_incidencia = 6 THEN 'Problemas con SIHCE'
+        ELSE ''
+    END AS tipo_incidencia,
+    t.detalle_atencion, 
+    CONCAT_WS(' ',  u.first_name, u.last_name) AS personal_soporte,
+      CONCAT(
+        DAY(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)), ' de ',
+        CASE MONTH(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR))
+            WHEN 1 THEN 'enero'
+            WHEN 2 THEN 'febrero'
+            WHEN 3 THEN 'marzo'
+            WHEN 4 THEN 'abril'
+            WHEN 5 THEN 'mayo'
+            WHEN 6 THEN 'junio'
+            WHEN 7 THEN 'julio'
+            WHEN 8 THEN 'agosto'
+            WHEN 9 THEN 'septiembre'
+            WHEN 10 THEN 'octubre'
+            WHEN 11 THEN 'noviembre'
+            WHEN 12 THEN 'diciembre'
+        END,
+        ' del ', YEAR(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)),
+        ' a las ', DATE_FORMAT(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR), '%H:%i')
+    ) AS fecha_atencion_formato,
+    t.expediente
+FROM reclamo_entidadreclamo AS t
+LEFT JOIN setup_entidad AS e ON e.id = t.entidad2
+LEFT JOIN setup_ris AS r ON r.id = t.ris_id
+LEFT JOIN setup_usuario AS u ON u.id = t.id_user
+WHERE DATE(t.created_at) BETWEEN fecha_inicio AND fecha_fin
+  AND soporte = u.id
+  AND t.estado_reclamo IN (1,2,3)
+ORDER BY t.created_at;
+
+END $$
+
+DELIMITER ;
+
+*************************************************************************************
+
+MARIADB SERVIDOR:
+
+DELIMITER $$
+
+CREATE PROCEDURE obtener_reporte_tickets(
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE,
+    IN p_soporte INT
+)
+BEGIN
+
+    SELECT 
+        CONCAT(
+            DAY(DATE_SUB(t.created_at, INTERVAL 5 HOUR)), ' de ',
+            CASE MONTH(DATE_SUB(t.created_at, INTERVAL 5 HOUR))
+                WHEN 1 THEN 'enero'
+                WHEN 2 THEN 'febrero'
+                WHEN 3 THEN 'marzo'
+                WHEN 4 THEN 'abril'
+                WHEN 5 THEN 'mayo'
+                WHEN 6 THEN 'junio'
+                WHEN 7 THEN 'julio'
+                WHEN 8 THEN 'agosto'
+                WHEN 9 THEN 'septiembre'
+                WHEN 10 THEN 'octubre'
+                WHEN 11 THEN 'noviembre'
+                WHEN 12 THEN 'diciembre'
+            END,
+            ' del ',
+            YEAR(DATE_SUB(t.created_at, INTERVAL 5 HOUR)),
+            ' a las ',
+            DATE_FORMAT(DATE_SUB(t.created_at, INTERVAL 5 HOUR), '%H:%i')
+        ) AS fecha_creacion_formato,
+
+        CASE t.estado_reclamo
+            WHEN 0 THEN 'Nuevo'
+            WHEN 1 THEN 'En curso'
+            WHEN 2 THEN 'Atendido'
+            WHEN 3 THEN 'Cerrado'
+            ELSE ''
+        END AS estado,
+
+        t.codigo_ticket,
+        CONCAT_WS(' ', t.nombres, t.apellidos) AS usuario,
+        e.nombre AS dependencia,
+        r.denominacion AS ris,
+
+        CASE t.tipo_incidencia
+            WHEN 1 THEN 'Problemas con computadoras'
+            WHEN 2 THEN 'Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, TRAMITE, etc)'
+            WHEN 3 THEN 'Conectividad y Redes'
+            WHEN 4 THEN 'Impresoras y escáner'
+            WHEN 5 THEN 'Software de Ofimática (Word, Excel, etc)'
+            WHEN 6 THEN 'Problemas con SIHCE'
+            ELSE ''
+        END AS tipo_incidencia,
+
+        t.detalle_atencion,
+        CONCAT_WS(' ', u.first_name, u.last_name) AS personal_soporte,
+
+        CONCAT(
+            DAY(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)), ' de ',
+            CASE MONTH(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR))
+                WHEN 1 THEN 'enero'
+                WHEN 2 THEN 'febrero'
+                WHEN 3 THEN 'marzo'
+                WHEN 4 THEN 'abril'
+                WHEN 5 THEN 'mayo'
+                WHEN 6 THEN 'junio'
+                WHEN 7 THEN 'julio'
+                WHEN 8 THEN 'agosto'
+                WHEN 9 THEN 'septiembre'
+                WHEN 10 THEN 'octubre'
+                WHEN 11 THEN 'noviembre'
+                WHEN 12 THEN 'diciembre'
+            END,
+            ' del ',
+            YEAR(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR)),
+            ' a las ',
+            DATE_FORMAT(DATE_SUB(t.fecha_atencion, INTERVAL 5 HOUR), '%H:%i')
+        ) AS fecha_atencion_formato,
+
+        t.expediente
+
+    FROM reclamo_entidadreclamo t
+    LEFT JOIN setup_entidad e ON e.id = t.entidad2
+    LEFT JOIN setup_ris r ON r.id = t.ris_id
+    LEFT JOIN setup_usuario u ON u.id = t.id_user
+
+    WHERE DATE(t.created_at) BETWEEN fecha_inicio AND fecha_fin
+      AND u.id = p_soporte
+      AND t.estado_reclamo IN (1,2,3)
+
+    ORDER BY t.created_at;
+
+END $$
+
+DELIMITER ;
+
+use diris_mesa_de_ayuda_4;
+drop procedure obtener_reporte_tickets;
+
+call obtener_reporte_tickets('2025-10-01','2025-10-27',463)

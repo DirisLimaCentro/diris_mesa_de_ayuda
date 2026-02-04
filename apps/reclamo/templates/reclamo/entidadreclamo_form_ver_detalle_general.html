@@ -1,0 +1,1336 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% block  container %}
+
+    <style>
+
+        .btn-fixed {
+    width: 160px; /* ajusta según tu diseño */
+    text-align: center;
+}
+        .ui-menu > .ui-menu-item {
+            border: 2px solid #0f95ac !important;
+            width: 100% !important;
+        }
+
+
+        .ui-widget.ui-widget-content {
+            width: 50% !important;
+        }
+
+
+        .highlighted {
+            background-color: #21f3b4;
+        }
+
+        .highlight {
+            background-color: #21f3b4;
+            -moz-border-radius: 5px; /* FF1+ */
+            -webkit-border-radius: 5px; /* Saf3-4 */
+            border-radius: 5px; /* Opera 10.5, IE 9, Saf5, Chrome */
+            -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* FF3.5+ */
+            -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* Saf3.0+, Chrome */
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); /* Opera 10.5+, IE 9.0 */
+        }
+
+        .highlight {
+            padding: 1px 4px;
+            margin: 0 -4px;
+        }
+
+        input[type=checkbox] {
+            /* Double-sized Checkboxes */
+            -ms-transform: scale(2); /* IE */
+            -moz-transform: scale(2); /* FF */
+            -webkit-transform: scale(2); /* Safari and Chrome */
+            -o-transform: scale(2); /* Opera */
+            transform: scale(2);
+            padding: 10px;
+        }
+
+        /* Might want to wrap a span around your checkbox text */
+        .form-check-input {
+            /* Checkbox text */
+            font-size: 110%;
+            display: inline;
+        }
+
+
+        .list-group-item {
+            border: 2px solid #545054 !important;
+        }
+
+        #conent-causas a:nth-child(even) {
+            background: #bee0f6 !important;
+        }
+
+
+        input:invalid {
+            border: 3px dashed red !important;
+        }
+
+        select:invalid {
+            border: 3px dashed red !important;
+        }
+
+        textarea:invalid {
+            border: 3px dashed red !important;
+        }
+
+        input:valid {
+            border: 1px solid green;
+        }
+
+        select:valid {
+            border: 1px solid green;
+        }
+
+        textarea:valid {
+            border: 1px solid green;
+        }
+         
+
+
+    </style>
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active"> </li>
+                                <li class="breadcrumb-item ">
+                                    <a href="{% url 'reclamo:entidad-reclamo-list' %}?anio={{ request.session.reclamo_anio }}&mes={{ request.session.reclamo_mes }}">
+                                         </a>
+                                </li>
+                                <li class="breadcrumb-item active"> </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <section id="patients-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+
+                                <div class="card-header">
+                                    <h1 class=" mt-2"><strong>Ticket: </strong>{{ object.codigo_ticket }} </h1>
+                                     <h4 class=" mt-2"><strong>Fecha de registro: </strong>{{ object.created_at }} </h4>   
+                                    
+                                </div>
+
+                                <div class="card-content collapse show wizard">
+
+
+                                    <div class="card-body">
+                                        <form class="steps-validation wizard-notification" method="post" role="form"
+                                              enctype="multipart/form-data" id="reclamo-new">
+                                            <div hidden>
+                                                {% include 'includes/bs4_form.html' with form=form col=4 include='entidad' start_tabindex="0" hidden="" %}
+                                                {% include 'includes/bs4_form.html' with form=form col=4 include=inputs_hidden start_tabindex="0" hidden="" %}
+                                            </div>
+                                            {% csrf_token %}
+                                             <p class="h6"> </p>
+                                            <fieldset disabled>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_uno start_tabindex="1" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+                                                 <!--  <h6>USUARIO AFECTADO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_dos start_tabindex="10" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                              <h6>PRESENTA RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row text-center">
+                                                    <div class="col-md-12">
+                                                        <div class="form-check">
+                                                            {{ form.es_mismo_usuario_afectado }}
+                                                            <label class="form-check-label"
+                                                                   for="same_user" style="
+                                                                                    background-color: #3fe43f;
+                                                                                    color: #2700ff;
+                                                                                    padding: 2px 11px;
+                                                                                    font-weight: 700;">
+                                                                Es el mismo usuario afectado ?
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="divider">
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_tres start_tabindex="15" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                    <h6>DETALLE RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+
+                                                     {% include 'includes/bs4_form.html' with form=form col=4 include=paso_cuatro start_tabindex="15" hidden="" %}</div>
+                                            </fieldset>
+
+
+                                            <h6>GESTIÓN DE RECLAMO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_cinco start_tabindex="28" hidden="" %}
+                                                </div>
+                                            </fieldset>
+
+
+                                           <h6>RESULTADO</h6>
+                                            <fieldset>
+                                                <div class="form-row">
+                                                    {% include 'includes/bs4_form.html' with form=form col=4 include=paso_seis start_tabindex="35" hidden="" %}
+                                                </div>
+                                            </fieldset>-->
+
+                                        </form>
+
+                                        <div class=" float-md-right">
+                                            <a href="{% url 'reclamo:general-list' %}"
+   class="btn btn-danger btn-sm mb-2 btn-fixed">
+    <i class="la la-arrow-left"></i>
+    Lista de tickets
+</a>
+
+<!--<a class="btn btn-success btn-sm mb-2 btn-fixed"
+   data-toggle="modal"
+   data-target="#confirmAtenderModal"
+    data-href="{% url 'reclamo:atender-reclamo' object.id %}">
+    <i class="la la-check"></i>
+    Atender
+</a>-->
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 class="text-success cupos-success">
+                        ¿ Desea guardar los cambios ?
+                    </h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cupos-valid" data-dismiss="modal">Cancelar
+                    </button>
+                    <a type="button" style="color: #fff" class="btn btn-primary cupos-success" data-dismiss="modal"
+                       id="confirmar">Confirmar </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="clasificacionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Buscar clasificación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-1 mt-1">
+                            <input name="buscar" placeholder="Buscar..." class="form-control" type="text" id="buscar"
+                                   autocomplete="off">
+                            <input name="numero-causa" id="numero-causa" hidden>
+                        </div>
+                    </div>
+                    <div class="list-group" id="conent-causas">
+                        {% for object in clasificaciones %}
+                            <a href="#" data-pk="{{ object.id }}"
+                               class="list-group-item list-group-item-action flex-column align-items-start item-causa">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ object.codigo }}</h5>
+                                    <small>{{ object.get_categoria_display }}</small>
+                                </div>
+                                <h3>{{ object.causa }}</h3>
+                                <p class="mb-1">{{ object.definicion }}</p>
+                                {#                                <p class="mb-1">{{ object.definicion_corta }}</p>#}
+                                <small>{{ object.definicion_corta }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <div class="modal fade" id="confirmAtenderModal" tabindex="-1" role="dialog" aria-labelledby="confirmAtenderLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Desea atender este caso?
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+        <a id="confirmAtenderGo" class="btn btn-success btn-sm" href="#">Aceptar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock container %}
+
+{% block static %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const risSelect = document.getElementById("id_ris");
+    const entidadSelect = document.getElementById("id_entidad");
+    const distritoInput = document.getElementById("id_distrito"); // campo distrito
+    // ⚡ Guardamos el valor que vino de Django en un data-atributo
+    if (entidadSelect) {
+        entidadSelect.setAttribute("data-seleccionado", "{{ form.entidad2.value|default:'' }}");
+    }
+
+    // Opciones según RIS
+    const opcionesPorRis = {
+        "1": [
+            {value: 1, text: "C.S.M.C. BARRANCO", distrito: "AVENIDA SURCO 431, BARRANCO"},
+            {value: 2, text: "C.S. GAUDENCIO BERNASCONI", distrito: "AVENIDA GRAU 198 AV. GRAU Nº198, BARRANCO"},
+            {value: 3, text: "C.S. ALICIA LASTRES DE LA TORRE", distrito: "MARTÍNEZ DE PINILLOS 124 , BARRANCO"},
+            {value: 4, text: "C.S. GUSTAVO LANATTA LUJAN", distrito: "AV. DEFENSORES DEL MORRO (EX HUAYLAS) Nº556 AV. DEFENSORES DEL MORRO (EX HUAYLAS) Nº556, CHORRILLOS"},
+            {value: 5, text: "C.M.I. VIRGEN DEL CARMEN", distrito: "CALLE LEOPOLDO ARIAS NRO. 200, CHORRILLOS"},
+            {value: 6, text: "P.S. ARMATAMBO", distrito: "CALLE LUCANAS MZ 1 LOTE 1 AAHH ARMATAMBO, CHORRILLOS"},
+            {value: 7, text: "C.E. SAN PEDRO DE LOS CHORRILLOS", distrito: "CALLE FERROCARRIL NÚMERO S/N CHORRILLOS"},
+            {value: 8, text: "C.M.I. BUENOS AIRES DE VILLA", distrito: "AV. BUENOS AIRES DE VILLA S/N. NÚMERO S/N DISTRITO CHORRILLOS "},
+            {value: 9, text: "C.S. DELICIAS DE VILLA", distrito: "JIRÓN NEVADO CARHUAZO S/N II ZONA DELICIAS DE VILLA S/N CHORRILLOS"},
+            {value: 10, text: "C.S. SAN GENARO DE VILLA", distrito: "AV. PRINCIPAL (ALTURA DE LA CALLE 12) AAHH SAN GENARO DISTRITO CHORRILLOS"},
+            {value: 11, text: "P.S. VISTA ALEGRE DE VILLA", distrito: "CALLE JOSE CARLOS MARIATEGUI S/N CHORRILLOS LIMA LIMA"},
+            {value: 12, text: "P.S. SANTA ISABEL DE VILLA", distrito: "AV. INDEPENDENCIA S/N.AAHH SANTA ISABEL DE VILLA NÚMERO S/N DISTRITO CHORRILLOS PROVINCIA LIMA DEPARTAMENTO LIMA"},
+            {value: 13, text: "C.S. TUPAC AMARU DE VILLA", distrito: "AV. TÚPAC AMARU MZ. E, LT.1 CHORRILLOS"},
+            {value: 14, text: "P.S. SAN JUAN DE LA LIBERTAD", distrito: "AV. 11 S/N AA.HH. SAN JUAN DE LA LIBERTAD CHORRILLOS"},
+            {value: 15, text: "P.S. MATEO PUMACAHUA", distrito: "AV. MATEO PUMACAHUA MZ T S/N LOTE 37 SECTOR 01 NÚMERO S/N DISTRITO CHORRILLOS"},
+            {value: 16, text: "P.S. SANTA TERESA DE CHORRILLOS", distrito: "PROLONGACIÓN AV.EL SOL NÚMERO S/N DISTRITO CHORRILLOS"},
+            {value: 17, text: "P.S. VILLA VENTURO", distrito: "CALLE JAUJA S/N. NÚMERO S/N DISTRITO CHORRILLOS"},
+            {value: 18, text: "P.S. NUEVA CALEDONIA", distrito: "AV. HUANCAVELICA MZ.E,LT.1 AAHH NUEVA CALEDONIA CHORRILLOS"},
+            {value: 19, text: "P.S. LOS INCAS", distrito: "CALLE ISLAS GUYANAS MZ I-6 LOTE 30 URB. LOS CEDROS DE VILLA CHORRILLOS"},
+            {value: 20, text: "P.S. DEFENSORES DE LIMA", distrito: "AAHH DEFENSORES DE LIMA S/N, FRENTE A LA MZ D CHORRILLOS"},
+            {value: 21, text: "C.S.M.C. SAN SEBASTIAN", distrito: "AVENIDA INDEPENDENCIA S/N SANTA ISABEL DE VILLA CHORRILLOS"},
+            {value: 22, text: "C.S.M.C. COMUNITARIO NANCY REYES BAHAMONETE", distrito: "CALLE SAN RODOLFO PISO 1 441 CHORRILLOS"},
+            {value: 23, text: "C.S. SANTIAGO DE SURCO", distrito: "JIRÓN DANIEL CORNEJO NÚMERO 182 DISTRITO SANTIAGO DE SURCO"},
+            {value: 24, text: "P.S. SAN CARLOS", distrito: "JR. MARISCAL SANTA CRUZ S/N AAHH SAN CARLOS SANTIAGO DE SURCO"},
+            {value: 25, text: "P.S. SAN ROQUE", distrito: "ESTEBAN CAMERE 378 - URB SAN ROQUE SN SANTIAGO DE SURCO"},
+            {value: 26, text: "P.S. LOS VIÑEDOS DE SURCO", distrito: "MZ F LOTE 12 AAHH VIÑEDOS DE SURCO DISTRITO SANTIAGO DE SURCO"},
+            {value: 27, text: "P.S. LAS FLORES", distrito: "CALLE FERREÑAFE 220 - 2DA CUADRA EL POLO URB. LAS FLORES - MONTERRICO SANTIAGO DE SURCO"},
+            {value: 28, text: "P.S. LAS DUNAS", distrito: "CALLE LOS HERRERILLOS MZA F LTE 1 S/N - LAS DUNAS NÚMERO S/N DISTRITO SANTIAGO DE SURCO"},
+            {value: 132, text: "C.S.M.C  CRL. SAN. WILELMO PEDRO ZORRILLA HUAMAN", distrito: "JIRÓN GENERAL BUENDIA 503 VILLA MILITAR OESTE CHORRILLOS"},
+            {value: 138, text: "C.S.M.C. SAN IGNACIO DE SURCO", distrito: "SURCO"},
+                                    {value: 176, text: "C.S.M.C. VIKTOR FRANKL", distrito: "CALLE 9 MZ C LOTE 15, URB. LA LIBERTAD DISTRITO SANTIAGO DE SURCO"},
+                                                    {value: 182, text: "C.S JOSE OLAYA BALANDRA", distrito: "CALLE STA ROSA DISTRITO DE CHORRILLOS"},
+                                                    {value: 183, text: "HOGAR PROTEGIDO CHORRILLOS", distrito: "CALLE MAXIMILIANO VELARDE 284 CHORRILLOS"}
+
+
+        ],
+        "2": [
+            {value: 102, text: "C.M.I. LURÍN", distrito: "JIRÓN GRAU Nº 370 JR. GRAU Nº 370 LURIN"},
+            {value: 103, text: "P.S. BUENA VISTA", distrito: "PROLONGACIÓN ALFONSO UGARTE BUENA VISTA BAJA S/N NÚMERO S/N DISTRITO LURIN"},
+            {value: 104, text: "CLAS JULIO C TELLO", distrito: "AV. LAS ACASIAS MZ B LT 12 ST 1 JULIO C. TELLO DISTRITO LURIN"},
+            {value: 105, text: "C.S. VILLA ALEJANDRO", distrito: "MZ L- LOTE 31- AAHH VILLA ALEJANDRO LURIN"},
+            {value: 106, text: "P.S. MARTHA MILAGROS BAJA", distrito: "AV. LOS CIPRECES MZ B , LOTE 01 , MARTHA MILAGROS BAJA LURIN"},
+            {value: 107, text: "C.S. NUEVO LURIN KM. 40 (CLAS)", distrito: "AV. 28 JULIO MZ 18 LT 20 NUEVO LURIN - KM 40 ANTIGUA PANAMERICANA SUR DISTRITO LURIN"},
+            {value: 111, text: "P.S.VILLA LIBERTAD (CLAS)", distrito: "JIRÓN HUANUCO NÚMERO S/N DISTRITO LURIN"},
+            {value: 124, text: "C.S. SAN BARTOLO", distrito: "AVENIDA SAN BARTOLO MZ A LT 1 Y AV. EL GOFL NÚMERO S/N DISTRITO SAN BARTOLO"},
+            {value: 125, text: "C.S. PUCUSANA", distrito: "AV LIMA 559 PUCUSANA"},
+            {value: 126, text: "C.S. BENJAMÍN DOIG", distrito: "AAHH BENJAMIN DOIG LOSSIO MZ 21 LT 13 DISTRITO PUCUSANA"},
+            {value: 127, text: "P.S. PUNTA HERMOSA", distrito: "JR PIMENTEL Nº 248 MZ G LT 9 PUNTA HERMOSA"},
+            {value: 128, text: "C.S. PUNTA NEGRA", distrito: "AV GUAYANAY NORTE - ZONA CENTRAL MZ H-1 LT 6 PUNTA NEGRA"},
+            {value: 129, text: "P.S. VILLA MERCEDES", distrito: "AV. MANCO CAPAC MZ H LT 01 DISTRITO SANTA MARIA DEL MAR"},
+            {value: 134, text: "CSMC  BALNEARIOS DEL SUR", distrito: "CALLE BARTOLOME HERRERA N° 100-102 MZ A LOTE 10 DE LA AGRUPACION DE FAMILIAS SANTA CRUZ A UNA CUADRA DE LA MUNICIPALIDAD DE PUNTA HERMOSA PUNTA HERMOSA"},
+            {value: 137, text: "CSMC SAN PEDRO DE LURIN", distrito: "LURIN"},
+                        {value: 180, text: "LABORATORIO PS PUNTA HERMOSA", distrito: "CALLE PIMENTEL NRO. 193 - MZ J LTE. 16, DEL DISTRITO DE BALNEARIO DE PUNTA HERMOSA"},
+
+
+        ],
+        "3": [
+            {value: 108, text: "C.S.M.C. LA MEDALLA MILAGROSA", distrito: "JIRÓN 12 DE JULIO SECTOR 24 DE JUNIO COLLANAC PACHACAMAC"},
+            {value: 109, text: "C.S.M.C. SANTA ROSA DE MANCHAY", distrito: "CALLE 20 SECTOR PORTADA DE MANCHAY III CPR HUERTOS DE MANCHAY B5 03 PACHACAMAC"},
+            {value: 110, text: "C.S. PACHACAMAC", distrito: "AV. COLONIAL S/N Y ESQ. CASTILLA PACHACAMAC"},
+            {value: 112, text: "P.S. PAMPA GRANDE", distrito: "AV 07 DE JUNIO-CPR PAMPA GRANDE MANZANA B LOTE S/N DISTRITO PACHACAMAC"},
+            {value: 113, text: "P.S. QUEBRADA VERDE", distrito: "AV. ROQUE SAENZ PEÑA MZ. I LOTE 13 DISTRITO PACHACAMAC"},
+            {value: 114, text: "P.S. GUAYABO", distrito: "AV SAN JUAN MZ H LT 2 CENTRO POBLADO RURAL GUAYABO-PACHACAMAC"},
+            {value: 115, text: "P.S. PICAPIEDRA", distrito: "AV REAL MZ J LT 8 CENTRO POBLADO RURAL PICAPIEDRA-PACHACAMAC PACHACAMAC"},
+            {value: 116, text: "P.S. CARDAL", distrito: "CENTRO POBLADO RURAL CARDAL - PACHACAMAC "},
+            {value: 117, text: "P.S. MANCHAY ALTO", distrito: "AV LAS CASUARINAS MZ E LT 18 CENTRO POBLADO RURAL MANCHAY ALTO DISTRITO PACHACAMAC"},
+            {value: 118, text: "P.S. TAMBO INGA", distrito: "AV VICTOR MALASQUEZ CENTRO POBLADO RURAL TAMBO INGA - PACHACAMAC"},
+            {value: 119, text: "C.S. PORTADA DE MANCHAY", distrito: "AAHH PORTADA DE MANCHAY DISTRITO PACHACAMAC"},
+            {value: 120, text: "P.S. HUERTOS DE MANCHAY", distrito: "MZ T LOTE S/N SECTOR RINCONADA ALTA PACHACAMAC"},
+            {value: 121, text: "C.S. CLAS JUAN PABLO II", distrito: "MANZANA K8 LOTE 5B, SECTOR LOS JARDINES HUERTOS DE MANCHAY DISTRITO PACHACAMAC"},
+            {value: 122, text: "P.S. COLLANAC", distrito: "AV. VICTOR MALASQUEZ KM 5.5 SECTOR 24 DE JUNIO -COLLANAC PACHACAMAC"},
+            {value: 123, text: "P.S. PARQUES DE MANCHAY", distrito: "CARRETERA CARRETERA CIENEGUILLA KM 21-MZ 1 LT 12-13 AAHH PAUL POBLET LIND DISTRITO PACHACAMAC"},
+            {value: 135, text: "PS.BELLA ESMERALDA", distrito: "AAHH CENTRO POBLADO RURAL LOS HUERTOS DE MANCHAY SECTOR BELLA ESMERALDA MZ N LOTE 1 DISTRITO PACHACAMAC"}
+        ],
+        "4": [
+            {value: 29, text: "C.S. SAN JUAN DE MIRAFLORES", distrito: "PSJE. SAN JUAN S/N ZONA A (JUNTO COMISARÍA SJM) SAN JUAN DE MIRAFLORES"},
+            {value: 30, text: "P.S. DESIDERIO MOSCOSO CASTILLO", distrito: "AA.HH. VIRGEN DEL GUADALUPE SN MZ E LT 1 URB PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 31, text: "P.S. VILLA SOLIDARIDAD", distrito: "CALLE 9 SN MZ F-A LOTE 3 ASENTAMIENTO HUMANO VILLA SOLIDARIDAD SAN JUAN DE MIRAFLORES"},
+            {value: 32, text: "P.S. VALLE SHARON", distrito: "ESQ. DE LOS ALELÍS Y CIPRECES S/N. VALLE SHARON SAN JUAN DE MIRAFLORES"},
+            {value: 33, text: "P.S. PAMPAS DE SAN JUAN", distrito: "AV. PEDRO SILVA CDRA. 10 S/N ZONA C SAN JUAN DE MIRAFLORES"},
+            {value: 34, text: "C.S. TRÉBOL AZUL", distrito: "AV. MIGUEL GRAU MZ. L, LOTE. 15 - ALT. CDRA 9 AV. PROLONG. CANEVARO AAHH TRÉBOL AZUL SAN JUAN DE MIRAFLORES"},
+            {value: 35, text: "P.S. HÉROES DEL PACÍFICO", distrito: "JR. 1° DE ENERO S/N AAHH PACIFICO I SJM SAN JUAN DE MIRAFLORES"},
+            {value: 36, text: "P.S. PARAÍSO", distrito: "CALLE L, LTE. 6 Y 7 MZ. H, AAHH- PARAISO SAN JUAN DE MIRAFLORES"},
+            {value: 37, text: "P.S. SANTA URSULA", distrito: "CALLE SANTA TERESA MZ G LOTE 17 S/N COOPERATIVA SANTA URSULA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 38, text: "P.S. RICARDO PALMA", distrito: "MZ. F LOTE 1 ASOCIACION DE VIVIENDA TRADICIONES RICARDO PALMA DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 39, text: "P.S. LADERAS DE VILLA", distrito: "PSJE F MANUEL IGLESIAS LOTE A.V. - 2 REF. CALLE RETAMA - PSJE F SAN JUAN DE MIRAFLORES"},
+            {value: 40, text: "C.S. VILLA SAN LUIS", distrito: "AVENIDA VILLA SOLIDARIDAD O10 1 SECTOR VILLA SAN LUIS Y JOSÉ C. MARIÁTEGUI VILLA SAN LUIS SAN JUAN DE MIRAFLORES"},
+            {value: 41, text: "C.S. LEONOR SAAVEDRA", distrito: "AVENIDA TORRES PAZ CDRA. 1 ESQ. CDRA. 4 AV. LOS HÉROES SN SAN JUAN DE MIRAFLORES"},
+            {value: 42, text: "C.S. JESÚS PODEROSO", distrito: "PUEBLO JOVEN JESUS PODEROSO LOTE C MZ T S/N PAMPLONA BAJA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 43, text: "P.S. EL BRILLANTE", distrito: "AV. SAN JUAN CON AVDA DEFENSORES DE LIMA S/N PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 44, text: "P.S. 6 DE JULIO", distrito: "ASOCIACION DE VICIENDA 6 DE JULIO, PAMPLONA BAJA L 14-A ESPALDA DE PUESTO DE FISCALIZACION DEL SURCO. SAN JUAN DE MIRAFLORES"},
+            {value: 45, text: "C.M.I. MANUEL BARRETO", distrito: "JR. MANUEL BARRETO S/N ZONA K-CIUDAD DE DIOS SAN JUAN DE MIRAFLORES"},
+            {value: 46, text: "P.S. VIRGEN DEL BUEN PASO", distrito: "AV. CENTENARIO PARAD.14, SECT.VÍRGEN DEL BUEN PASO-PAMPLONA ALTA DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 47, text: "P.S. SAN FRANCISCO DE LA CRUZ", distrito: "PROLONGACIÓN CANEVARO, SAN FRANCISCO DE LA CRUZ-PAMPLONA ALTA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 48, text: "P.S. MARIANNE PREUSS DE STARK", distrito: "CALLE MZ 78 LT5 (LOS LAURELES) INTERSECCION CALLE Q1 Y CALLE 10 SECTOR LOS ANGELES PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 49, text: "C.M.I. OLLANTAY", distrito: "AV. PROLONGACION GABRIEL TORRES S/N. PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 50, text: "P.S. LA RINCONADA", distrito: "MZ T2 LOTE 15 AAHH LA RINCONADA -PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 51, text: "P.S. LEONCIO PRADO", distrito: "MZ I-10 LOTE 6- SECTOR LEONCIO PRADO MZ I-10 LOTE 6- SECTOR LEONCIO PRADO SAN JUAN DE MIRAFLORES"},
+            {value: 52, text: "P.S. JOSÉ M. ARGUEDAS", distrito: "PASAJE A, MZ F, LOTE 01, SECTOR JOSE MARIA ARGUEDAS, PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
+            {value: 53, text: "P.S. 5 DE MAYO", distrito: "JR. LIBERTAD MZ.A6-LOTE 28-SECTOR 5 DE MAYO-PAMPLONA ALTA DISTRITO SAN JUAN DE MIRAFLORES"},
+            {value: 63, text: "C.S.M.C. 12 DE NOVIEMBRE", distrito: "AVENIDA LAS AMERICAS PISO 2 S/N SAN JUAN DE MIRAFLORES"},
+            {value: 136, text: "CSMC RICARDO PALMA", distrito: "ASOCIACION DE VIVIENDA TRADICIONES RICARDO PALMA MZ G LTE 17 DISTRITO SAN JUAN DE MIRAFLORES"},
+                        {value: 177, text: "CSMC QHALI KAY", distrito: "JR. JULIO BELLIDO 1156, MZ F2 LOTE 06 ZONA D, URBANIZACION SAN JUAN DISTRITO SAN JUAN DE MIRAFLORES"}
+
+        ],
+        "5": [
+    {value: 82, text: "C.M.I. SAN JOSÉ", distrito: "AV. LOS ÁNGELES S/N, SECTOR 1, GRUPO 15 NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
+    {value: 83, text: "P.S. SEÑOR DE LOS MILAGROS", distrito: "ST. 1 GR. 25 MZ D1 LOTE 2 VILLA EL SALVADOR"},
+    {value: 84, text: "P.S LLANAVILLA", distrito: "CALLE LA PAZ MZ F LTE 05 SECTOR 8 VILLA EL SALVADOR"},
+    {value: 85, text: "C.S.M.C. EL SOL DE VILLA", distrito: "SECTOR 2 GRUPO 6 MZ R LOTE 1 AL 4 VILLA EL SALVADOR"},
+    {value: 86, text: "C.S.M.C. VILLA EL SALVADOR", distrito: "SECTOR 6 GRUPO 5 I 19 AV PASTOR SEVILLA RUTA C PARADERO POLICLINICO VILLA EL SALVADOR"},
+    {value: 87, text: "C.S. SAN MARTÍN DE PORRES", distrito: "CALLE LOS BOMBEROS S/N ST. 2 GR. 15 VILLA EL SALVADOR"},
+    {value: 88, text: "P.S. VIRGEN DE LA ASUNCIÓN", distrito: "SECTOR 3 GRUPO 3 MANZANA P-1 LOTE 4 B DISTRITO VILLA EL SALVADOR"},
+    {value: 89, text: "P.S. SAGRADA FAMILIA", distrito: "SECTOR 2, GRUPO 18, PARQUE CENTRAL ST. 2 GR. 18 VILLA EL SALVADOR"},
+    {value: 90, text: "C.M.I. JUAN PABLO II", distrito: "AV. MARIANO PASTOR SEVILLA S/N ,SECTOR 6,GRUPO 6 NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
+    {value: 91, text: "P.S. FERNANDO LUYO SIERRA", distrito: "SECTOR 7 GRUPO 1 S/N VILLA EL SALVADOR"},
+    {value: 92, text: "P.S. CRISTO SALVADOR", distrito: "PARQUE CENTRAL ST. 9 GR. 2 PARQUE CENTRAL VILLA EL SALVADOR"},
+    {value: 93, text: "P.S. SARITA COLONIA", distrito: "PARQUE CENTRAL ST. 2 GR. 24 PARQUE CENTRAL VILLA EL SALVADOR"},
+    {value: 94, text: "P.S. OASIS DE VILLA", distrito: "AA.HH. OASIS DE VILLA VILLA EL SALVADOR"},
+    {value: 95, text: "P.S. SASBI", distrito: "PARQUE CENTRAL S/N SECTOR 6 - GRUPO 01 VILLA EL SALVADOR"},
+    {value: 96, text: "C.M.I. CÉSAR LOPEZ SILVA", distrito: "VILLA EL SALVADOR"},
+    {value: 97, text: "P.S. PRÍNCIPE DE ASTURIAS", distrito: "AA.HH. PRINCIPE DE ASTURIAS S/N LT 17-IV ETAPA DE PACHACAMAC NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
+    {value: 98, text: "P.S. PACHACAMAC", distrito: "AV. 200 MILLAS BARRIO 2,SECTOR 1, IV ETAPA-PACHACAMAC VILLA EL SALVADOR"},
+    {value: 99, text: "P.S. EDILBERTO RAMOS", distrito: "AV. TAHUANTINSUYO MZ U S/N SECTOR 10 AA.HH. EDILBERTO RAMOS VILLA EL SALVADOR"},
+    {value: 100, text: "C.S. HÉROES DEL CENEPA", distrito: "JR. HEROES DEL CENEPA MZ C LT 20, ALT DE PANAM.SUR KM 24 VILLA EL SALVADOR"},
+    {value: 101, text: "C.S. BRISAS DE PACHACAMAC", distrito: "AV. REICHE S/N MZ K AA.HH. BRISAS DE PACHACAMAC VILLA EL SALVADOR"},
+    {value: 131, text: "C.S.M.C VIRGEN DE LA MERCED", distrito: "EDILBERTO RAMOS, GRUPO 1, MZ. M, PRIMA, SECTOR 10, MEDIA CUADRA DE AV. UNIVERSITARIA CON PASTOR SEVILLA DENTRO DE LA CAPILLA VIRGEN DE LA MERCED VILLA EL SALVADOR"},
+                    {value: 179, text: "C.S.M.C. LEÓN XIV", distrito: "SECTOR 2 GRUPO 7 MZ. J LOTE 5 ENTRE AV. ARRIBA PERÚ Y AV. CENTRAL VILLA SALVADOR, VILLA EL SALVADOR"},
+                                        {value: 181, text: "LOCAL ARCHIVO CENTRAL", distrito: "MZ Z1 LOTE 28 PARCELA 34 ASOCIACION DE VIVIENDA VILLA EL ROSAL - VILLA EL SALVADOR"}
+
+
+],
+
+"6": [
+    {value: 54, text: "C.M.I. VILLA MARÍA DEL TRIUNFO", distrito: "AV. PEDRO VALLE S/N (ALTURA CUADRA 18 AV.EL TRIUNFO) VILLA MARIA DEL TRIUNFO"},
+    {value: 55, text: "P.S. 12 DE JUNIO", distrito: "AAHH. 12 DE JUNIO S/N CALLE AMANCAES S/N, INTERSECCIÓN CON PASAJE LAS FLORES, MZ. J, LOTE 4, VILLA MARIA DEL TRIUNFO"},
+    {value: 56, text: "P.S. SANTA ROSA DE BELÉN", distrito: "AV. BOLIVAR CUADRA 6 CON JOSE OLAYA S/N VILLA MARIA DEL TRIUNFO"},
+    {value: 57, text: "C.M.I. JOSÉ CARLOS MARIÁTEGUI", distrito: "AVENIDA SIMÓN BOLÍVAR ESQUINA JR. MARIANO NECOCHEA S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 58, text: "P.S. VILLA LIMATAMBO", distrito: "MZ J1 LOTE 2 AAHH VILLA LIMATAMBO VILLA MARIA DEL TRIUNFO"},
+    {value: 59, text: "P.S. JUAN CARLOS SOBERON", distrito: "PROLONGACION JOSE CARLOS MARIATEGUI MZ 6 LOTE 18 AAHH VIRGEN DE LA CANDELARIA VILLA MARIA DEL TRIUNFO"},
+    {value: 60, text: "P.S. BUENOS AIRES", distrito: "BUENOS AIRES S/N SAN GABRIEL BAJO NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 61, text: "P.S. VALLE ALTO", distrito: "CALLE ALFONSO UGARTE S/N ALTURA DE LA CUADRA 11. AV. JOSE OLAYA VILLA MARIA DEL TRIUNFO"},
+    {value: 62, text: "P.S. PARAÍSO ALTO", distrito: "MZ F2 ,LOTE 1 , SECTOR PARAÍSO ALTO DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 64, text: "P.S. VALLE BAJO", distrito: "CALLE INDEPENDENCIA CUADRA 1 S/N VILLA MARIA DEL TRIUNFO"},
+    {value: 65, text: "C.M.I. JOSÉ GALVEZ", distrito: "CRUCE CALLE ARICA CON AGRICULTURA S/N VILLA MARIA DEL TRIUNFO"},
+    {value: 66, text: "P.S. MÓDULO I", distrito: "PROLONGACION LUCANAS S/N PARADERO 12 VILLA MARIA DEL TRIUNFO"},
+    {value: 67, text: "P.S. NUEVO PROGRESO", distrito: "PUEBLO JOVEN NUEVO PROGRESO SECTOR I VILLA MARIA DEL TRIUNFO"},
+    {value: 68, text: "P.S. CIUDAD DE GOSEN", distrito: "DIVINO MAESTRO MZ D LT 11 VILLA MARIA DEL TRIUNFO"},
+    {value: 69, text: "C.S. NUEVA ESPERANZA", distrito: "AV. 26 DE NOVIEMBRE 835 NVA. ESPERANZA VILLA MARIA DEL TRIUNFO"},
+    {value: 70, text: "P.S. VIRGEN DE LOURDES", distrito: "AV. CONDEBAMBA S/N NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 71, text: "P.S. CÉSAR VALLEJO II", distrito: "VILLA MARIA DEL TRIUNFO"},
+    {value: 72, text: "P.S. NUEVA ESPERANZA ALTA", distrito: "AV. R. MERINO Y TACNA MZ 9 LT 1B COMITE 8B NUEVA ESPERANZA ALTA DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 73, text: "C.M.I. DANIEL A. CARRIÓN", distrito: "AV. PACHACUTEC Nº 3470 VILLA MARIA DEL TRIUNFO"},
+    {value: 74, text: "P.S. TORRES DE MELGAR", distrito: "MZ. SPCO LOTE PM AAHH TORRES DE MELGAR VILLA MARIA DEL TRIUNFO"},
+    {value: 75, text: "P.S. MICAELA BASTIDAS", distrito: "JR. JOSE OLAYA S/N VILLA MARIA DEL TRIUNFO"},
+    {value: 76, text: "C.M.I. TABLADA DE LURÍN", distrito: "AV. REPUBLICA Y BILLINGURST S/N 2DO SECTOR VILLA MARIA DEL TRIUNFO"},
+    {value: 77, text: "P.S. SANTA ROSA DE LAS CONCHITAS", distrito: "AAHH SANTA ROSA DE LAS CONCHITAS MZ L LOTE 18 DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 78, text: "C.S.M.C. SAN GABRIEL ALTO", distrito: "OTROS PUEBLO JOVEN JOSE CARLOS MARIATEGUI MZ SPCO LOTE TPA ETAPA SEXTA SECTOR SAN GABRIEL DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 79, text: "CAM. TAYTA WASI", distrito: "AVENIDA AV. PRIMAVERA CRUZE CON CALLE SUCRE S/N PPJJ JOSE CARLOS MARIATEGUI NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
+    {value: 80, text: "P.S. DAVID GUERRERO DUARTE", distrito: "AV. LOS INCAS ESQ. JR. TUPAC YUPANQUI 2DO SECTOR VILLA MARIA DEL TRIUNFO"},
+    {value: 81, text: "C.S.M.C. MONSEÑOR JOSE RAMON GURRUCHAGA", distrito: "AVENIDA SANTA ROSA 900 AL COSTADO DEL ALBERGUE DE LOS ANCIANOS VILLA MARINA VILLA MARIA DEL TRIUNFO"},
+        {value: 178, text: "C.S.M.C. YUYAY WASI", distrito: "AV. NICOLAS DE PIEROLA N°1156 PRIMERA ZONA DEL HOGAR POLICIAL, VILLA MARIA DEL TRIUNFO"},
+                {value: 184, text: "HOGAR PROTEGIDO DE VILLA MARIA DEL TRIUNFO", distrito: "OTROS GRUPO1 MANZANA L LOTE 12 URBANIZACIÓN AAHH NUEVO PROGRESO DISTRITO VILLA MARIA DEL TRIUNFO"}
+
+
+],
+"8": [
+    { value: 147, text: "DIRECCION ADMINISTRATIVA" },
+    { value: 143, text: "ORGANO DE CONTROL INSTITUCIONAL" },
+    { value: 140, text: "OFICINA DE GESTION DE TECNOLOGIAS DE LA INFORMACION" },
+    { value: 149, text: "OFICINA DE ABASTECIMIENTO" },
+    { value: 151, text: "OFICINA DE TESORERIA" },
+    { value: 152, text: "OFICINA DE CONTABILIDAD" },
+    { value: 153, text: "OFICINA DE TRAMITE DOCUMENTARIO Y ARCHIVO" },
+    { value: 154, text: "OFICINA DE PLANEAMIENTO Y MODERNIZACION DE LA GESTION PUBLICA" },
+    { value: 155, text: "OFICINA DE PRESUPUESTO PUBLICO" },
+    { value: 156, text: "OFICINA DE PROYECTOS DE INVERSION" },
+    { value: 165, text: "OFICINA DE APOYO AL DIAGNOSTICO Y LABORATORIO DE SALUD PUBLICA" },
+    { value: 169, text: "SECRETARIA TECNICA DEL PROCEDIMIENTO ADMINISTRATIVO DISCIPLINARIO" },
+    { value: 168, text: "OFICINA DE ASESORIA JURIDICA" },
+    { value: 188, text: "UNIDAD DE GESTIÓN DE LA INFORMACIÓN ESTADÍSTICA" }
+],
+"9": [
+    { value: 142, text: "DIRECCION GENERAL" },
+    { value: 144, text: "DIRECCION ADJUNTA" },
+    { value: 157, text: "DIRECCION DE SALUD AMBIENTAL E INOCUIDAD ALIMENTARIA" },
+    { value: 158, text: "DIRECCION DE MEDICAMENTOS, INSUMOS Y DROGAS" },
+    { value: 159, text: "DIRECCION DE MONITOREO Y GESTION SANITARIA" },
+    { value: 145, text: "OFICINA DE COMUNICACIONES" },
+    { value: 146, text: "OFICINA DE INTEGRIDAD INSTITUCIONAL" },
+    { value: 148, text: "OFICINA DE GESTION DE RECURSOS HUMANOS" },
+    { value: 150, text: "OFICINA DE INFRAESTRUCTURA Y EQUIPAMIENTO" },
+    { value: 160, text: "OFICINA DE MONITOREO Y SUPERVISION" },
+    { value: 161, text: "OFICINA DE GESTION DE RIESGOS Y DESASTRES" },
+    { value: 162, text: "OFICINA DE SERVICIOS DE SALUD" },
+    { value: 163, text: "OFICINA DE GESTION DE CALIDAD" },
+    { value: 164, text: "OFICINA DE SEGUROS" },
+    { value: 166, text: "OFICINA DE INTERVENCIONES SANITARIAS" },
+    { value: 167, text: "OFICINA DE EPIDEMIOLOGIA, INTELIGENCIA SANITARIA Y DOCENCIA E INVESTIGACION" }
+    
+],
+"10": [
+    { value: 187, text: "ALMACÉN CENTRAL" },
+    
+    
+]
+         
+  };
+
+    // Evento: cambiar RIS
+    function actualizarEntidades() {
+    const risId = risSelect.value;
+    const opciones = opcionesPorRis[risId] || [];
+
+    const valorSeleccionado = entidadSelect.getAttribute("data-seleccionado");
+
+    entidadSelect.innerHTML = "<option value=''>Seleccione un establecimiento</option>";
+
+    opciones.forEach(op => {
+        const option = new Option(op.text, op.value);
+        if (valorSeleccionado && valorSeleccionado == op.value) {
+            option.selected = true;
+        }
+        entidadSelect.add(option);
+    });
+}
+
+risSelect.addEventListener("change", function() {
+    entidadSelect.setAttribute("data-seleccionado", "");
+    actualizarEntidades();
+});
+
+entidadSelect.addEventListener("change", function () {
+    // No es necesario hacer nada adicional aquí si no usamos 'distrito'
+});
+
+actualizarEntidades();
+
+});
+</script>
+
+<script>
+  $('#confirmAtenderModal').on('show.bs.modal', function (e) {
+      var trigger = $(e.relatedTarget); // Botón que abrió el modal
+      var url = trigger.data('href'); // URL para atender
+      $('#confirmAtenderGo').attr('href', url);
+  });
+</script>
+
+    <script>
+
+
+$("#content-id_fecha_reclamo").hide();
+
+        $('input').keyup(function () {
+            if ($(this).attr("type") === 'password' || $(this).attr("name") === 'username') {
+            } else {
+                $(this).val($(this).val().toUpperCase());
+            }
+        });
+
+        $('textarea').keyup(function () {
+            $(this).val($(this).val().toUpperCase());
+        });
+
+
+        $('label[for="id_clasificacion_reclamo_1"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='1' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+        $('label[for="id_clasificacion_reclamo_2"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='2' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+        $('label[for="id_clasificacion_reclamo_3"]').append(" <span data-toggle='modal' data-target='#clasificacionModal' data-numero='3' class='badge badge-success text-bold-700' style='cursor: pointer;'> <i class='ft-eye' ></i> Buscar </span>");
+
+
+        $(function () {
+
+
+            $('#buscar').keyup(function () {
+
+                // Search text
+                var text = $(this).val();
+
+                // Hide all content class element
+                $('.item-causa').hide();
+
+                // Search
+                $('.item-causa:contains("' + text + '")').closest('.item-causa').show();
+
+                if (text === "") {
+                    $('.item-causa').show();
+                }
+                $("#conent-causas").unhighlight();
+                $("#conent-causas").highlight(text);
+            });
+        });
+
+
+        $("#confirmar").click(function () {
+            $('form#reclamo-new').submit();
+        });
+
+        $(".item-causa").click(function () {
+            const pk = $(this).data("pk")
+
+            $('#clasificacionModal').modal('toggle');
+            {#$('form#prematricula-new').submit();#}
+
+            const numero_causa = $("#numero-causa").val();
+
+            if (numero_causa === '1') {
+                $("#id_clasificacion_reclamo_1").val(pk);
+            }
+            if (numero_causa === '2') {
+                $("#id_clasificacion_reclamo_2").val(pk);
+            }
+            if (numero_causa === '3') {
+                $("#id_clasificacion_reclamo_3").val(pk);
+            }
+
+        });
+
+
+        $('#clasificacionModal').on('show.bs.modal', function (e) {
+            var numero = $(e.relatedTarget).data('numero');
+            $("#numero-causa").val(numero);
+            $('#buscar').val("");
+            $('.item-causa').show();
+            $("#conent-causas").unhighlight();
+        });
+
+        {#   Validando ruc   #}
+
+
+        var usario_validar = (value) => {
+
+
+            $("#content-id_nombres_usuario .danger").remove();
+            $("#content-id_apellido_paterno_usuario .danger").remove();
+            $("#content-id_apellido_materno_usuario .danger").remove();
+            $("#content-id_razon_social_usuario .danger").remove();
+
+            if (value === "8") {
+
+                $("#id_razon_social_usuario").prop('required', true);
+                $('label[for="id_razon_social_usuario"]').append("<span class='danger required_razon_social_usuario' >*</span>");
+
+                $("#id_nombres_usuario").prop('required', false);
+                $("#id_nombres_usuario-error").remove();
+
+                $("#id_apellido_paterno_usuario").prop('required', false);
+                $("#id_apellido_paterno_usuario-error").remove();
+
+                $("#id_apellido_materno_usuario").prop('required', false);
+                $("#id_apellido_materno_usuario-error").remove();
+
+                {#$('#id_numero_documento_usuario').val("");#}
+                $('#id_nombres_usuario').val("");
+                $('#id_apellido_paterno_usuario').val("");
+                $('#id_apellido_materno_usuario').val("");
+
+                // Ocultar Inputs
+                $("#content-id_nombres_usuario").hide();
+                $("#content-id_apellido_paterno_usuario").hide();
+                $("#content-id_apellido_materno_usuario").hide();
+                $("#content-id_razon_social_usuario").show();
+                // FIN ocultar
+
+            } else {
+
+                $("#id_razon_social_usuario").prop('required', false);
+                $("#id_nombres_usuario").prop('required', false);
+                $('label[for="id_nombres_usuario"]').append("<span class='danger required_nombres_usuario'>*</span>");
+                $("#id_apellido_paterno_usuario").prop('required', false);
+                $('label[for="id_apellido_paterno_usuario"]').append("<span class='danger required_apellido_paterno_usuario'>*</span>");
+                $("#id_apellido_materno_usuario").prop('required', false);
+                $('label[for="id_apellido_materno_usuario"]').append("<span class='danger required_apellido_materno_usuario'>*</span>");
+                // Ocultar Inputs
+                $("#content-id_nombres_usuario").show();
+                $("#content-id_apellido_paterno_usuario").show();
+                $("#content-id_apellido_materno_usuario").show();
+                $("#content-id_razon_social_usuario").hide();
+                // FIN ocultar
+            }
+
+        }
+
+
+        var presenta_validar = (value) => {
+
+
+            $("#content-id_nombres_presenta .danger").remove();
+            $("#content-id_apellido_paterno_presenta .danger").remove();
+            $("#content-id_apellido_materno_presenta .danger").remove();
+            $("#content-id_razon_social_presenta .danger").remove();
+
+            if (value === "8") {
+
+                $("#id_razon_social_presenta").prop('required', true);
+                $('label[for="id_razon_social_presenta"]').append("<span class='danger required_razon_social_presenta' >*</span>");
+
+                $("#id_nombres_presenta").prop('required', false);
+                $("#id_nombres_presenta-error").remove();
+
+                $("#id_apellido_paterno_presenta").prop('required', false);
+                $("#id_apellido_paterno_presenta-error").remove();
+
+                $("#id_apellido_materno_presenta").prop('required', false);
+                $("#id_apellido_materno_presenta-error").remove();
+
+                {#$('#id_numero_documento_presenta').val("");#}
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+
+                // Ocultar Inputs
+                $("#content-id_nombres_presenta").hide();
+                $("#content-id_apellido_paterno_presenta").hide();
+                $("#content-id_apellido_materno_presenta").hide();
+                $("#content-id_razon_social_presenta").show();
+                // FIN ocultar
+            } else {
+
+                $("#id_razon_social_presenta").prop('required', false);
+
+                $("#id_nombres_presenta").prop('required', false);
+                $('label[for="id_nombres_presenta"]').append("<span class='danger required_nombres_presenta'>*</span>");
+
+                $("#id_apellido_paterno_presenta").prop('required', false);
+                $('label[for="id_apellido_paterno_presenta"]').append("<span class='danger required_apellido_paterno_presenta'>*</span>");
+
+                $("#id_apellido_materno_presenta").prop('required', false);
+                $('label[for="id_apellido_materno_presenta"]').append("<span class='danger required_apellido_materno_presenta'>*</span>");
+             
+ 
+                // Ocultar Inputs
+                $("#content-id_nombres_presenta").show();
+                $("#content-id_apellido_paterno_presenta").show();
+                $("#content-id_apellido_materno_presenta").show();
+                $("#content-id_razon_social_presenta").hide();
+                // FIN ocultar
+            }
+        }
+
+
+        $('#id_tipo_documento_usuario').change(function () {
+            const id = $(this).val()
+            usario_validar(id);
+        });
+
+        $('#id_tipo_documento_presenta').change(function () {
+            const id = $(this).val()
+            presenta_validar(id);
+        });
+
+
+        $('#id_es_mismo_usuario_afectado').change(function () {
+            if (this.checked) {
+
+                const id_tipo_documento_usuario = $('#id_tipo_documento_usuario').val();
+                const id_numero_documento_usuario = $('#id_numero_documento_usuario').val();
+                const id_razon_social_usuario = $('#id_razon_social_usuario').val();
+                const id_nombres_usuario = $('#id_nombres_usuario').val();
+                const id_apellido_paterno_usuario = $('#id_apellido_paterno_usuario').val();
+                const id_apellido_materno_usuario = $('#id_apellido_materno_usuario').val();
+
+                presenta_validar(id_tipo_documento_usuario);
+
+                $('#id_tipo_documento_presenta').val(id_tipo_documento_usuario);
+                $('#id_numero_documento_presenta').val(id_numero_documento_usuario);
+                $('#id_razon_social_presenta').val(id_razon_social_usuario);
+                $('#id_nombres_presenta').val(id_nombres_usuario);
+                $('#id_apellido_paterno_presenta').val(id_apellido_paterno_usuario);
+                $('#id_apellido_materno_presenta').val(id_apellido_materno_usuario);
+
+
+            } else {
+                $('#id_tipo_documento_presenta').val("");
+                $('#id_numero_documento_presenta').val("");
+                $('#id_razon_social_presenta').val("");
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+            }
+        });
+
+
+        var updateDataUsuarioForm = (dni) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                dataType: 'json',
+                url: "/reclamo/validar-persona/" + dni,
+                data: {},
+                success: function (data) {
+                    if (data) {
+                        if (data.estado === true) {
+                            $('#id_nombres_usuario').val(data.persona.nombres);
+                            $('#id_apellido_paterno_usuario').val(data.persona.apellido_paterno);
+                            $('#id_apellido_materno_usuario').val(data.persona.apellido_materno);
+                        }
+                    }
+                }
+            });
+        };
+
+
+        var updateDataPresentaForm = (dni) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                dataType: 'json',
+                url: "/reclamo/validar-persona/" + dni,
+                data: {},
+                success: function (data) {
+                    if (data) {
+                        if (data.estado === true) {
+                            $('#id_nombres_presenta').val(data.persona.nombres);
+                            $('#id_apellido_paterno_presenta').val(data.persona.apellido_paterno);
+                            $('#id_apellido_materno_presenta').val(data.persona.apellido_materno);
+                        }
+                    }
+                }
+            });
+        };
+
+        $("#id_numero_documento_usuario").keyup(function () {
+            const dni = $(this).val();
+            const id_tipo_documento_usuario = $("#id_tipo_documento_usuario").val();
+
+            if (dni.length === 8) {
+                if (id_tipo_documento_usuario === "8") {
+                    $('#id_nombres_usuario').val("");
+                    $('#id_apellido_paterno_usuario').val("");
+                    $('#id_apellido_materno_usuario').val("");
+                } else {
+                    updateDataUsuarioForm(dni);
+                }
+            } else {
+                $('#id_nombres_usuario').val("");
+                $('#id_apellido_paterno_usuario').val("");
+                $('#id_apellido_materno_usuario').val("");
+            }
+        });
+
+
+        $("#id_numero_documento_presenta").keyup(function () {
+            const dni = $(this).val();
+            const id_tipo_documento_presenta = $("#id_tipo_documento_presenta").val();
+
+            if (dni.length === 8) {
+                if (id_tipo_documento_presenta === "8") {
+                    $('#id_nombres_presenta').val("");
+                    $('#id_apellido_paterno_presenta').val("");
+                    $('#id_apellido_materno_presenta').val("");
+                } else {
+                    updateDataPresentaForm(dni);
+                }
+            } else {
+                $('#id_nombres_presenta').val("");
+                $('#id_apellido_paterno_presenta').val("");
+                $('#id_apellido_materno_presenta').val("");
+            }
+        });
+
+
+        var autorizacion_correo_validar = (value) => {
+            if (value === "0") {
+                $("#id_correo_presenta").prop('required', true);
+                $('label[for="id_correo_presenta"]').append("<span class='danger required_correo_presenta'>*</span>");
+                $("#content-id_correo_presenta").show();
+            } else {
+                $("#id_correo_presenta").prop('required', false);
+                $(".required_correo_presenta").remove();
+                $("#content-id_correo_presenta").hide();
+            }
+        }
+
+        $('#id_autorizacion_notificacion_correo').change(function () {
+            const id = $(this).val()
+            autorizacion_correo_validar(id);
+        });
+
+
+        {#Paso 5 "Gestión del Reclamo"#}
+
+        {#quitar traslado de estado del reclamo#}
+
+        const habilitarTrasladoEstadosReclamo = () => {
+            $('#id_estado_reclamo').append($('<option>', {value: 3, text: 'TRASLADADO'}));
+            $('#id_estado_reclamo option[value="3"]').attr("selected", "selected");
+            $('option', '#id_estado_reclamo').not(':eq(0), :selected').remove();
+        }
+
+
+        const quitandoTrasladoEstadosReclamo = () => {
+            /*
+            var exists = $('#id_estado_reclamo option').filter(function () {
+                return $(this).val() === "3";
+            }).length;
+            if (exists) {
+                $("#id_estado_reclamo option[value='3']").remove();
+            }*/
+            const estados = $('#id_estado_reclamo');
+
+            estados.append($('<option>', {value: 1, text: 'RESUELTO'}));
+            estados.append($('<option>', {value: 2, text: 'EN TRAMITE'}));
+            estados.append($('<option>', {value: 4, text: 'ARCHIVADO POR DUPLICIDAD'}));
+            estados.append($('<option>', {value: 5, text: 'ACUMULADO'}));
+            estados.append($('<option>', {
+                value: 6,
+                text: 'CONCLUIDO (CUANDO EL RESULTADO ES COMUNICADO AL RECLAMANTE O TERCERO LEGITIMADO)'
+            }));
+
+
+        }
+
+        const validarCodigoPrimigenioPorEstado = id => {
+
+
+
+            $("#id_codigo_reclamo_primigenio").attr("required", "required");
+
+
+            $("#content-id_codigo_reclamo_primigenio .danger").remove();
+
+            if (id == "3" || id == "4" || id == "5") {
+
+
+                $("#id_codigo_reclamo_primigenio").prop('required', true);
+                $('label[for="id_codigo_reclamo_primigenio"]').append("<span class='danger required_codigo_reclamo_primigenio'>*</span>");
+                $("#content-id_codigo_reclamo_primigenio").show();
+
+
+                const current_text = $('#reclamo-new-t-4 .current-info').text();
+                if (current_text !== "") {
+                    $('.actions ul ').children().eq(1).css('display', 'none');
+                    $('.actions ul ').children().eq(2).css('display', '');
+                }
+
+
+                $("#content-id_resultado_reclamo .danger").remove();
+                $("#content-id_fecha_resultado_reclamo .danger").remove();
+                $("#id_resultado_reclamo").prop('required', false);
+                $("#id_fecha_resultado_reclamo").prop('required', false);
+
+
+                {#$('.actions ul ').children().eq(1).children("a").text("Finalizar registro");#}
+
+                {#$('.actions ul ').children().eq(1).html("<a href='#finish' role='menuitem'>Finalizar registro</a>");#}
+            } else {
+                $("#id_codigo_reclamo_primigenio").prop('required', false);
+                $(".required_codigo_reclamo_primigenio").remove();
+                $("#content-id_codigo_reclamo_primigenio").hide();
+
+                $('.actions ul ').children().eq(1).css('display', '');
+                $('.actions ul ').children().eq(2).css('display', 'none');
+
+                {#$('.actions ul ').children().eq(1).children("a").prop("href", "#next");#}
+                {#$('.actions ul ').children().eq(1).children("a").text("Siguiente");#}
+            }
+        }
+
+        const validarCompetenciaReclamo = id => {
+
+            $('option', '#id_estado_reclamo').remove();
+            if (id === "2") {
+
+                habilitarTrasladoEstadosReclamo();
+                {#Ocultar inputs y no required#}
+
+                $("#id_etapa_reclamo").prop('required', false);
+                $(".required_etapa_reclamo").remove();
+                $("#content-id_etapa_reclamo").hide();
+
+                {#Habilitar inputs#}
+
+                $("#id_tipo_administrado_traslado").prop('required', true);
+                $('label[for="id_tipo_administrado_traslado"]').append("<span class='danger required_tipo_administrado_traslado'>*</span>");
+                $("#id_codigo_administrado_deriva").prop('required', true);
+                $('label[for="id_codigo_administrado_deriva"]').append("<span class='danger required_codigo_administrado_deriva'>*</span>");
+                $("#content-id_tipo_administrado_traslado").show();
+                $("#content-id_codigo_administrado_deriva").show();
+
+
+                validarCodigoPrimigenio(3);
+
+
+            } else {
+                quitandoTrasladoEstadosReclamo();
+                $("#id_tipo_administrado_traslado").prop('required', false);
+                $(".required_tipo_administrado_traslado").remove();
+                $("#id_codigo_administrado_deriva").prop('required', false);
+                $(".required_codigo_administrado_deriva").remove();
+                $("#content-id_tipo_administrado_traslado").hide();
+                $("#content-id_codigo_administrado_deriva").hide();
+                {#Habilitar inputs#}
+
+                $("#id_etapa_reclamo").prop('required', true);
+                $('label[for="id_etapa_reclamo"]').append("<span class='danger required_etapa_reclamo'>*</span>");
+
+                $("#content-id_etapa_reclamo").show();
+
+            }
+
+
+        }
+
+        const validarResultadoReclamo = id => {
+
+
+            $("#content-id_fecha_resultado_reclamo .danger").remove();
+            $("#id_fecha_resultado_reclamo").prop('required', false);
+
+            if (id == "0") {
+                $("#content-id_motivo_conclusion_anticipada").hide();
+                $("#content-id_fecha_resultado_reclamo").hide();
+                $("#content-id_comunicacion_resultado_reclamo").hide();
+                $("#content-id_fecha_notificacion").hide();
+            } else {
+                $("#content-id_motivo_conclusion_anticipada").show();
+                $("#content-id_fecha_resultado_reclamo").show();
+                $("#content-id_comunicacion_resultado_reclamo").show();
+                $("#content-id_fecha_notificacion").show();
+                    $("#id_fecha_resultado_reclamo").prop('required', true);
+                    $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_codigo_administrado_deriva'>*</span>");
+
+            }
+
+
+        }
+
+
+        const validarResultadoReclamoPorEstado = id => {
+            $("#content-id_resultado_reclamo .danger").remove();
+            $("#content-id_fecha_resultado_reclamo .danger").remove();
+            $("#id_resultado_reclamo").prop('required', false);
+            $("#id_fecha_resultado_reclamo").prop('required', false);
+
+            if (!(id < 6 && id > 3)) {
+                $("#id_resultado_reclamo").prop('required', true);
+
+                $('label[for="id_resultado_reclamo"]').append("<span class='danger required_resultado_reclamo'>*</span>");
+
+                if ($("#id_resultado_reclamo").val() === 5) {
+                    $("#id_fecha_resultado_reclamo").prop('required', true);
+                    $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_fecha_resultado_reclamo'>*</span>");
+
+                }
+            }
+        }
+
+
+        const validandoMedioRecepcionReclamo = (id) => {
+
+
+            $('option', '#id_medio_recepcion_reclamo').remove();
+
+
+            const estados = $('#id_medio_recepcion_reclamo');
+            estados.append($('<option>', {value: "", text: '---------'}));
+
+
+            if (id == 1) {
+                estados.append($('<option>', {value: 1, text: 'LIBRO DE RECLAMACIONES VIRTUAL'}));
+                estados.append($('<option>', {value: 6, text: 'RECLAMO TRASLADO DE OTRA ADMINISTRADA'}));
+                estados.append($('<option>', {value: 7, text: 'RECLAMO COPARTICIPADO CON OTRA ADMINISTRADA'}));
+            }
+
+            if (id == 2) {
+                estados.append($('<option>', {value: 2, text: 'LIBRO DE RECLAMACIONES FÍSICO'}));
+                estados.append($('<option>', {value: 4, text: 'RECLAMO PRESENCIAL'}));
+                estados.append($('<option>', {value: 5, text: 'DOCUMENTO ESCRITO'}));
+                estados.append($('<option>', {value: 6, text: 'RECLAMO TRASLADO DE OTRA ADMINISTRADA'}));
+                estados.append($('<option>', {value: 7, text: 'RECLAMO COPARTICIPADO CON OTRA ADMINISTRADA'}));
+            }
+
+            if (id == 3) {
+                estados.append($('<option>', {value: 3, text: 'LLAMADA TELEFÓNICA'}));
+            }
+
+
+        }
+
+        const validarEtapaPorEstadoReclamo = id => {
+
+
+            $('option', '#id_etapa_reclamo').remove();
+
+            const estados = $('#id_etapa_reclamo');
+
+            estados.append($('<option>', {value: "", text: '---------'}));
+
+
+            if (id == "1") {
+                estados.append($('<option>', {value: 3, text: 'RESULTADO Y NOTIFICACIÓN'}));
+            }
+
+            if (id == "2") {
+                estados.append($('<option>', {value: 1, text: 'ADMISIÓN Y REGISTRO'}));
+                estados.append($('<option>', {value: 2, text: 'EVALUACIÓN E INVESTIGACIÓN'}));
+            }
+
+            if (id == "3" || id == "4" || id == "5" || id == "6") {
+                estados.append($('<option>', {value: 4, text: 'ARCHIVO Y CUSTODIA DEL EXPEDIENTE'}));
+            }
+
+
+        }
+
+
+        const validarResultadoPorEtapa = id => {
+
+
+            $("#content-id_resultado_reclamo").show();
+
+            const id_resultado_reclamo = $("#id_resultado_reclamo").val();
+            $('option', '#id_resultado_reclamo').remove();
+            const estados = $('#id_resultado_reclamo');
+            estados.append($('<option selected>', {value: "", text: '---------'}));
+            if (id == "3" || id == "4") {
+                estados.append($('<option>', {value: 1, text: 'FUNDADO'}));
+                estados.append($('<option>', {value: 2, text: 'FUNDADO PARCIAL'}));
+                estados.append($('<option>', {value: 3, text: 'INFUNDADO'}));
+                estados.append($('<option>', {value: 4, text: 'IMPROCEDENTE'}));
+                estados.append($('<option>', {value: 5, text: 'CONCLUIDO ANTICIPADAMENTE'}));
+            } else if (id == "1" || id == "2") {
+                estados.append($('<option>', {value: 0, text: 'PENDIENTE'}));
+            } else {
+                $("#id_resultado_reclamo").prop('required', false);
+                $(".required_resultado_reclamo").remove();
+                $("#content-id_resultado_reclamo").hide();
+            }
+            if (id_resultado_reclamo) {
+                $("#id_resultado_reclamo").val(id_resultado_reclamo);
+            }
+
+            const id_estado_reclamo = $("#id_estado_reclamo").val()
+
+            if (Number(id_estado_reclamo) > 2 && Number(id_estado_reclamo) <= 5) {
+                if (id == "2" || id == "4") {
+                    $("#id_resultado_reclamo").prop('required', false);
+                    $(".required_resultado_reclamo").remove();
+                    $("#content-id_resultado_reclamo").hide();
+                }
+            }
+
+
+        }
+
+
+        const validarMotivoPorResultado = id => {
+            $("#content-id_motivo_conclusion_anticipada").hide()
+
+            $("#content-id_motivo_conclusion_anticipada .danger").remove();
+            $("#id_motivo_conclusion_anticipada").prop('required', false);
+
+            if (id == 5) {
+                $("#content-id_motivo_conclusion_anticipada").show()
+                $("#id_motivo_conclusion_anticipada").prop('required', true);
+                $('label[for="id_motivo_conclusion_anticipada"]').append("<span class='danger required_motivo_conclusion_anticipada'>*</span>");
+            } else {
+                $('#id_motivo_conclusion_anticipada').val("");
+            }
+
+        }
+
+
+        $('#id_competencia_reclamo').change(function () {
+            const id = $(this).val();
+            validarCompetenciaReclamo(id);
+        });
+
+        $('#id_estado_reclamo').change(function () {
+            const id = $(this).val();
+            validarCodigoPrimigenioPorEstado(id);
+            validarResultadoReclamoPorEstado(id);
+            validarEtapaPorEstadoReclamo(id);
+        });
+
+        $('#id_resultado_reclamo').change(function () {
+            const id = $(this).val();
+            validarResultadoReclamo(id);
+            validarMotivoPorResultado(id);
+        });
+
+
+        $('#id_medio_presentacion').change(function () {
+            const id = $(this).val();
+            validandoMedioRecepcionReclamo(id);
+        });
+
+        $('#id_etapa_reclamo').change(function () {
+            const id = $(this).val();
+            validarResultadoPorEtapa(id);
+        });
+
+
+        // Ejecutar cuando carga la página
+
+        $(document).ready(function () {
+
+            const id_tipo_documento_usuario = $("#id_tipo_documento_usuario").val();
+            const id_tipo_documento_presenta = $("#id_tipo_documento_presenta").val();
+            const id_medio_presentacion = $("#id_medio_presentacion").val();
+
+
+            if (id_medio_presentacion) {
+                validandoMedioRecepcionReclamo(id_medio_presentacion);
+            }
+
+
+            if (id_tipo_documento_usuario) {
+                usario_validar(id_tipo_documento_usuario);
+            }
+
+            if (id_tipo_documento_presenta) {
+                presenta_validar(id_tipo_documento_presenta);
+            }
+
+            const id_autorizacion_notificacion_correo = $('#id_autorizacion_notificacion_correo').val();
+            if (id_autorizacion_notificacion_correo) {
+                autorizacion_correo_validar(id_autorizacion_notificacion_correo);
+            }
+
+            const id_competencia_reclamo = $('#id_competencia_reclamo').val();
+            if (id_competencia_reclamo) {
+                validarCompetenciaReclamo(id_competencia_reclamo);
+            }
+
+            const id_estado_reclamo = $('#id_estado_reclamo').val();
+            if (id_estado_reclamo) {
+                validarCodigoPrimigenioPorEstado(id_estado_reclamo);
+                validarEtapaPorEstadoReclamo(id_estado_reclamo);
+            }
+
+            const id_etapa_reclamo = $('#id_etapa_reclamo').val();
+            if (id_etapa_reclamo) {
+                validarResultadoPorEtapa(id_etapa_reclamo);
+            }
+
+
+            const id_resultado_reclamo = $('#id_resultado_reclamo').val();
+            if (id_resultado_reclamo) {
+                validarResultadoReclamo(id_resultado_reclamo);
+                validarMotivoPorResultado(id_resultado_reclamo);
+            }
+
+
+        });
+
+
+    </script>
+
+
+    {% if form.instance.pk %}
+        <script>
+            $(document).ready(function () {
+                var estado_reclamo = $('#id_estado_reclamo').val("{{ form.estado_reclamo.value }}");
+
+
+                validarResultadoReclamoPorEstado(estado_reclamo);
+
+
+                $('.actions ul li a').click(function () {
+                    const current_text = $('#reclamo-new-t-4 .current-info').text();
+                    if (current_text !== "") {
+                        const id_estado_reclamo = $('#id_estado_reclamo').val();
+                        if (id_estado_reclamo) {
+                            validarCodigoPrimigenioPorEstado(id_estado_reclamo);
+                            validarEtapaPorEstadoReclamo(id_estado_reclamo);
+
+                             setTimeout(() => {
+                                 $("#id_etapa_reclamo").val("{{ form.etapa_reclamo.value }}");
+                                 $("#id_medio_recepcion_reclamo").val("{{ form.medio_recepcion_reclamo.value }}");
+                }, 150)
+                        }
+                    }
+                });
+
+
+                setTimeout(() => {
+                    $("#id_etapa_reclamo").val("{{ form.etapa_reclamo.value }}");
+                    $("#id_medio_recepcion_reclamo").val("{{ form.medio_recepcion_reclamo.value }}");
+                }, 1500)
+
+            });
+        </script>
+    {% else %}
+        <script>
+            $("#id_resultado_reclamo").prop('required', true);
+            $("#id_fecha_resultado_reclamo").prop('required', true);
+            $('label[for="id_resultado_reclamo"]').append("<span class='danger required_resultado_reclamo'>*</span>");
+            $('label[for="id_fecha_resultado_reclamo"]').append("<span class='danger required_fecha_resultado_reclamo'>*</span>");
+        </script>
+    {% endif %}
+
+
+
+
+{% endblock static %}

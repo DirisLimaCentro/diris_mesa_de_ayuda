@@ -1,0 +1,4 @@
+<option value="0"> -- TODO --</option>
+{% for object in objects_list %}
+    <option value="{{ object.pk }}">{{ object.nombre }} - {{ object.codigo }} </option>
+{% endfor %}

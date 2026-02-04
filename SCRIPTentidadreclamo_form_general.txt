@@ -1,0 +1,133 @@
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const nombreSelect = document.getElementById("id_nombre");
+    const unidadOrganicaSelect = document.getElementById("id_unidad_organica");
+
+    const opcionesPorEntidad = {
+        "148": [
+            "SUB UNIDAD FUNCIONAL GESTION DEL EMPLEO",
+            "SUB UNIDAD FUNCIONAL GESTION DEL DESARROLLO Y CAPACITACION/RENDIMIENTO",
+            "SUB UNIDAD FUNCIONAL GESTION DE COMPENSACIONES",
+            "SUB UNIDAD FUNCIONAL PLANIFICACIÓN Y POLITICA DE RECURSOS HUMANOS",
+            "SUB UNIDAD FUNCIONAL GESTION DE RELACIONES HUMANAS Y SOCIALES",
+            "SUB UNIDAD FUNCIONAL ORGANIZACIÓN DEL TRABAJO Y DISTRIBUCION"
+        ],
+        "146": [
+            "SUB UNIDAD FUNCIONAL INTEGRIDAD INSTITUCIONAL",
+            "SUB UNIDAD FUNCIONAL TRANSPARENCIA"
+        ],
+        "149": [
+        "SUB UNIDAD FUNCIONAL PROGRAMACION",
+        "SUB UNIDAD FUNCIONAL ALMACEN",
+        "SUB UNIDAD FUNCIONAL ADQUISICIONES",
+        "SUB UNIDAD FUNCIONAL PATRIMONIO",
+        "SUB UNIDAD FUNCIONAL SERVICIOS GENERALES Y TRANSPORTE"
+    ],
+    "150": [
+        "SUB UNIDAD FUNCIONAL INFRAESTRUCTURA",
+        "SUB UNIDAD FUNCIONAL EQUIPAMIENTO"
+    ],
+    "151": [
+        "SUB UNIDAD FUNCIONAL CUENTAS CORRIENTES",
+        "SUB UNIDAD FUNCIONAL CONTROL DE GASTOS",
+        "SUB UNIDAD FUNCIONAL COBRANZA PRE COACTIVA",
+        "SUB UNIDAD FUNCIONAL TRIBUTACION",
+        "SUB UNIDAD FUNCIONAL CAJA CHICA"
+    ],
+    "152": [
+        "SUB UNIDAD FUNCIONAL CONTROL PREVIO",
+        "SUB UNIDAD FUNCIONAL INTEGRACION CONTABLE Y PRESUPUESTAL",
+        "SUB UNIDAD FUNCIONAL CONTROL DE INGRESOS Y SALIDAS DE ACTIVOS Y BIENES CORRIENTES"
+    ],
+    "153": [
+        "SUB UNIDAD FUNCIONAL ARCHIVO"
+    ],
+    "154": [
+        "SUB UNIDAD FUNCIONAL COSTOS",
+        "SUB UNIDAD FUNCIONAL ORGANIZACION Y MODERNIZACION DE LA GESTION PUBLICA",
+        "SUB UNIDAD FUNCIONAL PLANEAMIENTO"
+    ],
+    "155": [
+        "SUB UNIDAD FUNCIONAL EVALUACION Y SEGUIMIENTO DE LA EJECUCION PRESUPUESTAL",
+        "SUB UNIDAD FUNCIONAL PROGRAMACION, FORMULACION Y EVALUACION PRESUPUESTAL"
+    ],
+    "156": [
+        "SUB UNIDAD FUNCIONAL FORMULACIÓN DE PROYECTOS"
+    ],
+    "157": [
+        "FISCALIZACION Y SANCION",
+        "VIGILANCIA Y CONTROL",
+        "AUTORIZACIONES Y CERTIFICACIONES"
+    ],
+    "158": [
+        "ACCESO Y USO RACIONAL FARMACOlOGICO",
+        "FISCALIZACION, CONTROL Y VIGILANCIA SANITARIA",
+        "AUTORIZACION Y CERTIFICACION DE ESTABLECIMIENTOS FARMACEUTICOS"
+    ],
+    "167": [
+        "SUB UNIDAD FUNCIONAL ESTADISTICA",
+        "SUB UNIDAD FUNCIONAL DOCENCIA E INVESTIGACION"
+    ],
+    "166": [
+        "ESTRATEGIA DE PUEBLOS INDIGENAS U ORIGINARIOS",
+        "ESTRATEGIA SANITARIA DE ALIMENTACION Y NUTRICION SALUDABLE",
+        "ESTRATEGIA SANITARIA DE ETAPA DE VIDA ADULTO MAYOR",
+        "ESTRATEGIA SANITARIA DE ETAPA DE VIDA JOVEN",
+        "ESTRATEGIA SANITARIA DE ETAPA DE VIDA NIÑO",
+        "ESTRATEGIA SANITARIA DE INMUNIZACIONES",
+        "ESTRATEGIA SANITARIA DE METAXENICAS Y ZOONOSIS",
+        "ESTRATEGIA SANITARIA DE PREVENCION Y CONTROL DE CANCER",
+        "ESTRATEGIA SANITARIA DE PREVENCION Y CONTROL DE DAÑOS NO TRANSMISIBLES",
+        "ESTRATEGIA SANITARIA DE PREVENCION Y CONTROL DE LA DISCAPACIDAD",
+        "ESTRATEGIA SANITARIA DE PREVENCION Y CONTROL DE LA TUBERCULOSIS",
+        "ESTRATEGIA SANITARIA DE PREVENCION Y CONTROL DE LAS ITS VIH SIDA Y HEPATITIS",
+        "ESTRATEGIA SANITARIA DE SALUD BUCAL",
+        "ESTRATEGIA SANITARIA DE SALUD FAMILIAR",
+        "ESTRATEGIA SANITARIA DE SALUD MENTAL Y CULTURA DE PAZ",
+        "ESTRATEGIA SANITARIA DE SALUD OCULAR Y PREVENCION DE LA CEGUERA",
+        "ESTRATEGIA SANITARIA DE SALUD SEXUAL Y REPRODUCTIVA",
+        "ESTRATEGIA SANITARIA DE VIDA ADULTO MUJER Y VARON",
+        "ESTRATEGIA SANITARIA DE VIGILANCIA DE RIESGO CON METALES PESADOS",
+        "ESTRATEGIA SANITARIA ETAPA DE VIDA ADOLESCENTE"
+    ],
+    "140": [
+        "SUB UNIDAD FUNCIONAL SOPORTE INFORMATICO",
+        "SUB UNIDAD FUNCIONAL REDES Y COMUNICACIONES"
+    ]
+    };
+
+    function llenarUnidadOrganica(opciones) {
+        unidadOrganicaSelect.innerHTML = "";
+
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "---------";
+        unidadOrganicaSelect.appendChild(defaultOption);
+
+        opciones.forEach(function (opcion) {
+            const opt = document.createElement("option");
+            opt.value = opcion;
+            opt.textContent = opcion;
+            unidadOrganicaSelect.appendChild(opt);
+        });
+    }
+
+    nombreSelect.addEventListener("change", function () {
+        const selected = nombreSelect.value;
+        if (opcionesPorEntidad[selected]) {
+            llenarUnidadOrganica(opcionesPorEntidad[selected]);
+        } else {
+            llenarUnidadOrganica([]);
+        }
+    });
+
+    // Ejecutar al cargar por si ya hay una selección
+    const selectedOnLoad = nombreSelect.value;
+    if (opcionesPorEntidad[selectedOnLoad]) {
+        llenarUnidadOrganica(opcionesPorEntidad[selectedOnLoad]);
+    }
+});
+</script>
+
+    <script>

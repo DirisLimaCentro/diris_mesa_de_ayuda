@@ -1,0 +1,320 @@
+{% extends 'dashboard.html' %}
+{% load static format_item %}
+{% block  container %}
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Reportes</li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header" style="padding-bottom: 2px !important;">
+                                <h2 class=" mt-2">{{ title }}</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body" style="padding-top: 0 !important;">
+
+                                    <div class="row justify-content-md-center">
+                                        <div class="card" style="margin-bottom: 0 !important;">
+                                            <div class="card-content collapse show">
+                                                <div class="card-body"
+                                                     style="padding-top: 0 !important; margin-bottom: 0 !important;     padding-bottom: 0 !important;">
+                                                    <form class="form" method="post" role="form"
+                                                          action="{% url 'reportes:reclamos-por-mes' %}">
+                                                        {% csrf_token %}
+                                                        <div class="form-row align-items-center">
+                                                            <div class="col-auto">
+                                                                <label class="" for="inlineFormInput">AÑO</label>
+                                                                <select class="form-control mb-2"
+                                                                        name="anio" id="anio" required>
+                                                                    <option value=""> -- Selecionar --
+                                                                    </option>
+                                                                    {% for a in anios %}
+                                                                        <option value="{{ a.0 }}"
+                                                                                {% if anio == a.0 %}
+                                                                                selected
+                                                                                {% endif %}
+                                                                        >{{ a.0 }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <button type="submit" class="btn btn-primary"
+                                                                        id="buscar">
+                                                                    <i class="la la-search"></i> BUSCAR
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if list_final %}
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Año: {{ anio }}</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table  bg-primary white mb-0">
+                                                        <thead>
+                                                        <tr>
+                                                            {% for i in list_final.0 %}
+                                                                <th
+                                                                        {% if forloop.counter > 1 %}
+                                                                            class="text-center"
+                                                                        {% endif %}
+                                                                >{{ i }}</th>
+                                                            {% endfor %}
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for i in list_final %}
+                                                            {% if forloop.counter > 1 %}
+                                                                <tr>
+                                                                    {% for j in i %}
+                                                                        <td
+                                                                                {% if forloop.counter > 1 %}
+                                                                                    class="text-center"
+                                                                                {% endif %}
+                                                                        >{{ j }}</td>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        </tbody>
+                                                        <tbody style="border-top: 3px solid #ffffff !important;">
+                                                        <tr>
+                                                            {% for f in list_final_total %}
+                                                                <th
+                                                                        {% if forloop.counter > 1 %}
+                                                                            class="text-center"
+                                                                        {% endif %}
+                                                                >{{ f }}</th>
+                                                            {% endfor %}
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h4 class="card-title">Avance en el tiempo de reclamos
+                                                                presentados </h4>
+                                                            <a class="heading-elements-toggle"><i
+                                                                    class="la la-ellipsis-v font-medium-3"></i></a>
+                                                            <div class="heading-elements">
+                                                                <ul class="list-inline mb-0">
+                                                                    <li><a data-action="collapse"><i
+                                                                            class="ft-minus"></i></a></li>
+                                                                    <li><a data-action="reload"><i
+                                                                            class="ft-rotate-cw"></i></a>
+                                                                    </li>
+                                                                    <li><a data-action="expand"><i
+                                                                            class="ft-maximize"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-content collapse show">
+                                                            <div class="card-body chartjs">
+                                                                <canvas id="line-chart-meses" height="500"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
+
+{% block static %}
+
+    <script src="{% static 'app-assets/vendors/js/charts/chart.min.js' %} "></script>
+    {#    <script src="{% static 'app-assets/js/scripts/charts/chartjs/line/line.js' %} "></script>#}
+
+    <script>
+        $("#buscar").click(function () {
+            $(".alert").hide();
+        });
+    </script>
+
+    <script>
+        {% autoescape off %}
+            $(window).on("load", function () {
+
+
+                function getRandomColor() {
+                    var letters = '0123456789ABCDEF';
+                    var color = '#';
+                    for (var i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                    }
+                    return color;
+                }
+
+
+                const data_ = {{ list_final|safe }}
+                    data_.shift();
+                console.log(data_);
+
+                let new_data = data_.map((valor, index) => {
+
+                    const color = getRandomColor();
+
+                    {#console.log(valor)#}
+                    return {
+                        label: valor[0],
+                        data: valor.slice(1, 13),
+                        lineTension: 0,
+                        fill: false,
+                        {#borderDash: [5, 5],#}
+                        borderColor: color,
+                        pointBorderColor: color,
+                        pointBackgroundColor: "#000000",
+                        pointBorderWidth: 2,
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 4,
+                    }
+                })
+
+                console.log(new_data);
+
+                //Get the context of the Chart canvas element we want to select
+                var ctx = $("#line-chart-meses");
+
+                // Chart Options
+
+                var chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    hover: {
+                        mode: 'label'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            gridLines: {
+                                color: "#f3f3f3",
+                                drawTicks: false,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'RIS'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            gridLines: {
+                                color: "#f3f3f3",
+                                drawTicks: false,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Reclamos'
+                            },
+                            ticks: {
+                                max: {{ count_mayor|safe }},
+                                min: 0,
+                                stepSize: 5
+                            }
+                        }]
+                    },
+                    title: {
+                        display: true,
+                        text: 'Grafico consolidado de la cantidad de reclamos por RIS'
+                    }
+                };
+
+                // Chart Data
+                var chartData = {
+                    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"],
+                    datasets: new_data
+                };
+
+                var config = {
+                    type: 'line',
+
+                    // Chart Options
+                    options: chartOptions,
+
+                    data: chartData
+                };
+
+                // Create the chart
+                var lineChart = new Chart(ctx, config);
+            });
+        {% endautoescape %}
+    </script>
+
+{% endblock static %}
+
+
+{#                   datasets: [{#}
+{#                        label: "My First dataset",#}
+{#                        data: [65, 59, 80, 81, 56, 55, 40],#}
+{#                        fill: false,#}
+{#                        borderDash: [5, 5],#}
+{#                        borderColor: "#9C27B0",#}
+{#                        pointBorderColor: "#9C27B0",#}
+{#                        pointBackgroundColor: "#FFF",#}
+{#                        pointBorderWidth: 2,#}
+{#                        pointHoverBorderWidth: 2,#}
+{#                        pointRadius: 4,#}
+{#                    }, {#}
+{#                        label: "My Second dataset",#}
+{#                        data: [28, 48, 40, 19, 86, 27, 90],#}
+{#                        fill: false,#}
+{#                        borderDash: [5, 5],#}
+{#                        borderColor: "#00A5A8",#}
+{#                        pointBorderColor: "#00A5A8",#}
+{#                        pointBackgroundColor: "#FFF",#}
+{#                        pointBorderWidth: 2,#}
+{#                        pointHoverBorderWidth: 2,#}
+{#                        pointRadius: 4,#}
+{#                    }, {#}
+{#                        label: "My Third dataset - No bezier",#}
+{#                        data: [45, 25, 16, 36, 67, 18, 76],#}
+{#                        lineTension: 0,#}
+{#                        fill: false,#}
+{#                        borderColor: "#FF7D4D",#}
+{#                        pointBorderColor: "#FF7D4D",#}
+{#                        pointBackgroundColor: "#FFF",#}
+{#                        pointBorderWidth: 2,#}
+{#                        pointHoverBorderWidth: 2,#}
+{#                        pointRadius: 4,#}
+{#                    }]#}

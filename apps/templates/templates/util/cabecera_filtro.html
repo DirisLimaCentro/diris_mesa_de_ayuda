@@ -1,0 +1,130 @@
+{% csrf_token %}
+
+<style>
+
+    .error  {
+        color: red !important;
+    }
+
+</style>
+<div class="card">
+    <div class="card-header">Filtro</div>
+    <div class="card-body">
+        <div class="form-row align-items-center">
+            <div class="col-auto">
+                <label class=""
+                       for="inlineFormInput">RIS</label>
+                {% if request.session.tipo_usuario == "Administrador RIS" %}
+                    <select class="form-control mb-2" name="ris" id="ris" required>
+                        <option value="{{ request.user.ris }}" selected>
+                            {{ request.session.entidad_nombre }}
+                        </option>
+                    </select>
+                {% elif request.session.tipo_usuario == "Administrador IPRESS" %}
+                    <select class="form-control mb-2"
+                            name="ris" id="ris" required>
+                        {% for a in list_ris %}
+                            {% if request.user.entidad.ris == a.0 %}
+                                <option value="{{ a.0 }}" selected>{{ a.1 }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <select class="form-control mb-2"
+                            name="ris" id="ris" required>
+                        <option value="0"
+                                {% if ris == 0 %}
+                                selected
+                                {% endif %}
+                        > -- TODO --
+                        </option>
+                        {% for a in list_ris %}
+                            <option value="{{ a.0 }}"
+                                    {% if ris == a.0 %}
+                                    selected
+                                    {% endif %}
+                            >{{ a.1 }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+            <div class="col-auto">
+                <label class="" for="inlineFormInput">IPRESS</label>
+                {% if request.session.tipo_usuario == "Administrador IPRESS" %}
+                    <select class="form-control mb-2" name="ipress" id="ipress" required>
+                        {% for item in list_ipress %}
+                            {% if request.user.entidad.id == item.id %}
+                                <option value="{{ item.id }}" selected>
+                                    {{ item.nombre }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <select class="form-control mb-2" name="ipress" id="ipress" required>
+                        <option value="0"
+                                {% if ipress == 0 %}
+                                selected
+                                {% endif %}
+                        > -- TODO --
+                        </option>
+                        {% for item in list_ipress %}
+                            <option value="{{ item.id }}"
+                                    {% if ipress == item.id %}
+                                    selected
+                                    {% endif %}
+                            >
+                                {{ item.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+
+            </div>
+            <div class="col-auto">
+                <label class=""
+                       for="inlineFormInput">AÑO {{ anio }}</label>
+                <select class="form-control mb-2"
+                        name="anio" id="anio" required>
+                    <option value=""> -- Selecionar --</option>
+                    {% for a in anios %}
+                        <option value="{{ a.0 }}"
+                                {% if anio == a.0 %}
+                                selected
+                                {% endif %}
+                        >{{ a.0 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if not show_mes == "false" %}
+                <div class="col-auto">
+                    <label class="" for="inlineFormInput">Periodo
+                        (Mes)</label>
+                    <select class="form-control mb-2"
+                            name="mes" id="mes" required>
+                        <option value=""> -- Selecionar --
+                        </option>
+                        {% for a in meses %}
+                            <option value="{{ a.0 }}"
+                                    {% if mes == a.0 %}
+                                    selected
+                                    {% endif %}
+                            >{{ a.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+
+            <div class="col-auto">
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary"
+                            id="buscar">
+                        <i class="la la-search"></i> BUSCAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

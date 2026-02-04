@@ -1,0 +1,155 @@
+{% extends 'dashboard.html' %}
+{% load static format_item %}
+{% block  container %}
+
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="breadcrumb-wrapper col-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active">Reportes</li>
+                                <li class="breadcrumb-item active">{{ title }}</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class=" mt-2">{{ title }}</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body" style="padding-top: 0 !important;">
+
+                                    <div class="row justify-content-md-center">
+                                        <div class="card" style="margin-bottom: 0 !important;">
+                                            <div class="card-content collapse show">
+                                                <div class="card-body"
+                                                     style="padding-top: 0 !important; margin-bottom: 0 !important;     padding-bottom: 0 !important;">
+                                                    <form class="form" method="post" role="form"
+                                                          action="{% url 'reportes:ris-etapa-reclamo' %}">
+                                                        {% csrf_token %}
+                                                        {% include 'util/cabecera_filtro.html' with tipo="ADMINISTRADOR_UGIPRESS" %}
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if list_final %}
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Año: {{ anio }}</h5>
+                                                <h5 class="card-title">Mes: {{ mes|filter_mes }}</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table  bg-primary white mb-0">
+                                                        <thead>
+                                                        <tr>
+                                                            {% for i in list_final.0 %}
+                                                                <th
+                                                                        {% if forloop.counter > 1 %}
+                                                                            class="text-center"
+                                                                        {% endif %}
+                                                                >{{ i }}</th>
+                                                            {% endfor %}
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for i in list_final %}
+                                                            {% if forloop.counter > 1 %}
+                                                                <tr>
+                                                                    {% for j in i %}
+                                                                        <td
+                                                                                {% if forloop.counter > 1 %}
+                                                                                    class="text-center"
+                                                                                {% endif %}
+                                                                        >{{ j }}</td>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        </tbody>
+                                                        <tbody style="border-top: 3px solid #ffffff !important;">
+                                                        <tr>
+                                                            {% for f in list_final_total %}
+                                                                <th
+                                                                        {% if forloop.counter > 1 %}
+                                                                            class="text-center"
+                                                                        {% endif %}
+                                                                >{{ f }}</th>
+                                                            {% endfor %}
+                                                        </tr>
+
+
+                                                        <tr>
+                                                            {% for f in list_final_total_porcentaje %}
+                                                                <th
+                                                                        {% if forloop.counter > 1 %}
+                                                                            class="text-center"
+                                                                        {% endif %}
+                                                                >{{ f }}
+
+                                                                    {% if forloop.counter > 1 %}
+                                                                        %
+                                                                    {% endif %}
+
+                                                                </th>
+                                                            {% endfor %}
+                                                        </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
+
+{% block static %}
+
+    <script type="application/javascript">
+        var getSelectIpressByRis = (ris_id) => {
+            $.ajax({
+                type: 'GET',
+                {#crossDomain: true,#}
+                {#dataType: 'json',#}
+                url: "{% url 'entidad:get-select' %}",
+                data: {
+                    'ris_id': ris_id
+                },
+                success: function (data) {
+                    $("#ipress").html(data);
+                },
+                error: function (request, status, error) {
+                    console.log(status)
+                    console.log(error)
+                    console.log(request.responseText);
+                }
+            });
+        };
+
+        $('#ris').on('change', function () {
+            const valor = $(this).val();
+            getSelectIpressByRis(valor);
+        });
+    </script>
+
+{% endblock static %}

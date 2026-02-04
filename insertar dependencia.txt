@@ -1,0 +1,21 @@
+use diris_mesa_de_ayuda;
+
+INSERT INTO setup_entidad (
+id,
+    nombre,
+    codigo,
+    categoria,
+    ris,
+    numero_medidas_adoptados,
+    numero_reclamos,
+    sede
+) VALUES (
+168,
+    'OFICINA DE ASESORIA JURIDICA',
+    'OAJ',
+    0,
+    0,
+    0,
+    0,
+    'Mutual FAP'
+);
