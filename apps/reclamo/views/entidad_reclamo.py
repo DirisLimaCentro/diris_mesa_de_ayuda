@@ -1506,8 +1506,7 @@ class EntidadReclamoCreate_secretaria(CreateView):
 
     Código de Ticket: {self.object.codigo_ticket}
 
-    Puede hacerle seguimiento a su código de Ticket ingresando a https://mesadeayuda.dirislimasur.gob.pe/
-
+ 
     Saludos cordiales,
 
     Atte.
@@ -1726,10 +1725,7 @@ class EntidadReclamoCreate_monitoreo_general(CreateView):
                 f"Estimado usuario,\n\n"
                 f"Su ticket ha sido registrado correctamente.\n\n"
                 f"Código de ticket: {self.object.cod_ticket_monitoreo}\n\n"
-                f"Puede hacerle seguimiento a su código de Ticket ingresando a https://mesadeayuda.dirislimasur.gob.pe/.\n\n"
-                f"Con las credenciales:\n"
-                f"USUARIO: dirisls\n"
-                f"CONTRASEÑA: 123456\n\n"
+                 
 
                 f"Saludos cordiales,\n"
                 f"Atte.\n"
@@ -2050,11 +2046,7 @@ class EntidadReclamoCreate_general(CreateView):
 
     Código de Ticket: {self.object.codigo_ticket}
 
-    Puede hacerle seguimiento a su código de Ticket ingresando a https://mesadeayuda.dirislimasur.gob.pe/
-
-    Con las credenciales:
-    USUARIO: dirisls
-    CONTRASEÑA: 123456
+    
 
     Saludos cordiales,
 

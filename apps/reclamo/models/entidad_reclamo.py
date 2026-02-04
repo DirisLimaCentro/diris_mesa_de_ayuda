@@ -165,12 +165,11 @@ CARGO=((1, 'JEFE (A)'),
 
 TIPO_INCIDENCIA=((1, 'Problemas con computadoras'),
  
-             (2, 'Problemas con Sistemas Institucionales (SIAF, SIGA, Otros sistemas) '),
+             (2, 'Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, etc) '),
               (3, 'Conectividad y Redes'),
                (4, 'Impresoras y escáner'),
                 (5, 'Software de Ofimática (Word, Excel, etc)'),
-                (6, 'Problemas con SIHCE'),
-                (7, 'Problemas con SGD'))
+                (6, 'Problemas con SIHCE'))
 
  
 
