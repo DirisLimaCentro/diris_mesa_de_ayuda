@@ -211,7 +211,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_LOCAL_ROOT = os.path.join(BASE_DIR, '..', 'C:/apps2026/helpdesk/diris_mesa_de_ayuda_v2-main/static/')
+STATIC_LOCAL_ROOT = os.path.join(BASE_DIR, '..', 'static/')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, '..', 'C:/apps2026/helpdesk/diris_mesa_de_ayuda_v2-main/static'),)
 
 STATIC_URL = '/staticfiles/'
