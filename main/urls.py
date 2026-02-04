@@ -26,7 +26,7 @@ urlpatterns = [
                   path('', include('apps.index.url')),
                   path('accounts/', include('django.contrib.auth.urls')),
                   path('manager/', admin.site.urls),
-                      path('clearcache/', include('clearcache.urls')),
+                      #path('clearcache/', include('clearcache.urls')),
 
 
                   path('localizations/country/', include('apps.localizations.urls.country')),
