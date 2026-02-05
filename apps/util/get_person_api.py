@@ -83,7 +83,7 @@ def get_person_api_reniec(dni, request):
                 response_data=response_dict,
                 ip_local=ip_local,
                 ip_publica=ip_publica,
-                origen='SISTEMA DE RECLAMACIONES DIRIS LIMA SUR',
+                origen='SISTEMA DE MESA DE AYUDA DIRIS LIMA CENTRO',
                 username=username,
                 user_id=user_id,
                 nombre_pc=nombre_pc,
