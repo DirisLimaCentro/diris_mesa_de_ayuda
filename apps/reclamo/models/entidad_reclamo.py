@@ -169,7 +169,8 @@ TIPO_INCIDENCIA=((1, 'Problemas con computadoras'),
               (3, 'Conectividad y Redes'),
                (4, 'Impresoras y escáner'),
                 (5, 'Software de Ofimática (Word, Excel, etc)'),
-                (6, 'Problemas con SIHCE'))
+                (6, 'Problemas con SIHCE'),
+                  (7, 'Otros'))
 
  
 
@@ -233,7 +234,7 @@ class EntidadReclamo(models.Model):
     codigo_ticket= models.CharField(_('Codigo de ticket:'), max_length=30,null=True, blank=True
                                     )
     
-    celular= models.CharField(_('Celular:'), max_length=9)
+    celular= models.CharField(_('Celular:'), max_length=9 , null=True, blank=True)
 
     anydesk= models.CharField(_('Código de anydesk:'), max_length=15,null=True, blank=True)
 
@@ -261,7 +262,7 @@ class EntidadReclamo(models.Model):
                                            null=True, blank=True)
 
 
-    correo_usuario= models.EmailField(_('Correo electrónico para ser notificado:'), max_length=120)
+    correo_usuario= models.EmailField(_('Correo electrónico para ser notificado:'), max_length=120 , null=True, blank=True)
  
     detalle_atencion = models.CharField(_('Detalle de la atención:'), max_length=800,
                                            null=True, blank=True)

@@ -636,6 +636,8 @@
         <span>Impresoras y escáner</span>
     {% elif object.tipo_incidencia == 5 %}
         <span>Software de Ofimática</span>
+        {% elif object.tipo_incidencia == 7 %}
+        <span>Otros</span>
     {% else %}
         <span class="badge badge-pill badge-primary"></span>
     {% endif %}

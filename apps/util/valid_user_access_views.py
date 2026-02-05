@@ -99,6 +99,9 @@ def valid_entidad_add(request, user):
     if len(request.user.groups.filter(name="Secretaria")) > 0:
         valor_return = True
 
+
+    if len(request.user.groups.filter(name="Soporte")) > 0:
+        valor_return = True
     return valor_return
 
 
@@ -142,6 +145,9 @@ def valid_ipress_entidad_add(request, user):
 
     if len(request.user.groups.filter(name="General")) > 0:
 
+        valor_return = True
+
+    if len(request.user.groups.filter(name="Soporte")) > 0:
         valor_return = True
 
 
