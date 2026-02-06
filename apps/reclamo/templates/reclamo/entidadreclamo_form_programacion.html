@@ -289,253 +289,178 @@
 document.addEventListener("DOMContentLoaded", function () {
     const risSelect = document.getElementById("id_ris");
     const entidadSelect = document.getElementById("id_entidad");
-    const distritoInput = document.getElementById("id_distrito"); // campo distrito
+    //const distritoInput = document.getElementById("id_distrito"); // campo distrito
+    
     // 👉 Hacer obligatorio el campo
     entidadSelect.setAttribute("required", "required");
 
     // Opciones según RIS
     const opcionesPorRis = {
         "1": [
-            // --- CENTRO DE SALUD (C.S.) ---
-    {value: 3, text: "C.S. ALICIA LASTRES DE LA TORRE", distrito: "MARTÍNEZ DE PINILLOS 124 , BARRANCO"},
-    {value: 9, text: "C.S. DELICIAS DE VILLA", distrito: "JIRÓN NEVADO CARHUAZO S/N II ZONA DELICIAS DE VILLA S/N CHORRILLOS"},
-    {value: 2, text: "C.S. GAUDENCIO BERNASCONI", distrito: "AVENIDA GRAU 198 AV. GRAU Nº198, BARRANCO"},
-    {value: 4, text: "C.S. GUSTAVO LANATTA LUJAN", distrito: "AV. DEFENSORES DEL MORRO (EX HUAYLAS) Nº556 AV. DEFENSORES DEL MORRO (EX HUAYLAS) Nº556, CHORRILLOS"},
-    {value: 182, text: "C.S JOSE OLAYA BALANDRA", distrito: "CALLE STA ROSA DISTRITO DE CHORRILLOS"},
-    {value: 10, text: "C.S. SAN GENARO DE VILLA", distrito: "AV. PRINCIPAL (ALTURA DE LA CALLE 12) AAHH SAN GENARO DISTRITO CHORRILLOS"},
-    {value: 23, text: "C.S. SANTIAGO DE SURCO", distrito: "JIRÓN DANIEL CORNEJO NÚMERO 182 DISTRITO SANTIAGO DE SURCO"},
-    {value: 13, text: "C.S. TUPAC AMARU DE VILLA", distrito: "AV. TÚPAC AMARU MZ. E, LT.1 CHORRILLOS"},
-
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) ---
-    {value: 1, text: "C.S.M.C. BARRANCO", distrito: "AVENIDA SURCO 431, BARRANCO"},
-    {value: 132, text: "C.S.M.C CRL. SAN. WILELMO PEDRO ZORRILLA HUAMAN", distrito: "JIRÓN GENERAL BUENDIA 503 VILLA MILITAR OESTE CHORRILLOS"},
-    {value: 22, text: "C.S.M.C. COMUNITARIO NANCY REYES BAHAMONETE", distrito: "CALLE SAN RODOLFO PISO 1 441 CHORRILLOS"},
-    {value: 138, text: "C.S.M.C. SAN IGNACIO DE SURCO", distrito: "SURCO"},
-    {value: 21, text: "C.S.M.C. SAN SEBASTIAN", distrito: "AVENIDA INDEPENDENCIA S/N SANTA ISABEL DE VILLA CHORRILLOS"},
-    {value: 176, text: "C.S.M.C. VIKTOR FRANKL", distrito: "CALLE 9 MZ C LOTE 15, URB. LA LIBERTAD DISTRITO SANTIAGO DE SURCO"},
-
-    // --- CENTRO MATERNO INFANTIL (C.M.I.) ---
-    {value: 8, text: "C.M.I. BUENOS AIRES DE VILLA", distrito: "AV. BUENOS AIRES DE VILLA S/N. NÚMERO S/N DISTRITO CHORRILLOS "},
-    {value: 5, text: "C.M.I. VIRGEN DEL CARMEN", distrito: "CALLE LEOPOLDO ARIAS NRO. 200, CHORRILLOS"},
-
-    // --- PUESTO DE SALUD (P.S.) ---
-    {value: 6, text: "P.S. ARMATAMBO", distrito: "CALLE LUCANAS MZ 1 LOTE 1 AAHH ARMATAMBO, CHORRILLOS"},
-    {value: 20, text: "P.S. DEFENSORES DE LIMA", distrito: "AAHH DEFENSORES DE LIMA S/N, FRENTE A LA MZ D CHORRILLOS"},
-    {value: 28, text: "P.S. LAS DUNAS", distrito: "CALLE LOS HERRERILLOS MZA F LTE 1 S/N - LAS DUNAS NÚMERO S/N DISTRITO SANTIAGO DE SURCO"},
-    {value: 27, text: "P.S. LAS FLORES", distrito: "CALLE FERREÑAFE 220 - 2DA CUADRA EL POLO URB. LAS FLORES - MONTERRICO SANTIAGO DE SURCO"},
-    {value: 19, text: "P.S. LOS INCAS", distrito: "CALLE ISLAS GUYANAS MZ I-6 LOTE 30 URB. LOS CEDROS DE VILLA CHORRILLOS"},
-    {value: 26, text: "P.S. LOS VIÑEDOS DE SURCO", distrito: "MZ F LOTE 12 AAHH VIÑEDOS DE SURCO DISTRITO SANTIAGO DE SURCO"},
-    {value: 15, text: "P.S. MATEO PUMACAHUA", distrito: "AV. MATEO PUMACAHUA MZ T S/N LOTE 37 SECTOR 01 NÚMERO S/N DISTRITO CHORRILLOS"},
-    {value: 18, text: "P.S. NUEVA CALEDONIA", distrito: "AV. HUANCAVELICA MZ.E,LT.1 AAHH NUEVA CALEDONIA CHORRILLOS"},
-    {value: 24, text: "P.S. SAN CARLOS", distrito: "JR. MARISCAL SANTA CRUZ S/N AAHH SAN CARLOS SANTIAGO DE SURCO"},
-    {value: 14, text: "P.S. SAN JUAN DE LA LIBERTAD", distrito: "AV. 11 S/N AA.HH. SAN JUAN DE LA LIBERTAD CHORRILLOS"},
-    {value: 25, text: "P.S. SAN ROQUE", distrito: "ESTEBAN CAMERE 378 - URB SAN ROQUE SN SANTIAGO DE SURCO"},
-    {value: 12, text: "P.S. SANTA ISABEL DE VILLA", distrito: "AV. INDEPENDENCIA S/N.AAHH SANTA ISABEL DE VILLA NÚMERO S/N DISTRITO CHORRILLOS PROVINCIA LIMA DEPARTAMENTO LIMA"},
-    {value: 16, text: "P.S. SANTA TERESA DE CHORRILLOS", distrito: "PROLONGACIÓN AV.EL SOL NÚMERO S/N DISTRITO CHORRILLOS"},
-    {value: 17, text: "P.S. VILLA VENTURO", distrito: "CALLE JAUJA S/N. NÚMERO S/N DISTRITO CHORRILLOS"},
-    {value: 11, text: "P.S. VISTA ALEGRE DE VILLA", distrito: "CALLE JOSE CARLOS MARIATEGUI S/N CHORRILLOS LIMA LIMA"},
-
-    // --- CENTRO EDUCATIVO (C.E.) ---
-    {value: 7, text: "C.E. SAN PEDRO DE LOS CHORRILLOS", distrito: "CALLE FERROCARRIL NÚMERO S/N CHORRILLOS"},
-
-    // --- HOGAR PROTEGIDO ---
-    {value: 183, text: "HOGAR PROTEGIDO CHORRILLOS", distrito: "CALLE MAXIMILIANO VELARDE 284 CHORRILLOS"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIS) ---
-    {value: 170, text: "RIS BCO-CHO-SCO", distrito: ""}
-
-
-        ],
+        { value: 11, text: "C.S. CONDE DE LA VEGA BAJA" },
+{ value: 20, text: "C.S. CONTROL DE ZOONOSIS" },
+{ value: 12, text: "C.S. JUAN PEREZ CARRANZA" },
+{ value: 9,  text: "C.S. MIRONES BAJO" },
+{ value: 17, text: "C.S. MIRONES" },
+{ value: 10, text: "C.S. RAUL PATRUCCO PUIG" },
+{ value: 13, text: "C.S. SAN SEBASTIAN" },
+{ value: 14, text: "C.S. UNIDAD VECINAL N°3" },
+{ value: 15, text: "C.S. VILLA MARIA PERPETUO SOCORRO" },
+{ value: 5,  text: "C.S.M.C. JESUS MARIA" },
+{ value: 19, text: "C.S.M.C. KUYANAKUSUN" },
+{ value: 16, text: "C.S.M.C. MAGDALENA" },
+{ value: 7,  text: "C.S.M.C. MIRONES BAJO" },
+{ value: 18, text: "C.S.M.C. SAN MARCOS" },
+{ value: 4,  text: "C.S.M.C. SURQUILLO" },
+{ value: 8,  text: "C.S.M.C. VILLA CAMPOY" },
+{ value: 3,  text: "P.S. JARDIN ROSA DE SANTA MARIA" },
+{ value: 1,  text: "P.S. PALERMO" },
+{ value: 2,  text: "P.S. RESCATE" },
+{ value: 6,  text: "P.S. SANTA ROSA" }
+],
         "2": [
-          // --- CENTRO DE SALUD (C.S.) ---
-    {value: 126, text: "C.S. BENJAMÍN DOIG", distrito: "AAHH BENJAMIN DOIG LOSSIO MZ 21 LT 13 DISTRITO PUCUSANA"},
-    {value: 107, text: "C.S. NUEVO LURIN KM. 40 (CLAS)", distrito: "AV. 28 JULIO MZ 18 LT 20 NUEVO LURIN - KM 40 ANTIGUA PANAMERICANA SUR DISTRITO LURIN"},
-    {value: 125, text: "C.S. PUCUSANA", distrito: "AV LIMA 559 PUCUSANA"},
-    {value: 128, text: "C.S. PUNTA NEGRA", distrito: "AV GUAYANAY NORTE - ZONA CENTRAL MZ H-1 LT 6 PUNTA NEGRA"},
-    {value: 124, text: "C.S. SAN BARTOLO", distrito: "AVENIDA SAN BARTOLO MZ A LT 1 Y AV. EL GOFL NÚMERO S/N DISTRITO SAN BARTOLO"},
-    {value: 105, text: "C.S. VILLA ALEJANDRO", distrito: "MZ L- LOTE 31- AAHH VILLA ALEJANDRO LURIN"},
-
-    // --- CENTRO MATERNO INFANTIL (C.M.I.) ---
-    {value: 102, text: "C.M.I. LURÍN", distrito: "JIRÓN GRAU Nº 370 JR. GRAU Nº 370 LURIN"},
-
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) / CSMC ---
-    {value: 134, text: "CSMC BALNEARIOS DEL SUR", distrito: "CALLE BARTOLOME HERRERA N° 100-102 MZ A LOTE 10 DE LA AGRUPACION DE FAMILIAS SANTA CRUZ A UNA CUADRA DE LA MUNICIPALIDAD DE PUNTA HERMOSA PUNTA HERMOSA"},
-    {value: 137, text: "CSMC SAN PEDRO DE LURIN", distrito: "LURIN"},
-
-    // --- PUESTO DE SALUD (P.S.) ---
-    {value: 103, text: "P.S. BUENA VISTA", distrito: "PROLONGACIÓN ALFONSO UGARTE BUENA VISTA BAJA S/N NÚMERO S/N DISTRITO LURIN"},
-    {value: 106, text: "P.S. MARTHA MILAGROS BAJA", distrito: "AV. LOS CIPRECES MZ B , LOTE 01 , MARTHA MILAGROS BAJA LURIN"},
-    {value: 127, text: "P.S. PUNTA HERMOSA", distrito: "JR PIMENTEL Nº 248 MZ G LT 9 PUNTA HERMOSA"},
-    {value: 129, text: "P.S. VILLA MERCEDES", distrito: "AV. MANCO CAPAC MZ H LT 01 DISTRITO SANTA MARIA DEL MAR"},
-    {value: 111, text: "P.S.VILLA LIBERTAD (CLAS)", distrito: "JIRÓN HUANUCO NÚMERO S/N DISTRITO LURIN"},
-
-    // --- CENTRO LOCAL DE ADMINISTRACIÓN DE SALUD (CLAS) ---
-    {value: 104, text: "CLAS JULIO C TELLO", distrito: "AV. LAS ACASIAS MZ B LT 12 ST 1 JULIO C. TELLO DISTRITO LURIN"},
-
-    // --- LABORATORIO ---
-    {value: 180, text: "LABORATORIO PS PUNTA HERMOSA", distrito: "CALLE PIMENTEL NRO. 193 - MZ J LTE. 16, DEL DISTRITO DE BALNEARIO DE PUNTA HERMOSA"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIS) ---
-    {value: 174, text: "RIS LURIN Y BALNEARIOS", distrito: ""}
-
-
+           { value: 24, text: "C.S. BREÑA" },
+{ value: 23, text: "C.S. CHACRA COLORADA" },
+{ value: 26, text: "C.S. JESUS MARIA" },
+{ value: 22, text: "C.S. SAN MIGUEL" },
+{ value: 25, text: "C.S.M.C. HONORIO DELGADO" },
+{ value: 27, text: "C.S.M.C. SAN MIGUEL" },
+{ value: 28, text: "C.S.M.I. MAGDALENA" },
+{ value: 21, text: "P.S. HUACA PANDO" }
         ],
         "3": [
-         // --- CENTRO DE SALUD (C.S.) ---
-    {value: 121, text: "C.S. CLAS JUAN PABLO II", distrito: "MANZANA K8 LOTE 5B, SECTOR LOS JARDINES HUERTOS DE MANCHAY DISTRITO PACHACAMAC"},
-    {value: 110, text: "C.S. PACHACAMAC", distrito: "AV. COLONIAL S/N Y ESQ. CASTILLA PACHACAMAC"},
-    {value: 119, text: "C.S. PORTADA DE MANCHAY", distrito: "AAHH PORTADA DE MANCHAY DISTRITO PACHACAMAC"},
-
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) ---
-    {value: 108, text: "C.S.M.C. LA MEDALLA MILAGROSA", distrito: "JIRÓN 12 DE JULIO SECTOR 24 DE JUNIO COLLANAC PACHACAMAC"},
-    {value: 109, text: "C.S.M.C. SANTA ROSA DE MANCHAY", distrito: "CALLE 20 SECTOR PORTADA DE MANCHAY III CPR HUERTOS DE MANCHAY B5 03 PACHACAMAC"},
-
-    // --- PUESTO DE SALUD (P.S.) / POSTA DE SALUD (PS.) ---
-    {value: 116, text: "P.S. CARDAL", distrito: "CENTRO POBLADO RURAL CARDAL - PACHACAMAC "},
-    {value: 122, text: "P.S. COLLANAC", distrito: "AV. VICTOR MALASQUEZ KM 5.5 SECTOR 24 DE JUNIO -COLLANAC PACHACAMAC"},
-    {value: 114, text: "P.S. GUAYABO", distrito: "AV SAN JUAN MZ H LT 2 CENTRO POBLADO RURAL GUAYABO-PACHACAMAC"},
-    {value: 120, text: "P.S. HUERTOS DE MANCHAY", distrito: "MZ T LOTE S/N SECTOR RINCONADA ALTA PACHACAMAC"},
-    {value: 117, text: "P.S. MANCHAY ALTO", distrito: "AV LAS CASUARINAS MZ E LT 18 CENTRO POBLADO RURAL MANCHAY ALTO DISTRITO PACHACAMAC"},
-    {value: 112, text: "P.S. PAMPA GRANDE", distrito: "AV 07 DE JUNIO-CPR PAMPA GRANDE MANZANA B LOTE S/N DISTRITO PACHACAMAC"},
-    {value: 123, text: "P.S. PARQUES DE MANCHAY", distrito: "CARRETERA CARRETERA CIENEGUILLA KM 21-MZ 1 LT 12-13 AAHH PAUL POBLET LIND DISTRITO PACHACAMAC"},
-    {value: 115, text: "P.S. PICAPIEDRA", distrito: "AV REAL MZ J LT 8 CENTRO POBLADO RURAL PICAPIEDRA-PACHACAMAC PACHACAMAC"},
-    {value: 113, text: "P.S. QUEBRADA VERDE", distrito: "AV. ROQUE SAENZ PEÑA MZ. I LOTE 13 DISTRITO PACHACAMAC"},
-    {value: 118, text: "P.S. TAMBO INGA", distrito: "AV VICTOR MALASQUEZ CENTRO POBLADO RURAL TAMBO INGA - PACHACAMAC"},
-    {value: 135, text: "PS. BELLA ESMERALDA", distrito: "AAHH CENTRO POBLADO RURAL LOS HUERTOS DE MANCHAY SECTOR BELLA ESMERALDA MZ N LOTE 1 DISTRITO PACHACAMAC"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIC) ---
-    {value: 175, text: "RIC PACHACAMAC", distrito: ""}
-        ],
+    { value: 31, text: "C.S. LINCE" },
+{ value: 30, text: "C.S. SAN ISIDRO" },
+{ value: 33, text: "C.S. SAN ATANACIO DEL PEDREGAL" },
+{ value: 29, text: "C.S. SANTA CRUZ DE MIRAFLORES" },
+{ value: 32, text: "C.S. VILLA VICTORIA PORVENIR" },
+{ value: 34, text: "C.S.M.C. SAN ISIDRO" },
+{ value: 35, text: "C.S.M.I. SURQUILLO" }      
+    
+    ],
         "4": [
-           // --- CENTRO DE SALUD (C.S.) ---
-    {value: 42, text: "C.S. JESÚS PODEROSO", distrito: "PUEBLO JOVEN JESUS PODEROSO LOTE C MZ T S/N PAMPLONA BAJA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 41, text: "C.S. LEONOR SAAVEDRA", distrito: "AVENIDA TORRES PAZ CDRA. 1 ESQ. CDRA. 4 AV. LOS HÉROES SN SAN JUAN DE MIRAFLORES"},
-    {value: 29, text: "C.S. SAN JUAN DE MIRAFLORES", distrito: "PSJE. SAN JUAN S/N ZONA A (JUNTO COMISARÍA SJM) SAN JUAN DE MIRAFLORES"},
-    {value: 34, text: "C.S. TRÉBOL AZUL", distrito: "AV. MIGUEL GRAU MZ. L, LOTE. 15 - ALT. CDRA 9 AV. PROLONG. CANEVARO AAHH TRÉBOL AZUL SAN JUAN DE MIRAFLORES"},
-    {value: 40, text: "C.S. VILLA SAN LUIS", distrito: "AVENIDA VILLA SOLIDARIDAD O10 1 SECTOR VILLA SAN LUIS Y JOSÉ C. MARIÁTEGUI VILLA SAN LUIS SAN JUAN DE MIRAFLORES"},
+   { value: 43, text: "C.S. EL PINO" },
+{ value: 44, text: "C.S. MAX ARIAS SCHREIBER" },
+{ value: 42, text: "C.S. SAN COSME" },
+{ value: 40, text: "C.S. SAN LUIS" },
+{ value: 41, text: "C.S. TODOS LOS SANTOS DE SAN BORJA" },
+{ value: 45, text: "C.S.M.C. LA VICTORIA" },
+{ value: 39, text: "C.S.M.C. SAN BORJA" },
+{ value: 38, text: "C.S.M.C. SAN COSME" },
+{ value: 46, text: "C.S.M.I. EL PORVENIR" },
+{ value: 37, text: "P.S. CLAS EL PINO" },
+{ value: 36, text: "P.S. SAN JUAN MASIAS" }
 
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) / CSMC ---
-    {value: 63, text: "C.S.M.C. 12 DE NOVIEMBRE", distrito: "AVENIDA LAS AMERICAS PISO 2 S/N SAN JUAN DE MIRAFLORES"},
-    {value: 177, text: "CSMC QHALI KAY", distrito: "JR. JULIO BELLIDO 1156, MZ F2 LOTE 06 ZONA D, URBANIZACION SAN JUAN DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 136, text: "CSMC RICARDO PALMA", distrito: "ASOCIACION DE VIVIENDA TRADICIONES RICARDO PALMA MZ G LTE 17 DISTRITO SAN JUAN DE MIRAFLORES"},
-
-    // --- CENTRO MATERNO INFANTIL (C.M.I.) ---
-    {value: 45, text: "C.M.I. MANUEL BARRETO", distrito: "JR. MANUEL BARRETO S/N ZONA K-CIUDAD DE DIOS SAN JUAN DE MIRAFLORES"},
-    {value: 49, text: "C.M.I. OLLANTAY", distrito: "AV. PROLONGACION GABRIEL TORRES S/N. PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-
-    // --- PUESTO DE SALUD (P.S.) ---
-    {value: 53, text: "P.S. 5 DE MAYO", distrito: "JR. LIBERTAD MZ.A6-LOTE 28-SECTOR 5 DE MAYO-PAMPLONA ALTA DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 44, text: "P.S. 6 DE JULIO", distrito: "ASOCIACION DE VICIENDA 6 DE JULIO, PAMPLONA BAJA L 14-A ESPALDA DE PUESTO DE FISCALIZACION DEL SURCO. SAN JUAN DE MIRAFLORES"},
-    {value: 30, text: "P.S. DESIDERIO MOSCOSO CASTILLO", distrito: "AA.HH. VIRGEN DEL GUADALUPE SN MZ E LT 1 URB PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-    {value: 43, text: "P.S. EL BRILLANTE", distrito: "AV. SAN JUAN CON AVDA DEFENSORES DE LIMA S/N PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-    {value: 35, text: "P.S. HÉROES DEL PACÍFICO", distrito: "JR. 1° DE ENERO S/N AAHH PACIFICO I SJM SAN JUAN DE MIRAFLORES"},
-    {value: 52, text: "P.S. JOSÉ M. ARGUEDAS", distrito: "PASAJE A, MZ F, LOTE 01, SECTOR JOSE MARIA ARGUEDAS, PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-    {value: 39, text: "P.S. LADERAS DE VILLA", distrito: "PSJE F MANUEL IGLESIAS LOTE A.V. - 2 REF. CALLE RETAMA - PSJE F SAN JUAN DE MIRAFLORES"},
-    {value: 50, text: "P.S. LA RINCONADA", distrito: "MZ T2 LOTE 15 AAHH LA RINCONADA -PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-    {value: 51, text: "P.S. LEONCIO PRADO", distrito: "MZ I-10 LOTE 6- SECTOR LEONCIO PRADO MZ I-10 LOTE 6- SECTOR LEONCIO PRADO SAN JUAN DE MIRAFLORES"},
-    {value: 48, text: "P.S. MARIANNE PREUSS DE STARK", distrito: "CALLE MZ 78 LT5 (LOS LAURELES) INTERSECCION CALLE Q1 Y CALLE 10 SECTOR LOS ANGELES PAMPLONA ALTA SAN JUAN DE MIRAFLORES"},
-    {value: 33, text: "P.S. PAMPAS DE SAN JUAN", distrito: "AV. PEDRO SILVA CDRA. 10 S/N ZONA C SAN JUAN DE MIRAFLORES"},
-    {value: 36, text: "P.S. PARAÍSO", distrito: "CALLE L, LTE. 6 Y 7 MZ. H, AAHH- PARAISO SAN JUAN DE MIRAFLORES"},
-    {value: 38, text: "P.S. RICARDO PALMA", distrito: "MZ. F LOTE 1 ASOCIACION DE VIVIENDA TRADICIONES RICARDO PALMA DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 47, text: "P.S. SAN FRANCISCO DE LA CRUZ", distrito: "PROLONGACIÓN CANEVARO, SAN FRANCISCO DE LA CRUZ-PAMPLONA ALTA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 37, text: "P.S. SANTA URSULA", distrito: "CALLE SANTA TERESA MZ G LOTE 17 S/N COOPERATIVA SANTA URSULA NÚMERO S/N DISTRITO SAN JUAN DE MIRAFLORES"},
-    {value: 32, text: "P.S. VALLE SHARON", distrito: "ESQ. DE LOS ALELÍS Y CIPRECES S/N. VALLE SHARON SAN JUAN DE MIRAFLORES"},
-    {value: 31, text: "P.S. VILLA SOLIDARIDAD", distrito: "CALLE 9 SN MZ F-A LOTE 3 ASENTAMIENTO HUMANO VILLA SOLIDARIDAD SAN JUAN DE MIRAFLORES"},
-    {value: 46, text: "P.S. VIRGEN DEL BUEN PASO", distrito: "AV. CENTENARIO PARAD.14, SECT.VÍRGEN DEL BUEN PASO-PAMPLONA ALTA DISTRITO SAN JUAN DE MIRAFLORES"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIS) ---
-    {value: 171, text: "RIS SAN JUAN DE MIRAFLORES", distrito: ""}
-
-        ],
+],
         "5": [
-   // --- CENTRO DE SALUD (C.S.) ---
-    {value: 101, text: "C.S. BRISAS DE PACHACAMAC", distrito: "AV. REICHE S/N MZ K AA.HH. BRISAS DE PACHACAMAC VILLA EL SALVADOR"},
-    {value: 100, text: "C.S. HÉROES DEL CENEPA", distrito: "JR. HEROES DEL CENEPA MZ C LT 20, ALT DE PANAM.SUR KM 24 VILLA EL SALVADOR"},
-    {value: 87, text: "C.S. SAN MARTÍN DE PORRES", distrito: "CALLE LOS BOMBEROS S/N ST. 2 GR. 15 VILLA EL SALVADOR"},
-
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) ---
-    {value: 85, text: "C.S.M.C. EL SOL DE VILLA", distrito: "SECTOR 2 GRUPO 6 MZ R LOTE 1 AL 4 VILLA EL SALVADOR"},
-    {value: 179, text: "C.S.M.C. LEÓN XIV", distrito: "SECTOR 2 GRUPO 7 MZ. J LOTE 5 ENTRE AV. ARRIBA PERÚ Y AV. CENTRAL VILLA SALVADOR, VILLA EL SALVADOR"},
-    {value: 86, text: "C.S.M.C. VILLA EL SALVADOR", distrito: "SECTOR 6 GRUPO 5 I 19 AV PASTOR SEVILLA RUTA C PARADERO POLICLINICO VILLA EL SALVADOR"},
-    {value: 131, text: "C.S.M.C VIRGEN DE LA MERCED", distrito: "EDILBERTO RAMOS, GRUPO 1, MZ. M, PRIMA, SECTOR 10, MEDIA CUADRA DE AV. UNIVERSITARIA CON PASTOR SEVILLA DENTRO DE LA CAPILLA VIRGEN DE LA MERCED VILLA EL SALVADOR"},
-
-    // --- CENTRO MATERNO INFANTIL (C.M.I.) ---
-    {value: 96, text: "C.M.I. CÉSAR LOPEZ SILVA", distrito: "VILLA EL SALVADOR"},
-    {value: 90, text: "C.M.I. JUAN PABLO II", distrito: "AV. MARIANO PASTOR SEVILLA S/N ,SECTOR 6,GRUPO 6 NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
-    {value: 82, text: "C.M.I. SAN JOSÉ", distrito: "AV. LOS ÁNGELES S/N, SECTOR 1, GRUPO 15 NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
-
-    // --- PUESTO DE SALUD (P.S.) ---
-    {value: 92, text: "P.S. CRISTO SALVADOR", distrito: "PARQUE CENTRAL ST. 9 GR. 2 PARQUE CENTRAL VILLA EL SALVADOR"},
-    {value: 99, text: "P.S. EDILBERTO RAMOS", distrito: "AV. TAHUANTINSUYO MZ U S/N SECTOR 10 AA.HH. EDILBERTO RAMOS VILLA EL SALVADOR"},
-    {value: 91, text: "P.S. FERNANDO LUYO SIERRA", distrito: "SECTOR 7 GRUPO 1 S/N VILLA EL SALVADOR"},
-    {value: 84, text: "P.S LLANAVILLA", distrito: "CALLE LA PAZ MZ F LTE 05 SECTOR 8 VILLA EL SALVADOR"},
-    {value: 94, text: "P.S. OASIS DE VILLA", distrito: "AA.HH. OASIS DE VILLA VILLA EL SALVADOR"},
-    {value: 98, text: "P.S. PACHACAMAC", distrito: "AV. 200 MILLAS BARRIO 2,SECTOR 1, IV ETAPA-PACHACAMAC VILLA EL SALVADOR"},
-    {value: 97, text: "P.S. PRÍNCIPE DE ASTURIAS", distrito: "AA.HH. PRINCIPE DE ASTURIAS S/N LT 17-IV ETAPA DE PACHACAMAC NÚMERO S/N DISTRITO VILLA EL SALVADOR"},
-    {value: 89, text: "P.S. SAGRADA FAMILIA", distrito: "SECTOR 2, GRUPO 18, PARQUE CENTRAL ST. 2 GR. 18 VILLA EL SALVADOR"},
-    {value: 93, text: "P.S. SARITA COLONIA", distrito: "PARQUE CENTRAL ST. 2 GR. 24 PARQUE CENTRAL VILLA EL SALVADOR"},
-    {value: 95, text: "P.S. SASBI", distrito: "PARQUE CENTRAL S/N SECTOR 6 - GRUPO 01 VILLA EL SALVADOR"},
-    {value: 83, text: "P.S. SEÑOR DE LOS MILAGROS", distrito: "ST. 1 GR. 25 MZ D1 LOTE 2 VILLA EL SALVADOR"},
-    {value: 88, text: "P.S. VIRGEN DE LA ASUNCIÓN", distrito: "SECTOR 3 GRUPO 3 MANZANA P-1 LOTE 4 B DISTRITO VILLA EL SALVADOR"},
-
-    // --- LOCAL ARCHIVO CENTRAL ---
-    {value: 181, text: "LOCAL ARCHIVO CENTRAL", distrito: "MZ Z1 LOTE 28 PARCELA 34 ASOCIACION DE VIVIENDA VILLA EL ROSAL - VILLA EL SALVADOR"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIS) ---
-    {value: 173, text: "RIS VILLA EL SALVADOR", distrito: ""}
-
+   { value: 52, text: "C.S. CAJA DE AGUA" },
+{ value: 61, text: "C.S. CAMPOY" },
+{ value: 57, text: "C.S. CHACARILLA DE OTERO" },
+{ value: 49, text: "C.S. DANIEL ALCIDES CARRION" },
+{ value: 53, text: "C.S. LA HUAYRONA" },
+{ value: 58, text: "C.S. LA LIBERTAD" },
+{ value: 60, text: "C.S. MANGOMARCA" },
+{ value: 54, text: "C.S. SAN FERNANDO" },
+{ value: 55, text: "C.S. SANTA ROSA DE LIMA" },
+{ value: 48, text: "C.S. SANTA FE DE TOTORITA" },
+{ value: 56, text: "C.S. ZARATE" },
+{ value: 50, text: "C.S.M.C. MANGOMARCA" },
+{ value: 51, text: "C.S.M.C. JAVIER MARIATEGUI CHIAPPE" },
+{ value: 59, text: "P.S. 15 DE ENERO" },
+{ value: 47, text: "P.S. AZCARRUNZ ALTO" }
 ],
 
 "6": [
-   // --- CENTRO DE SALUD (C.S.) ---
-    {value: 69, text: "C.S. NUEVA ESPERANZA", distrito: "AV. 26 DE NOVIEMBRE 835 NVA. ESPERANZA VILLA MARIA DEL TRIUNFO"},
-
-    // --- CENTRO DE SALUD MENTAL COMUNITARIO (C.S.M.C.) ---
-    {value: 81, text: "C.S.M.C. MONSEÑOR JOSE RAMON GURRUCHAGA", distrito: "AVENIDA SANTA ROSA 900 AL COSTADO DEL ALBERGUE DE LOS ANCIANOS VILLA MARINA VILLA MARIA DEL TRIUNFO"},
-    {value: 78, text: "C.S.M.C. SAN GABRIEL ALTO", distrito: "OTROS PUEBLO JOVEN JOSE CARLOS MARIATEGUI MZ SPCO LOTE TPA ETAPA SEXTA SECTOR SAN GABRIEL DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 178, text: "C.S.M.C. YUYAY WASI", distrito: "AV. NICOLAS DE PIEROLA N°1156 PRIMERA ZONA DEL HOGAR POLICIAL, VILLA MARIA DEL TRIUNFO"},
-
-    // --- CENTRO MATERNO INFANTIL (C.M.I.) ---
-    {value: 73, text: "C.M.I. DANIEL A. CARRIÓN", distrito: "AV. PACHACUTEC Nº 3470 VILLA MARIA DEL TRIUNFO"},
-    {value: 65, text: "C.M.I. JOSÉ GALVEZ", distrito: "CRUCE CALLE ARICA CON AGRICULTURA S/N VILLA MARIA DEL TRIUNFO"},
-    {value: 57, text: "C.M.I. JOSÉ CARLOS MARIÁTEGUI", distrito: "AVENIDA SIMÓN BOLÍVAR ESQUINA JR. MARIANO NECOCHEA S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 76, text: "C.M.I. TABLADA DE LURÍN", distrito: "AV. REPUBLICA Y BILLINGURST S/N 2DO SECTOR VILLA MARIA DEL TRIUNFO"},
-    {value: 54, text: "C.M.I. VILLA MARÍA DEL TRIUNFO", distrito: "AV. PEDRO VALLE S/N (ALTURA CUADRA 18 AV.EL TRIUNFO) VILLA MARIA DEL TRIUNFO"},
-
-    // --- PUESTO DE SALUD (P.S.) ---
-    {value: 55, text: "P.S. 12 DE JUNIO", distrito: "AAHH. 12 DE JUNIO S/N CALLE AMANCAES S/N, INTERSECCIÓN CON PASAJE LAS FLORES, MZ. J, LOTE 4, VILLA MARIA DEL TRIUNFO"},
-    {value: 60, text: "P.S. BUENOS AIRES", distrito: "BUENOS AIRES S/N SAN GABRIEL BAJO NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 71, text: "P.S. CÉSAR VALLEJO II", distrito: "VILLA MARIA DEL TRIUNFO"},
-    {value: 68, text: "P.S. CIUDAD DE GOSEN", distrito: "DIVINO MAESTRO MZ D LT 11 VILLA MARIA DEL TRIUNFO"},
-    {value: 80, text: "P.S. DAVID GUERRERO DUARTE", distrito: "AV. LOS INCAS ESQ. JR. TUPAC YUPANQUI 2DO SECTOR VILLA MARIA DEL TRIUNFO"},
-    {value: 59, text: "P.S. JUAN CARLOS SOBERON", distrito: "PROLONGACION JOSE CARLOS MARIATEGUI MZ 6 LOTE 18 AAHH VIRGEN DE LA CANDELARIA VILLA MARIA DEL TRIUNFO"},
-    {value: 75, text: "P.S. MICAELA BASTIDAS", distrito: "JR. JOSE OLAYA S/N VILLA MARIA DEL TRIUNFO"},
-    {value: 66, text: "P.S. MÓDULO I", distrito: "PROLONGACION LUCANAS S/N PARADERO 12 VILLA MARIA DEL TRIUNFO"},
-    {value: 72, text: "P.S. NUEVA ESPERANZA ALTA", distrito: "AV. R. MERINO Y TACNA MZ 9 LT 1B COMITE 8B NUEVA ESPERANZA ALTA DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 67, text: "P.S. NUEVO PROGRESO", distrito: "PUEBLO JOVEN NUEVO PROGRESO SECTOR I VILLA MARIA DEL TRIUNFO"},
-    {value: 62, text: "P.S. PARAÍSO ALTO", distrito: "MZ F2 ,LOTE 1 , SECTOR PARAÍSO ALTO DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 56, text: "P.S. SANTA ROSA DE BELÉN", distrito: "AV. BOLIVAR CUADRA 6 CON JOSE OLAYA S/N VILLA MARIA DEL TRIUNFO"},
-    {value: 77, text: "P.S. SANTA ROSA DE LAS CONCHITAS", distrito: "AAHH SANTA ROSA DE LAS CONCHITAS MZ L LOTE 18 DISTRITO VILLA MARIA DEL TRIUNFO"},
-    {value: 74, text: "P.S. TORRES DE MELGAR", distrito: "MZ. SPCO LOTE PM AAHH TORRES DE MELGAR VILLA MARIA DEL TRIUNFO"},
-    {value: 61, text: "P.S. VALLE ALTO", distrito: "CALLE ALFONSO UGARTE S/N ALTURA DE LA CUADRA 11. AV. JOSE OLAYA VILLA MARIA DEL TRIUNFO"},
-    {value: 64, text: "P.S. VALLE BAJO", distrito: "CALLE INDEPENDENCIA CUADRA 1 S/N VILLA MARIA DEL TRIUNFO"},
-    {value: 58, text: "P.S. VILLA LIMATAMBO", distrito: "MZ J1 LOTE 2 AAHH VILLA LIMATAMBO VILLA MARIA DEL TRIUNFO"},
-    {value: 70, text: "P.S. VIRGEN DE LOURDES", distrito: "AV. CONDEBAMBA S/N NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
-
-    // --- CENTRO DE ATENCIÓN MÓVIL (CAM) ---
-    {value: 79, text: "CAM. TAYTA WASI", distrito: "AVENIDA AV. PRIMAVERA CRUZE CON CALLE SUCRE S/N PPJJ JOSE CARLOS MARIATEGUI NÚMERO S/N DISTRITO VILLA MARIA DEL TRIUNFO"},
-
-    // --- HOGAR PROTEGIDO ---
-    {value: 184, text: "HOGAR PROTEGIDO DE VILLA MARIA DEL TRIUNFO", distrito: "OTROS GRUPO1 MANZANA L LOTE 12 URBANIZACIÓN AAHH NUEVO PROGRESO DISTRITO VILLA MARIA DEL TRIUNFO"},
-
-    // --- OTROS ESTABLECIMIENTOS (RIS) ---
-    {value: 172, text: "RIS VILLA MARIA DEL TRIUNFO", distrito: ""}
-
+  { value: 66, text: "C.S. BAYOVAR" },
+{ value: 68, text: "C.S. GANIMEDES" },
+{ value: 69, text: "C.S. HUASCAR XV" },
+{ value: 70, text: "C.S. HUASCAR II" },
+{ value: 65, text: "C.S. MEDALLA MILAGROSA" },
+{ value: 67, text: "C.S. SAN HILARION" },
+{ value: 71, text: "C.S.M.C. JAIME ZUBIETA" },
+{ value: 72, text: "C.S.M.C. NUEVO PERU" },
+{ value: 63, text: "P.S. AYACUCHO" },
+{ value: 64, text: "P.S. PROYECTOS ESPECIALES" },
+{ value: 62, text: "P.S. SAGRADA FAMILIA" }
 ],
-"7": [
-    {value: 185, text: "SEDE ADMINISTRATIVA - I (LOCAL PINILLOS)", distrito: "Calle Martínez de Pinillos N°124-B, Barranco "},
-    {value: 186, text: "SEDE ADMINISTRATIVA - II  (LOCAL FAP)", distrito: "Av. Sáenz Peña Nro. 261, Barranco"},
-    {value: 187, text: "ALMACÉN CENTRAL", distrito: "AV. SANTA ANITA S/N (ALTURA CDRA.7), Chorrillos"},
+"8": [
+{ value: 83, text: "C.S. 10 DE OCTUBRE" },
+{ value: 79, text: "C.S. CRUZ DE MOTUPE" },
+{ value: 82, text: "C.S. ENRIQUE MONTENEGRO" },
+{ value: 81, text: "C.S. JAIME ZUBIETA" },
+{ value: 80, text: "C.S. JOSE CARLOS MARIATEGUI" },
+{ value: 78, text: "C.S. SANTA MARIA" },
+{ value: 77, text: "C.S. SU SANTIDAD JUAN PABLO II" },
+{ value: 74, text: "P.S. CESAR VALLEJO" },
+{ value: 73, text: "P.S. JOSE CARLOS MARIATEGUI V ETAPA" },
+{ value: 75, text: "P.S. MARISCAL CACERES" },
+{ value: 76, text: "P.S. TUPAC AMARU II" }
+],
+"9": [
+   
+    { value: 92, text: "Almacén DIRIS", piso: "Sotano" },
+{ value: 93, text: "Archivo y Acervo Documentario", piso: "PISO 12" },
+{ value: 94, text: "Dirección Adjunta", piso: "PISO 10" },
+{ value: 95, text: "Dirección Administrativa", piso: "PISO 10" },
+{ value: 96, text: "Dirección de Medicamentos Insumos y Drogas", piso: "PISO 09" },
+{ value: 97, text: "Dirección De Monitoreo", piso: "PISO 13" },
+{ value: 98, text: "Dirección General", piso: "PISO 10" },
+{ value: 99, text: "Espacio de Monitoreo de Emergencias y Desastres", piso: "PISO 01" },
+{ value: 100, text: "Oficina Infraestructura Y Equipamiento", piso: "PISO 09" },
+{ value: 101, text: "Oficina de Abastecimiento", piso: "PISO 10" },
+{ value: 102, text: "Oficina de Acceso y uso racional de Medicamentos", piso: "PISO 09" },
+{ value: 103, text: "Oficina De Apoyo Al Diagnostico Y Laboratorio De Salud Pública", piso: "PISO 13" },
+{ value: 104, text: "Oficina de Asesoría Jurídica", piso: "PISO 10" },
+{ value: 105, text: "Oficina de Autorizaciones Sanitarias de Establecimientos Farmaceuticos", piso: "PISO 09" },
+{ value: 106, text: "Oficina de Certificaion de Salud Ambiental/ Fiscalizacion y control en Salud Ambiental", piso: "PISO 09" },
+{ value: 107, text: "Oficina De Comunicaciones, E Imagen Institucional", piso: "PISO 10" },
+{ value: 108, text: "Oficina De Contabilidad", piso: "PISO 12" },
+{ value: 109, text: "Oficina de Epidemiología /Inteligencia Sanitaria y Docencia e Investigación", piso: "PISO 12" },
+{ value: 110, text: "Oficina de Fiscalizacion y Monitoreo y Vigilancia Sanitaria", piso: "PISO 09" },
+{ value: 111, text: "Oficina De Gestión De La Calidad", piso: "PISO 13" },
+{ value: 112, text: "Oficina De Gestión De Recursos Humanos", piso: "PISO 13" },
+{ value: 113, text: "Oficina De Gestión De Riesgos Y Desastres", piso: "PISO 01" },
+{ value: 114, text: "Oficina De Gestión De Tecnologias De La Informacion", piso: "PISO 12" },
+{ value: 115, text: "Oficina De Intervenciones Sanitarias", piso: "PISO 13" },
+{ value: 116, text: "Oficina De Planeamiento Y Modernizacion De La Gestion Publica", piso: "PISO 12" },
+{ value: 117, text: "Oficina De Presupuesto Publico", piso: "PISO 12" },
+{ value: 118, text: "Oficina De Proyectos De Inversiones", piso: "PISO 12" },
+{ value: 119, text: "Oficina De Salud Ambiental e Inocuidad Alimentaria", piso: "PISO 09" },
+{ value: 120, text: "Oficina De Seguros", piso: "PISO 09" },
+{ value: 121, text: "Oficina De Servicios De Salud", piso: "PISO 13" },
+{ value: 122, text: "Oficina De Tesorería", piso: "PISO 12" },
+{ value: 123, text: "Oficina de Vigilancia Sanitaria", piso: "PISO 09" },
+{ value: 124, text: "Órgano De Control Institucional", piso: "PISO 10" },
+{ value: 125, text: "Plataforma de Atencio al Usuario", piso: "PISO 01" },
+{ value: 126, text: "Secretaría Técnica", piso: "PISO 12" },
+{ value: 127, text: "Tramite del Publico Usuario", piso: "PISO 01" },
+{ value: 128, text: "Trámite Documentario", piso: "PISO 01" },
+{ value: 129, text: "Unidad Funcional Gestión Compensación", piso: "PISO 12" },
+{ value: 130, text: "Unidad Funcional De Adquisiciones", piso: "PISO 10" },
+{ value: 131, text: "Unidad Funcional De Almacenamiento Y Distribución", piso: "PISO 09" },
+{ value: 132, text: "Unidad Funcional De Área Transmisible", piso: "PISO 13" },
+{ value: 133, text: "Unidad Funcional De Autorización Y Categorización De Ipress", piso: "PISO 13" },
+{ value: 134, text: "Unidad Funcional De Control Previo", piso: "PISO 12" },
+{ value: 135, text: "Unidad Funcional De Gestión De Relaciones Humanas, Sociales, Seguridad Y Salud En El Trabajo", piso: "PISO 12" },
+{ value: 136, text: "Unidad Funcional De Gestión Del Desarrollo, Capacitación Y Del Rendimiento", piso: "PISO 13" },
+{ value: 137, text: "Unidad Funcional De Gestión Del Empleo", piso: "PISO 9" },
+{ value: 138, text: "Unidad Funcional De Integración Contable Y Presupuesto", piso: "PISO 12" },
+{ value: 139, text: "Unidad Funcional De Mantenimiento", piso: "PISO 09" },
+{ value: 140, text: "Unidad Funcional De Modernizacion", piso: "PISO 12" },
+{ value: 141, text: "Unidad Funcional De Organización De La Salud", piso: "PISO 13" },
+{ value: 142, text: "Unidad Funcional De Organización Del Trabajo Y Su Distribución", piso: "PISO 09" },
+{ value: 143, text: "Unidad Funcional De Patrimonio", piso: "PISO 10" },
+{ value: 144, text: "Unidad Funcional De Planificación De Políticas De Rrhh.", piso: "PISO 09" },
+{ value: 145, text: "Unidad Funcional De Programación", piso: "PISO 10" },
+{ value: 146, text: "Unidad Funcional De Referencia Y Contrarreferencia", piso: "PISO 13" },
+{ value: 147, text: "Unidad Funcional De Servicios Generales Y Transporte", piso: "Mezanine" },
+{ value: 148, text: "Unidad Funcional De Soporte Informático/Unidad Funcional de Telecomunicaciones y Redes", piso: "PISO 12" },
+{ value: 149, text: "Unidad Funcional Del Área De Promoción De La Salud", piso: "PISO 13" },
+{ value: 150, text: "Unidad Funcional Del Área Mujer Adolescente Y Joven.", piso: "PISO 13" },
+{ value: 151, text: "Unidad Funcional Del Área Niño", piso: "PISO 13" },
+{ value: 152, text: "Unidad Funcional Del Área No Transmisible, Adulto Y Adulto Mayor.", piso: "PISO 13" },
+{ value: 153, text: "Unidad Funcional Docencia e Investigación", piso: "PISO 12" },
+{ value: 154, text: "Unidad Funcional Infraestructura Y Equipamiento", piso: "PISO 09" }
     
 
 
@@ -547,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
     risSelect.addEventListener("change", function () {
         const risId = risSelect.value;
         entidadSelect.innerHTML = "";
-        distritoInput.value = ""; // limpiar distrito
+        //distritoInput.value = ""; // limpiar distrito
         // 🔹 Limpiamos el select pero SIN eliminarlo del DOM
         while (entidadSelect.firstChild) {
             entidadSelect.removeChild(entidadSelect.firstChild);
@@ -567,7 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const option = document.createElement("option");
                 option.value = opt.value;
                 option.textContent = opt.text;
-                option.dataset.distrito = opt.distrito;
+                //option.dataset.distrito = opt.distrito;
                 entidadSelect.appendChild(option);
             });
         }
@@ -576,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Evento: cambiar entidad -> setear distrito
     entidadSelect.addEventListener("change", function () {
         const selectedOption = entidadSelect.options[entidadSelect.selectedIndex];
-        distritoInput.value = selectedOption ? selectedOption.dataset.distrito : "";
+        //distritoInput.value = selectedOption ? selectedOption.dataset.distrito : "";
     });
 
     // Limpiar al inicio

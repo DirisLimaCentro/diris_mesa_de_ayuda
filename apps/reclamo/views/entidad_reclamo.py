@@ -222,8 +222,8 @@ class EntidadReclamoList_soporte(ListView):
  
         queryset = queryset.filter(
             estado_reclamo=0,
-            tipo_incidencia__in=[1, 4, 5,7]
-        ).exclude(tipo_incidencia__in=[2, 3, 6])
+            tipo_incidencia__in=[1,2,3, 4, 5,7]
+        ).exclude(tipo_incidencia__in=[  6])
  
         return queryset.order_by('-id')
     
@@ -284,9 +284,9 @@ class EntidadReclamoList_soporte_encurso(ListView):
             Q(estado_reclamo=1) | Q(estado_reclamo=2),
  
             id_user=self.request.user.id,
-            tipo_incidencia__in=[1, 4, 5,7]
+            tipo_incidencia__in=[1,2,3 4, 5,7]
         ).exclude(
-            tipo_incidencia__in=[2, 3, 6]
+            tipo_incidencia__in=[6]
         )
      
  
@@ -349,9 +349,9 @@ class EntidadReclamoList_soporte_cerrados(ListView):
         queryset = queryset.filter(
             Q(estado_reclamo=3),
             id_user=self.request.user.id,
-            tipo_incidencia__in=[1, 4, 5,7]
+            tipo_incidencia__in=[1,2,3, 4, 5,7]
         ).exclude(
-            tipo_incidencia__in=[2, 3, 6]
+            tipo_incidencia__in=[6]
         )
      
  

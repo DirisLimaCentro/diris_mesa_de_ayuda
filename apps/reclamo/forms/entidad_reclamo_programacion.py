@@ -10,7 +10,7 @@ from setup.models.entidad import Entidad
 
 class EntidadReclamoForm_programacion(forms.ModelForm):
     ris = forms.ModelChoiceField(
-        queryset = Ris.objects.filter(estado__in=[1, 3]),
+        queryset = Ris.objects.filter(estado__in=[1, 2]),
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="RIS",
         empty_label="Seleccione un RIS"
@@ -22,21 +22,21 @@ class EntidadReclamoForm_programacion(forms.ModelForm):
         required=False
     )
 
-    chofer = forms.ModelChoiceField(   # 👈 nuevo campo
-        queryset=Chofer.objects.filter(estado=1).order_by('nombre'),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Chofer",
-        empty_label="Seleccione un chofer",
-        required=False 
-    )
+#    chofer = forms.ModelChoiceField(   # 👈 nuevo campo
+#         queryset=Chofer.objects.filter(estado=1).order_by('nombre'),
+#         widget=forms.Select(attrs={'class': 'form-control'}),
+#         label="Chofer",
+#         empty_label="Seleccione un chofer",
+#         required=False 
+#     )
 
-    auto = forms.ModelChoiceField(   # 👈 nuevo campo
-        queryset=Auto.objects.filter(estado_auto=1).order_by('placa'),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Auto",
-        empty_label="Seleccione un auto",
-        required=False   
-    )
+#     auto = forms.ModelChoiceField(   # 👈 nuevo campo
+#         queryset=Auto.objects.filter(estado_auto=1).order_by('placa'),
+#         widget=forms.Select(attrs={'class': 'form-control'}),
+#         label="Auto",
+#         empty_label="Seleccione un auto",
+#         required=False   
+#     )
 
    
      
@@ -46,10 +46,10 @@ class EntidadReclamoForm_programacion(forms.ModelForm):
             'ris',
             'entidad2',
             'entidad_id',
-            'distrito',
+            #'distrito',
             'fecha_programada',
-            'chofer',    
-            'auto',
+            #'chofer',    
+           # 'auto',
             'descripcion_general',
             'detalle_programacion',
             'cantidad_personal',
