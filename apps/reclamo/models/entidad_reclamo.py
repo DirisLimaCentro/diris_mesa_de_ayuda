@@ -209,7 +209,30 @@ class EntidadReclamo(models.Model):
     # codigo_ugipress = models.CharField(_('Código de la UGIPRESS regístrado en SUSALUD'), max_length=8, null=True,
     #                                    blank=True)
 
-    nombres= models.CharField(_('Nombres y Apellidos del usuario que presenta el problema:'), max_length=80
+
+    dependencia_service = models.CharField(_('Dependencia:'), max_length=500,null=True, blank=True)
+
+    dependencia_service_nombre = models.CharField(_(':'), max_length=500,null=True, blank=True)
+
+
+
+
+    usuario_service = models.CharField(_('Usuario:'), max_length=60)
+    usuario_service_nombre = models.CharField(_('Usuario:'), max_length=30,null=True, blank=True)
+
+    dependencia_padre = models.CharField(_('Dependencia padre:'), max_length=30,null=True, blank=True)
+    dependencia_padre_nombre =  models.CharField(_('Dependencia padre:'), max_length=30,null=True, blank=True)
+
+
+    cargo_service =models.CharField(_('Cargo:'), max_length=30,null=True, blank=True)
+    cargo_service_nombre=models.CharField(_('Cargo:'), max_length=100,null=True, blank=True)
+
+ 
+
+    
+    ############################
+
+    nombres= models.CharField(_('Nombres y Apellidos del usuario que presenta el problema:'), max_length=80,null=True, blank=True
                                     )
 
     apellidos= models.CharField(_('Apellidos del usuario que presenta el problema:'), max_length=80,null=True, blank=True
@@ -219,7 +242,7 @@ class EntidadReclamo(models.Model):
     dni= models.CharField(_('DNI'), max_length=8,null=True, blank=True)
 
     cargo = models.PositiveIntegerField(
-        _('Cargo de quien presenta el problema:'), choices=CARGO)
+        _('Cargo de quien presenta el problema:'), choices=CARGO,null=True, blank=True)
     
     tipo_incidencia = models.PositiveIntegerField(
         _('Tipo de incidencia:'), choices=TIPO_INCIDENCIA)
@@ -267,9 +290,11 @@ class EntidadReclamo(models.Model):
     detalle_atencion = models.CharField(_('Detalle de la atención:'), max_length=800,
                                            null=True, blank=True)
     
-    ris  = models.ForeignKey(Ris, on_delete=models.CASCADE)
+    ris  = models.ForeignKey(Ris, on_delete=models.CASCADE,null=True, blank=True)
 
-    entidad2 = models.IntegerField()
+    entidad2 = models.IntegerField(null=True, blank=True)
+
+    n_atenciones = models.PositiveIntegerField(('Número de atenciones:'))
 
     ##################################
     tipo_institucion = models.PositiveIntegerField(_('Tipo de institución donde se presentó el reclamo'),

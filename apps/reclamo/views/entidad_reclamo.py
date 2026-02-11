@@ -52,7 +52,8 @@ from openpyxl.styles import PatternFill, Font, Alignment
 import locale
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
-
+import requests
+from django.http import JsonResponse
  
 
 
@@ -65,7 +66,7 @@ from django.utils.dateparse import parse_date
 
 
  
-paso_uno = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle_solicitud' ,'anydesk','ris','piso','correo_usuario','entidad2']
+paso_uno = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle_solicitud' ,'anydesk','ris','piso','correo_usuario','entidad2','n_atenciones','dependencia_service','usuario_service','dependencia_service_nombre','dependencia_padre','dependencia_padre_nombre','cargo_service']
 paso_dos = ['tipo_documento_usuario', 'numero_documento_usuario', 'razon_social_usuario', 'nombres_usuario',
             'apellido_paterno_usuario', 'apellido_materno_usuario']
 paso_tres = [  'numero_documento_presenta', 'razon_social_presenta',
@@ -90,10 +91,10 @@ paso_seis_prueba = ['tiene_medida','resultado_reclamo', 'motivo_conclusion_antic
                     ]
 paso_siete_prueba = ['comunicacion_resultado_reclamo', 'fecha_notificacion']
 
-paso_uno_secretaria = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle_solicitud'  ,'sede','nombre','anydesk','piso' ,'ris','entidad2','correo_usuario'
+paso_uno_secretaria = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle_solicitud'  ,'sede','nombre','anydesk','piso' ,'ris','entidad2','correo_usuario','n_atenciones','dependencia_service','usuario_service','dependencia_service_nombre','dependencia_padre','dependencia_padre_nombre','cargo_service'
             ]
 
-paso_uno_general = ['nombres' ,'cargo','tipo_incidencia',  'celular' ,'detalle_solicitud'  ,'sede','nombre','anydesk','piso' ,'correo_usuario','ris','entidad2'
+paso_uno_general = ['nombres' ,'cargo','tipo_incidencia',  'celular' ,'detalle_solicitud'  ,'sede','nombre','anydesk','piso' ,'correo_usuario','ris','entidad2' 
             ]
 
 paso_uno_programacion = ['ris','distrito','detalle_programacion','fecha_programada' ,'entidad2', 'chofer' ,'auto' ,'descripcion_general'
@@ -3735,4 +3736,35 @@ def atender_reclamo_sihce(request, pk):
         + "?anio=" + str(request.session.get('reclamo_anio', ''))
         + "&mes=" + str(request.session.get('reclamo_mes', ''))
     )
- 
+
+def listar_personas_por_dependencia(request):
+    id_dependencia = request.GET.get("id_dependencia")
+
+    if not id_dependencia:
+        return JsonResponse({"error": "Falta id_dependencia"}, status=400)
+
+    url = f"http://10.0.5.64/HelpdeskApi/Helpdesk/listarPersona/{id_dependencia}"
+
+    try:
+        r = requests.get(url, timeout=5)
+        data = r.json()
+
+        resultados = [
+            {
+                "id": str(p.get("id_persona")),
+                "nombre_completo": (
+                    f"{p.get('nombre','')} "
+                    f"{p.get('apellido_paterno','')} "
+                    f"{p.get('apellido_materno','')}"
+                ).strip(),
+                "cargo": p.get("cargo", ""),
+                "telefono": p.get("telefono", ""),   # ✅ NUEVO
+                "correo": p.get("correo", "")       # ✅ NUEVO
+            }
+            for p in data
+        ]
+
+        return JsonResponse({"resultados": resultados})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

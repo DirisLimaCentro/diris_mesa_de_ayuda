@@ -49,7 +49,7 @@ class EntidadReclamoForm_programacion(forms.ModelForm):
             #'distrito',
             'fecha_programada',
             #'chofer',    
-           # 'auto',
+            #'auto',
             'descripcion_general',
             'detalle_programacion',
             'cantidad_personal',

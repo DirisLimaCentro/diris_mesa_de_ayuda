@@ -48,6 +48,7 @@ INSTALLED_LIBRARIES = [
     'rest_framework',
     'django_filters',
     'widget_tweaks',
+    'django_select2',
 ]
 
 INSTALLED_MODULES = [

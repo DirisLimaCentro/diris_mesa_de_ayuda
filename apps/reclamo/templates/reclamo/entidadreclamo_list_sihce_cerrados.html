@@ -138,7 +138,7 @@
     </h1>
 
     <!-- Tabla leyenda a la derecha -->
-    <table id="leyenda" class="table table-bordered table-hover align-middle shadow-sm mb-0" style="width: 45%;">
+    <!--<table id="leyenda" class="table table-bordered table-hover align-middle shadow-sm mb-0" style="width: 45%;">
         <thead class="table-primary text-center">
             <tr>
                 <th colspan="5" class="fs-6 fw-bold py-2">CUADRO DE PRIORIDADES</th>
@@ -153,7 +153,7 @@
                 <td class="prioridad-5 fw-semibold text-dark py-2">BAJA</td>
             </tr>
         </tbody>
-    </table>
+    </table>-->
 </div>
                                 <div class="card-body collapse show" style="background-color:rgb(204, 200, 200) ">
                                     <div class="row">
@@ -219,7 +219,7 @@
                                                     <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>Prioridad</th>
+                                                        <!--<th>Prioridad</th>-->
                                                         <th>Fecha y hora de registro</th>
                                                         <th class="text-center">Estado</th>
                                                         <th class="text-center">Código de ticket</th>
@@ -246,7 +246,7 @@
                                                     {% for object in object_list %}
                                                         <tr>
                                                             <th>{{ forloop.counter0|add:page_obj.start_index }}</th>
-                                                            <td style="text-align: center; vertical-align: middle;">
+                                                            <!--<td style="text-align: center; vertical-align: middle;">
                                                                 {% if object.entidad_id == 147 %}
                                                                 <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
                                                                 {% elif object.entidad_id == 142 %}
@@ -267,7 +267,7 @@
                                                        
                                                     
 
-                                                                   {% endif %}</td>
+                                                                   {% endif %}</td>-->
                                                             <td>{{ object.created_at }}</td>
                                                             <td class="text-center">
                                                              {% if object.estado_reclamo == 1 %}
@@ -287,332 +287,14 @@
                                                            
                                                             <!--<td>{{ object.periodo|default_if_none:"" }}</td>-->
                                                             {#                                                            <td>{{ object.codigo_administrador|default_if_none:"" }}</td>#}
-                                                            <td class="text-center">{{ object.nombres }} 
+                                                            <td class="text-center">{{ object.usuario_service_nombre }} 
                                                             </td>
                                                              <td class="text-center">
                                                        {{ object.celular|default:'' }}
                                                             </td>
  
-                                                             <td class="text-center">  {% if object.entidad2 == 1 %}
-    P.S PALERMO
-{% elif object.entidad2 == 2 %}
-    P.S RESCATE
-{% elif object.entidad2 == 3 %}
-    P.S JARDIN ROSA DE SANTA MARIA
-{% elif object.entidad2 == 4 %}
-    C.S.M.C SURQUILLO
-{% elif object.entidad2 == 5 %}
-    C.S.M.C JESUS MARIA
-{% elif object.entidad2 == 6 %}
-    P.S SANTA ROSA
-{% elif object.entidad2 == 7 %}
-    C.S.M.C MIRONES BAJO
-{% elif object.entidad2 == 8 %}
-    C.S.M.C VILLA CAMPOY
-{% elif object.entidad2 == 9 %}
-    C.S MIRONES BAJO
-{% elif object.entidad2 == 10 %}
-    C.S RAUL PATRUCCO PUIG
-{% elif object.entidad2 == 11 %}
-    C.S CONDE DE LA VEGA BAJA
-{% elif object.entidad2 == 12 %}
-    C.S JUAN PEREZ CARRANZA
-{% elif object.entidad2 == 13 %}
-    C.S SAN SEBASTIAN
-{% elif object.entidad2 == 14 %}
-    C.S UNIDAD VECINAL N°3
-{% elif object.entidad2 == 15 %}
-    C.S VILLA MARIA PERPETUO SOCORRO
-{% elif object.entidad2 == 16 %}
-    C.S.M.C MAGDALENA
-{% elif object.entidad2 == 17 %}
-    C.S MIRONES
-{% elif object.entidad2 == 18 %}
-    C.S.M.C SAN MARCOS
-{% elif object.entidad2 == 19 %}
-    C.S.M.C KUYANAKUSUN
-{% elif object.entidad2 == 20 %}
-    C.S CONTROL DE ZOONOSIS
-{% elif object.entidad2 == 21 %}
-    P.S HUACA PANDO
-{% elif object.entidad2 == 22 %}
-    C.S SAN MIGUEL
-{% elif object.entidad2 == 23 %}
-    C.S CHACRA COLORADA
-{% elif object.entidad2 == 24 %}
-    C.S BREÑA
-{% elif object.entidad2 == 25 %}
-    C.S.M.C HONORIO DELGADO
-{% elif object.entidad2 == 26 %}
-    C.S JESUS MARIA
-{% elif object.entidad2 == 27 %}
-    C.S.M.C SAN MIGUEL
-{% elif object.entidad2 == 28 %}
-    C.S.M.I MAGDALENA
-{% elif object.entidad2 == 29 %}
-    C.S SANTA CRUZ DE MIRAFLORES
-{% elif object.entidad2 == 30 %}
-    C.S SAN ISIDRO
-{% elif object.entidad2 == 31 %}
-    C.S LINCE
-{% elif object.entidad2 == 32 %}
-    C.S VILLA VICTORIA PORVENIR
-{% elif object.entidad2 == 33 %}
-    C.S SAN ATANACIO DEL PEDREGAL
-{% elif object.entidad2 == 34 %}
-    C.S.M.C SAN ISIDRO
-{% elif object.entidad2 == 35 %}
-    C.S.M.I SURQUILLO
-{% elif object.entidad2 == 36 %}
-    P.S SAN JUAN MASIAS
-{% elif object.entidad2 == 37 %}
-    P.S CLAS EL PINO
-
-    {% elif object.entidad2 == 38 %}
-    C.S.M.C SAN COSME
-{% elif object.entidad2 == 39 %}
-    C.S.M.C SAN BORJA
-{% elif object.entidad2 == 40 %}
-    C.S SAN LUIS
-{% elif object.entidad2 == 41 %}
-    C.S TODOS LOS SANTOS DE SAN BORJA
-{% elif object.entidad2 == 42 %}
-    C.S SAN COSME
-{% elif object.entidad2 == 43 %}
-    C.S EL PINO
-{% elif object.entidad2 == 44 %}
-    C.S MAX ARIAS SCHREIBER
-{% elif object.entidad2 == 45 %}
-    C.S.M.C LA VICTORIA
-{% elif object.entidad2 == 46 %}
-    C.S.M.I EL PORVENIR
-{% elif object.entidad2 == 47 %}
-    P.S AZCARRUNZ ALTO
-{% elif object.entidad2 == 48 %}
-    C.S SANTA FE DE TOTORITA
-{% elif object.entidad2 == 49 %}
-    C.S DANIEL ALCIDES CARRION
-{% elif object.entidad2 == 50 %}
-    C.S.M.C MANGOMARCA
-{% elif object.entidad2 == 51 %}
-    C.S.M.C JAVIER MARIATEGUI CHIAPPE
-{% elif object.entidad2 == 52 %}
-    C.S CAJA DE AGUA
-{% elif object.entidad2 == 53 %}
-    C.S LA HUAYRONA
-{% elif object.entidad2 == 54 %}
-    C.S SAN FERNANDO
-{% elif object.entidad2 == 55 %}
-    C.S SANTA ROSA DE LIMA
-{% elif object.entidad2 == 56 %}
-    C.S ZARATE
-{% elif object.entidad2 == 57 %}
-    C.S CHACARILLA DE OTERO
-{% elif object.entidad2 == 58 %}
-    C.S LA LIBERTAD
-{% elif object.entidad2 == 59 %}
-    P.S 15 DE ENERO
-{% elif object.entidad2 == 60 %}
-    C.S MANGOMARCA
-{% elif object.entidad2 == 61 %}
-    C.S CAMPOY
-{% elif object.entidad2 == 62 %}
-    P.S SAGRADA FAMILIA
-{% elif object.entidad2 == 63 %}
-    P.S AYACUCHO
-{% elif object.entidad2 == 64 %}
-    P.S PROYECTOS ESPECIALES
-{% elif object.entidad2 == 65 %}
-    C.S MEDALLA MILAGROSA
-{% elif object.entidad2 == 66 %}
-    C.S BAYOVAR
-{% elif object.entidad2 == 67 %}
-    C.S SAN HILARION
-{% elif object.entidad2 == 68 %}
-    C.S GANIMEDES
-{% elif object.entidad2 == 69 %}
-    C.S HUASCAR XV
-{% elif object.entidad2 == 70 %}
-    C.S HUASCAR II
-{% elif object.entidad2 == 71 %}
-    C.S.M.C JAIME ZUBIETA
-{% elif object.entidad2 == 72 %}
-    C.S.M.C NUEVO PERU
-{% elif object.entidad2 == 73 %}
-    P.S JOSE CARLOS MARIATEGUI V ETAPA
-{% elif object.entidad2 == 74 %}
-    P.S CESAR VALLEJO
-{% elif object.entidad2 == 75 %}
-    P.S MARISCAL CACERES
-    {% elif object.entidad2 == 76 %}
-    P.S TUPAC AMARU II
-{% elif object.entidad2 == 77 %}
-    C.S SU SANTIDAD JUAN PABLO II
-{% elif object.entidad2 == 78 %}
-    C.S SANTA MARIA
-{% elif object.entidad2 == 79 %}
-    C.S CRUZ DE MOTUPE
-{% elif object.entidad2 == 80 %}
-    C.S JOSE CARLOS MARIATEGUI
-{% elif object.entidad2 == 81 %}
-    C.S JAIME ZUBIETA
-{% elif object.entidad2 == 82 %}
-    C.S ENRIQUE MONTENEGRO
-{% elif object.entidad2 == 83 %}
-    C.S 10 DE OCTUBRE
-{% elif object.entidad2 == 84 %}
-    HOSPITAL SAN JUAN DE LURIGANCHO
-{% elif object.entidad2 == 85 %}
-    HOSPITAL VICTOR LARCO HERRERA
-{% elif object.entidad2 == 86 %}
-    HOSPITAL DE APOYO SANTA ROSA
-{% elif object.entidad2 == 87 %}
-    HOSPITAL DOS DE MAYO
-{% elif object.entidad2 == 88 %}
-    HOSPITAL ARZOBISPO LOAYZA
-{% elif object.entidad2 == 89 %}
-    HOSPITAL DE EMERGENCIAS JOSE CASIMIRO ULLOA
-{% elif object.entidad2 == 90 %}
-    HOSPITAL DE EMERGENCIAS PEDIATRICAS
-{% elif object.entidad2 == 91 %}
-    HOSPITAL NACIONAL DOCENTE MADRE NIÑO SAN BARTOLOME
-                                                                {% elif object.entidad2 == 92 %}
-    Almacén DIRIS
-{% elif object.entidad2 == 93 %}
-    Archivo y Acervo Documentario
-{% elif object.entidad2 == 94 %}
-    Dirección Adjunta
-{% elif object.entidad2 == 95 %}
-    Dirección Administrativa
-{% elif object.entidad2 == 96 %}
-    Dirección de Medicamentos Insumos y Drogas
-{% elif object.entidad2 == 97 %}
-    Dirección De Monitoreo
-{% elif object.entidad2 == 98 %}
-    Dirección General
-{% elif object.entidad2 == 99 %}
-    Espacio de Monitoreo de Emergencias y Desastres
-{% elif object.entidad2 == 100 %}
-    Oficina Infraestructura Y Equipamiento
-{% elif object.entidad2 == 101 %}
-    Oficina de Abastecimiento
-{% elif object.entidad2 == 102 %}
-    Oficina de Acceso y uso racional de Medicamentos
-{% elif object.entidad2 == 103 %}
-    Oficina De Apoyo Al Diagnostico Y Laboratorio De Salud Pública
-{% elif object.entidad2 == 104 %}
-    Oficina de Asesoria Juridica
-{% elif object.entidad2 == 105 %}
-    Oficina de Autorizaciones Sanitarias de Establecimientos Farmaceuticos
-{% elif object.entidad2 == 106 %}
-    Oficina de Certificaion de Salud Ambiental/ Fiscalizacion y control en Salud Ambiental
-{% elif object.entidad2 == 107 %}
-    Oficina De Comunicaciones, E Imagen Institucional
-{% elif object.entidad2 == 108 %}
-    Oficina De Contabilidad
-{% elif object.entidad2 == 109 %}
-    Oficina de Epidemiología /Inteligencia Sanitaria y Docencia e Investigación
-{% elif object.entidad2 == 110 %}
-    Oficina de Fiscalizacion y Monitoreo y Vigilancia Sanitaria
-{% elif object.entidad2 == 111 %}
-    Oficina De Gestion De La Calidad
-{% elif object.entidad2 == 112 %}
-    Oficina De Gestion De Recursos Humanos
-{% elif object.entidad2 == 113 %}
-    Oficina De Gestion De Riesgos Y Desastres
-{% elif object.entidad2 == 114 %}
-    Oficina De Gestion De Tecnologias De La Informacion
-{% elif object.entidad2 == 115 %}
-    Oficina De Intervenciones Sanitarias
-{% elif object.entidad2 == 116 %}
-    Oficina De Planeamiento Y Modernizacion De La Gestion Publica
-{% elif object.entidad2 == 117 %}
-    Oficina De Presupuesto Publico
-{% elif object.entidad2 == 118 %}
-    Oficina De Proyectos De Inversiones
-{% elif object.entidad2 == 119 %}
-    Oficina De Salud Ambiental e Inocuidad Alimentaria
-{% elif object.entidad2 == 120 %}
-    Oficina De Seguros
-{% elif object.entidad2 == 121 %}
-    Oficina De Servicios De Salud
-{% elif object.entidad2 == 122 %}
-    Oficina De Tesorería
-{% elif object.entidad2 == 123 %}
-    Oficina de Vigilancia Sanitaria
-{% elif object.entidad2 == 124 %}
-    Órgano De Control Institucional
-{% elif object.entidad2 == 125 %}
-    Plataforma de Atencio al Usuario
-{% elif object.entidad2 == 126 %}
-    Secretaría Técnica
-{% elif object.entidad2 == 127 %}
-    Tramite del Publico Usuario
-{% elif object.entidad2 == 128 %}
-    Trámite Documentario
-{% elif object.entidad2 == 129 %}
-    Unidad Funcional Gestión Compensación
-{% elif object.entidad2 == 130 %}
-    Unidad Funcional De Adquisiciones
-{% elif object.entidad2 == 131 %}
-    Unidad Funcional De Almacenamiento Y Distribución
-{% elif object.entidad2 == 132 %}
-    Unidad Funcional De Area Transmisible
-{% elif object.entidad2 == 133 %}
-    Unidad Funcional De Autorización Y Categorización De Ipress
-{% elif object.entidad2 == 134 %}
-    Unidad Funcional De Control Previo
-{% elif object.entidad2 == 135 %}
-    Unidad Funcional De Gestión De Relaciones Humanas, Sociales, Seguridad Y Salud En El Trabajo
-{% elif object.entidad2 == 136 %}
-    Unidad Funcional De Gestión Del Desarrollo, Capacitación Y Del Rendimiento
-{% elif object.entidad2 == 137 %}
-    Unidad Funcional De Gestión Del Empleo
-{% elif object.entidad2 == 138 %}
-    Unidad Funcional De Integración Contable Y Presupuesto
-{% elif object.entidad2 == 139 %}
-    Unidad Funcional De Mantenimiento
-{% elif object.entidad2 == 140 %}
-    Unidad Funcional De Modernizacion
-{% elif object.entidad2 == 141 %}
-    Unidad Funcional De Organización De La Salud
-{% elif object.entidad2 == 142 %}
-    Unidad Funcional De Organización Del Trabajo Y Su Distribución
-{% elif object.entidad2 == 143 %}
-    Unidad Funcional De Patrimonio
-{% elif object.entidad2 == 144 %}
-    Unidad Funcional De Planificación De Políticas De Rrhh.
-{% elif object.entidad2 == 145 %}
-    Unidad Funcional De Programación
-{% elif object.entidad2 == 146 %}
-    Unidad Funcional De Referencia Y Contrarreferencia
-{% elif object.entidad2 == 147 %}
-    Unidad Funcional De Servicios Generales Y Transporte
-{% elif object.entidad2 == 148 %}
-    Unidad Funcional De Soporte Informático/Unidad Funcional de Telecomunicaciones y Redes
-{% elif object.entidad2 == 149 %}
-    Unidad Funcional Del Area De Promoción De La Salud
-{% elif object.entidad2 == 150 %}
-    Unidad Funcional Del Area Mujer Adolescente Y Joven.
-{% elif object.entidad2 == 151 %}
-    Unidad Funcional Del Area Niño
-{% elif object.entidad2 == 152 %}
-    Unidad Funcional Del Area No Transmisible, Adulto Y Adulto Mayor.
-{% elif object.entidad2 == 153 %}
-    Unidad Funcional Docencia e Investigación
-{% elif object.entidad2 == 154 %}
-    Unidad Funcional Infraestructura Y Equipamiento
- 
- 
- 
-
-
-    {% else %}
-         
-    {% endif %}
-                                                            </td>
-                                                             <td class="text-center"> {{ object.ris|default:'' }} 
-                                                            </td>
+                                                            <td class="text-center"> {{ object.dependencia_service_nombre }}   </td>
+                                                             <td class="text-center"> {{ object.cargo_service_nombre }} </td>
                                                             <!--<td>{{ object.numero_documento_presenta|default_if_none:"" }}
                                                                 -
                                                                 {{ object.razon_social_presenta|default_if_none:"" }}

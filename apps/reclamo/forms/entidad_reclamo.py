@@ -12,6 +12,9 @@ from setup.models.entidad import Entidad
 
 
 class EntidadReclamoForm(forms.ModelForm):
+
+
+
     sede = forms.CharField(disabled=True, required=False)
     nombre = forms.CharField(disabled=True, required=False)
 
