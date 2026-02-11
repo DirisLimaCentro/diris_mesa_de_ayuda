@@ -171,7 +171,27 @@
         </tr>
         <tr>
             <th class="text-muted" style="font-size: 1.05rem;">Tipo de incidencia:</th>
-            <td style="font-size: 1.1rem;">{{ object.tipo_incidencia|default:"—"  }}</td>
+            <td style="font-size: 1.1rem;"> {% if object.tipo_incidencia == 1 %}
+        <span>Problemas con computadoras</span>
+    {% elif object.tipo_incidencia == 2 %}
+        <span>Problemas con Sistemas Institucionales (SIAF, SIGA, SGD, etc)</span>
+    {% elif object.tipo_incidencia == 3 %}
+        <span>Conectividad y Redes</span>
+    {% elif object.tipo_incidencia == 4 %}
+        <span>Impresoras y escáner</span>
+    {% elif object.tipo_incidencia == 5 %}
+        <span>Software de Ofimática (Word, Excel, etc)</span>
+ 
+    {% elif object.tipo_incidencia == 6 %}
+        <span>Problemas con SIHCE</span>
+
+    {% elif object.tipo_incidencia == 7 %}
+        <span>Otros</span>
+           
+    
+     {% else %}
+        <span class="badge badge-pill badge-primary"></span>
+    {% endif %}</td>
         </tr>
         <tr>
             <th class="text-muted" style="font-size: 1.05rem;">Código AnyDesk:</th>
@@ -191,6 +211,9 @@
         </tr>
     </tbody>
 </table>
+  
+
+
 
 
                                                  <!--  <h6>USUARIO AFECTADO</h6>
