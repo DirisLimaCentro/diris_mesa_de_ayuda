@@ -314,7 +314,7 @@
                                                             </td>
  
                                                             <td class="text-center"> {{ object.dependencia_service_nombre }}   </td>
-                                                             <td class="text-center"> {{ object.cargo_service_nombre }} </td>
+                                                             <td class="text-center"> {{ object.cargo_service_nombre|default_if_none:"" }} </td>
                                                             <!--<td>{{ object.numero_documento_presenta|default_if_none:"" }}
                                                                 -
                                                                 {{ object.razon_social_presenta|default_if_none:"" }}
