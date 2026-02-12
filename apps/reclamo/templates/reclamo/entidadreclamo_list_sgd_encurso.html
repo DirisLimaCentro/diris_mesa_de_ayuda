@@ -248,8 +248,7 @@
                                                     <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>Prioridad</th>
-                                                        <th>Fecha y hora de registro</th>
+                                                         <th>Fecha y hora de registro</th>
                                                         <th class="text-center">Estado</th>
                                                         <th class="text-center">Código de ticket</th>
                                                         <!--<th>Periodo</th>-->
@@ -275,28 +274,7 @@
                                                     {% for object in object_list %}
                                                         <tr>
                                                             <th>{{ forloop.counter0|add:page_obj.start_index }}</th>
-                                                            <td style="text-align: center; vertical-align: middle;">
-                                                                {% if object.entidad_id == 147 %}
-                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
-                                                                {% elif object.entidad_id == 142 %}
-                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
-                                                               {% elif object.entidad_id == 144 %}
-                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
-                                                               {% elif object.entidad_id == 146 %}
-                                                                <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(245, 11, 11);"></span>
-                                                               
-                                                                {% elif object.cargo == 1 %}
-                                                                   <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(243, 161, 10);"></span>
-                                                                 {% elif object.cargo == 3 %}
-                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(247, 243, 27);"></span>
-                                                        {% elif object.cargo == 2 %}
-                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: green;"></span>
-                                                     {% elif object.cargo == 4 %}
-                                                    <span style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: rgb(79, 148, 238);"></span>
-                                                       
-                                                    
-
-                                                                   {% endif %}</td>
+                                                             
                                                             <td>{{ object.created_at }}</td>
                                                             <td class="text-center">
                                                              {% if object.estado_reclamo == 1 %}
