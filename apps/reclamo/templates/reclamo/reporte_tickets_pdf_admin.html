@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        /* HORIZONTAL A4 */
+        @page {
+            size: A4 landscape;
+            margin: 20px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: #222;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .meta {
+            text-align: center;
+            font-size: 10px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* ⚠️ clave para anchos uniformes */
+            word-wrap: break-word;
+            font-size: 10px;
+        }
+
+        th, td {
+            border: 1px solid #aaa;
+            padding: 6px 8px;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal; /* permite romper texto en varias líneas */
+            width: 110px; /* todas las columnas tienen mismo ancho reducido */
+            text-align: center; /* por defecto todas centradas */
+        }
+
+        /* columna 8 alineada a la izquierda */
+        th:nth-child(8),
+        td:nth-child(8) {
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f6f8b;
+            color: #fff;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        /* filas alternadas */
+        tbody tr:nth-child(even) {
+            background: #f5f7f8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <br><br>
+<h2><u>REPORTE DE ATENCIÓN DE TICKETS</u></h2>
+</header>
+
+<div class="meta">
+    Periodo: {{ fecha_inicio }} — {{ fecha_fin }} &nbsp; <!--| &nbsp; Generado por: {{ usuario }}-->
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha y hora de creación</th>
+            <th>Estado</th>
+            <th>Ticket</th>
+            <th>Usuario</th>
+            <th>Dependencia</th>
+            <th>Sede</th>
+            <th>Tipo incidencia</th>
+            <th>Detalle de la atención</th>
+            <th>Personal de soporte</th>
+            <th>Fecha y hora de la atención</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+            <tr>
+                {% for cell in row %}
+                    <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

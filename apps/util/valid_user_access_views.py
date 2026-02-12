@@ -102,6 +102,12 @@ def valid_entidad_add(request, user):
 
     if len(request.user.groups.filter(name="Soporte")) > 0:
         valor_return = True
+
+    if len(request.user.groups.filter(name="REDES")) > 0:
+        valor_return = True
+
+    if len(request.user.groups.filter(name="DESARROLLO")) > 0:
+        valor_return = True
     return valor_return
 
 
@@ -148,6 +154,12 @@ def valid_ipress_entidad_add(request, user):
         valor_return = True
 
     if len(request.user.groups.filter(name="Soporte")) > 0:
+        valor_return = True
+
+    if len(request.user.groups.filter(name="REDES")) > 0:
+        valor_return = True
+
+    if len(request.user.groups.filter(name="DESARROLLO")) > 0:
         valor_return = True
 
 

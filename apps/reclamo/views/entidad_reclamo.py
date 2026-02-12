@@ -3636,6 +3636,84 @@ class ReporteTicketPDFView(View):
             return HttpResponse("Hubo un error al generar el PDF.")
 
         return response
+
+
+
+
+class ReporteTicketPDFView_admin(View):
+    template_name = "reclamo/reporte_tickets_pdf_admin.html"
+
+    def post(self, request):
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_fin = request.POST.get('fecha_fin')
+         
+
+        if not fecha_inicio or not fecha_fin:
+            return HttpResponse("Error: Debes seleccionar ambas fechas.")
+
+        # Ejecutar SP
+        with connection.cursor() as cursor:
+            cursor.callproc('obtener_reporte_tickets_admin', [
+                fecha_inicio,
+                fecha_fin
+            ])
+            desc = cursor.description or []
+            filas = cursor.fetchall()
+
+        # Nombres de columnas (sanitizar None -> col_X)
+        columnas = []
+        for i, col in enumerate(desc):
+            name = col[0] if col and col[0] is not None else f"col_{i+1}"
+            columnas.append(str(name))
+
+        # Si queremos quitar la columna 11 (índice 10), calculamos el índice real
+        idx_eliminar = 10 if len(columnas) > 10 else None
+        if idx_eliminar is not None:
+            # elimina el header
+            columnas.pop(idx_eliminar)
+
+        # Construir filas como lista de listas (todas las celdas string, None -> "")
+        rows = []
+        for fila in filas:
+            fila = list(fila)
+            # eliminar columna 11 del resultado bruto si existe
+            if idx_eliminar is not None and idx_eliminar < len(fila):
+                fila.pop(idx_eliminar)
+            # convertir None -> "" y todo a str
+            fila_sanitizada = [("" if v is None else str(v)) for v in fila]
+            rows.append(fila_sanitizada)
+
+        # DEBUG: escribe la cantidad de columnas/filas al logger (útil para depurar)
+        logger.debug("ReporteTicketPDFView -> columnas=%s, filas_count=%s", len(columnas), len(rows))
+
+        # Si no hay columnas o no hay filas, devolver mensaje claro
+        if not columnas:
+            return HttpResponse("No hay columnas en el resultado del stored procedure.")
+        if not rows:
+            return HttpResponse("No se encontraron registros para el rango de fechas seleccionado.")
+
+        # Renderizar template con headers y rows
+        template = get_template(self.template_name)
+        html = template.render({
+            "headers": columnas,
+            "rows": rows,
+            "fecha_inicio": fecha_inicio,
+            "fecha_fin": fecha_fin,
+            "usuario": request.user.get_full_name() or request.user.username,
+        })
+
+        # Generar PDF
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = 'attachment; filename="reporte_tickets_admin.pdf"'
+
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            # si falla, lo logueamos y devolvemos mensaje de error
+            logger.error("xhtml2pdf error: %s", pisa_status.err)
+            return HttpResponse("Hubo un error al generar el PDF.")
+
+        return response
     
 
 def reporte_tickets_excel(request):
