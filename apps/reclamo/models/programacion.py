@@ -8,9 +8,9 @@ from django.utils.translation import gettext_lazy as _
 
 class Programacion(models.Model):
     id = models.AutoField(primary_key=True)
-    ris  = models.ForeignKey(Ris, on_delete=models.CASCADE)
+    ris  = models.ForeignKey(Ris, on_delete=models.CASCADE,null=True, blank=True)
     entidad_id = models.IntegerField( null=True, blank=True)
-    entidad2 = models.IntegerField()
+    entidad2 = models.IntegerField(null=True, blank=True)
     distrito = models.CharField(_('Dirección'),max_length=500,null=True, blank=True)
     cantidad_personal = models.IntegerField(null=True, blank=True)
     detalle_programacion = models.TextField(max_length=2000)
@@ -38,6 +38,15 @@ class Programacion(models.Model):
     trabajo_realizado = models.TextField(max_length=4000, null=True, blank=True)
     recomendaciones = models.TextField(max_length=4000, null=True, blank=True)
     observaciones = models.TextField(max_length=4000, null=True, blank=True)
+    dependencia_service = models.CharField(_('Dependencia:'), max_length=500,null=True, blank=True)
+
+    dependencia_service_nombre = models.CharField(_(':'), max_length=500,null=True, blank=True)
+    dependencia_padre = models.CharField(_('Dependencia padre:'), max_length=30,null=True, blank=True)
+    dependencia_padre_nombre =  models.CharField(_('Dependencia padre:'), max_length=30,null=True, blank=True)
+    direccion =  models.CharField(_('direccion:'), max_length=500,null=True, blank=True)
+
+    
+
      
 
     class Meta:

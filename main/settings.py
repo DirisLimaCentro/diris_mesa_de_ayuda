@@ -85,9 +85,9 @@ MIDDLEWARE = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'diris_mesa_de_ayuda',
+        'NAME': 'diris_mesa_de_ayuda_2',
         'USER': 'root',
-        'PASSWORD': 'Administrador@123',
+        'PASSWORD': '1234',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

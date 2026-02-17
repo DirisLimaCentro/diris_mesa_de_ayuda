@@ -17,7 +17,7 @@ class MedidaAdoptadaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Solo usuarios con rol=2
-        usuarios = Usuario.objects.filter(rol=2)
+        usuarios = Usuario.objects.filter(rol=3)
 
         # 👇 Insertamos opción nula al inicio
         self.fields['usuario_soporte'].choices = [("", "--- Seleccione un usuario ---")] + [

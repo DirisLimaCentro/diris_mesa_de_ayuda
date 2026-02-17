@@ -61,6 +61,7 @@ from django.http import JsonResponse
 
 
 from django.utils.dateparse import parse_date
+from django.contrib.auth import get_user_model
 
 
 
@@ -97,7 +98,7 @@ paso_uno_secretaria = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle
 paso_uno_general = ['nombres' ,'cargo','tipo_incidencia',  'celular' ,'detalle_solicitud'  ,'sede','nombre','anydesk','piso' ,'correo_usuario','ris','entidad2' 
             ]
 
-paso_uno_programacion = ['ris','distrito','detalle_programacion','fecha_programada' ,'entidad2', 'chofer' ,'auto' ,'descripcion_general'
+paso_uno_programacion = [ 'distrito','detalle_programacion','fecha_programada' ,  'chofer' ,'auto' ,'descripcion_general','dependencia_service','dependencia_service_nombre'
 
             ]
 
@@ -213,8 +214,7 @@ class EntidadReclamoList_soporte(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -273,8 +273,7 @@ class EntidadReclamoList_soporte_encurso(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -338,8 +337,7 @@ class EntidadReclamoList_soporte_cerrados(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -402,9 +400,8 @@ class EntidadReclamoList_sihce(ListView):
 
         if query:
             queryset = queryset.filter(
-                Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+               Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -463,8 +460,7 @@ class EntidadReclamoList_sihce_encurso(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -527,8 +523,7 @@ class EntidadReclamoList_sihce_cerrados(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -573,7 +568,7 @@ class EntidadReclamoUpdate_soporte_sihce(UpdateView):
 
     def form_valid(self, form):
  
-        msg = "Ticket actulizado correctamente"
+        msg = "Ticket actualizado correctamente"
         messages.add_message(self.request, messages.SUCCESS, msg)
 
         self.object = form.save()
@@ -637,9 +632,8 @@ class EntidadReclamoList_redes(ListView):
 
         if query:
             queryset = queryset.filter(
-                Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+               Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -699,8 +693,7 @@ class EntidadReclamoList_redes_encurso(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -769,8 +762,7 @@ class EntidadReclamoList_redes_cerrados(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -1006,8 +998,7 @@ class EntidadReclamoList_secretaria(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query)  )
 
         if anio and mes:
             queryset = queryset.filter(
@@ -1152,8 +1143,7 @@ class EntidadReclamoList_secretaria_encurso(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -1209,8 +1199,7 @@ class EntidadReclamoList_secretaria_cerrados(ListView):
         if query:
             queryset = queryset.filter(
                 Q(nombres__icontains=query) | Q(codigo_ticket__icontains=query) |
-                Q(nombres_usuario__icontains=query) | Q(apellido_paterno_usuario__icontains=query) |
-                Q(apellido_materno_usuario__icontains=query))
+                Q(usuario_service_nombre__icontains=query))
 
         if anio and mes:
             queryset = queryset.filter(
@@ -3846,3 +3835,45 @@ def listar_personas_por_dependencia(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+
+
+
+User = get_user_model()
+
+def listar_usuarios(request):
+
+    usuarios = User.objects.filter(
+        is_active=True,
+        rol=3
+    ).order_by('first_name', 'last_name').values(
+        'id',
+        'first_name',
+        'last_name'
+    )
+
+    return JsonResponse(list(usuarios), safe=False)
+
+
+def asignar_reclamo(request):
+
+    if request.method == "POST":
+
+        reclamo_id = request.POST.get("reclamo_id")
+        usuario_id = request.POST.get("usuario_id")
+
+        reclamo = get_object_or_404(EntidadReclamo, pk=reclamo_id)
+
+        if reclamo.id_user:
+            return JsonResponse({"error": "Ya asignado"}, status=400)
+
+        usuario = get_object_or_404(User, id=usuario_id, rol=3)
+
+        reclamo.id_user = usuario
+        reclamo.estado_reclamo = 1
+        reclamo.save()
+
+        return JsonResponse({"ok": True})
+
+    return JsonResponse({"error": "Metodo no permitido"}, status=400)
