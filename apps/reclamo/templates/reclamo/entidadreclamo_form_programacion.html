@@ -285,7 +285,37 @@
  
 
 {% block static %}
- 
+
+
+ <script>
+const textarea = document.getElementById("id_detalle_programacion");
+
+textarea.addEventListener("input", function() {
+
+    let inicio = this.selectionStart;
+    let fin = this.selectionEnd;
+
+    this.value = this.value.toUpperCase();
+
+    this.setSelectionRange(inicio, fin);
+
+});
+
+
+const input = document.getElementById("id_descripcion_general");
+
+input.addEventListener("input", function() {
+
+    let inicio = this.selectionStart;
+    let fin = this.selectionEnd;
+
+    this.value = this.value.toUpperCase();
+
+    this.setSelectionRange(inicio, fin);
+
+});
+</script>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {

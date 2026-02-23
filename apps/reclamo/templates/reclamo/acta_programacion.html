@@ -113,7 +113,7 @@
       <b>Firma del Personal que deja conforme </b><br>
 
       <div style="text-align:left; margin:0; padding:0;">
-        <b>Nombres y Apellidos: </b> 
+        <b>Nombres y Apellidos: </b>   {{ p.personal|default_if_none:""|linebreaksbr }}
       </div>
       <div style="text-align:left; margin:0; padding:0;">
         <b>DNI: </b>
