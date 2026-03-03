@@ -281,7 +281,7 @@ class EntidadReclamoForm(forms.ModelForm):
             'updated_at': DateInput(format='%Y-%m-%d'),
             'detalle_reclamo': Textarea(attrs={'rows': '12'}),
  
-            'piso': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'piso': forms.NumberInput(attrs={'class': 'form-control'}),
 
          }
 

@@ -40,7 +40,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header" style="background-color:rgb(230, 136, 28) ">
+                                <div class="card-header" style="background-color:rgb(218, 215, 211) ">
                                     <h1 class="">Tickets Gestionados
                                         <strong class="text-primary">({{ page_obj.paginator.count }}) - </strong>
                                         AÑO: <strong class="text-primary">{{ anio }} </strong>, MES:
@@ -141,7 +141,7 @@
                                                         <th class="text-center">Código de ticket</th>
                                                         <!--<th>Periodo</th>-->
                                                         
-                                                        <th class="text-center">Usuario</th>
+                                                        <!--<th class="text-center">Usuario</th>-->
                                                         <!--<th class="text-center">Celular</th>-->
                                                         <!--<th class="text-center">Oficina</th>-->
                                                         <!--<th class="text-center">Sede</th>-->
@@ -178,7 +178,7 @@
                                                            
                                                             <!--<td>{{ object.periodo|default_if_none:"" }}</td>-->
                                                             {#                                                            <td>{{ object.codigo_administrador|default_if_none:"" }}</td>#}
-                                                            <td class="text-center">{{ object.nombres }}  
+                                                              <!--<td class="text-center">{{ object.nombres }}  -->
                                                             </td>
                                                             <!-- <td class="text-center">
                                                        {{ object.celular|default:'' }}

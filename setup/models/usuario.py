@@ -70,6 +70,12 @@ class Usuario(AbstractUser):
     ris = models.IntegerField(_('Administrador RIS'), choices=RIS, default=0)
     rol = models.IntegerField(_('Rol'), null=True, blank=True)
 
+    id_cargo = models.CharField(max_length=45, null=True, blank=True)
+    cargo = models.CharField(max_length=100, null=True, blank=True)
+    id_dependencia = models.CharField(max_length=45, null=True, blank=True)
+    dependencia = models.CharField(max_length=150, null=True, blank=True)
+    usuario_service = models.CharField(max_length=150, null=True, blank=True)
+
     # document = models.CharField(_('número de DNI'), max_length=12, unique=True, validators=[
     #     RegexValidator(regex='^.{8}$', message=_('Tiene que ingresa 8 dígitos'), code='nomatch')])
 

@@ -67,7 +67,7 @@ from django.contrib.auth import get_user_model
 
 
  
-paso_uno = ['nombres' ,'cargo','tipo_incidencia', 'celular' ,'detalle_solicitud' ,'anydesk','ris','piso','correo_usuario','entidad2','n_atenciones','dependencia_service','usuario_service','dependencia_service_nombre','dependencia_padre','dependencia_padre_nombre','cargo_service']
+paso_uno = [ 'tipo_incidencia', 'celular' ,'detalle_solicitud' ,'anydesk', 'correo_usuario','entidad2','n_atenciones','dependencia_service','usuario_service','dependencia_service_nombre','dependencia_padre','dependencia_padre_nombre','cargo_service','piso']
 paso_dos = ['tipo_documento_usuario', 'numero_documento_usuario', 'razon_social_usuario', 'nombres_usuario',
             'apellido_paterno_usuario', 'apellido_materno_usuario']
 paso_tres = [  'numero_documento_presenta', 'razon_social_presenta',
@@ -165,8 +165,10 @@ class EntidadReclamoList(ListView):
             queryset = queryset.filter(
                 fecha_reclamo__year=anio, fecha_reclamo__month=mes)
             
-        queryset = queryset.filter(estado_reclamo=0)
-
+        queryset = queryset.filter(
+    estado_reclamo=0,
+    usuario_service__iexact=self.request.user.usuario_service
+)
         return queryset.order_by('-id')
     
 
@@ -886,7 +888,7 @@ class EntidadReclamoList_encurso(ListView):
             
             
         queryset = queryset.filter(
-            Q(estado_reclamo=1) | Q(estado_reclamo=2)   # <-- sigue filtrando por usuario logueado
+            Q(estado_reclamo=1) | Q(estado_reclamo=2) , usuario_service__iexact=self.request.user.usuario_service  # <-- sigue filtrando por usuario logueado
 )
     
  
@@ -946,7 +948,7 @@ class EntidadReclamoList_cerrados(ListView):
             
             
         queryset = queryset.filter(
-            Q(estado_reclamo=3)   # <-- sigue filtrando por usuario logueado
+            Q(estado_reclamo=3)  , usuario_service__iexact=self.request.user.usuario_service # <-- sigue filtrando por usuario logueado
 )
     
  
@@ -1421,10 +1423,31 @@ class EntidadReclamoCreate(CreateView):
         msg = "Ticket creado correctamente"
         messages.add_message(self.request, messages.SUCCESS, msg)
 
-        self.object = form.save()
+        # No guardes todavía
+        self.object = form.save(commit=False)
+
+        # Asignar usuario logeado
+        self.object.id_usuario = self.request.user.id
+        self.object.nombres = self.request.user.first_name
+        self.object.apellidos = self.request.user.last_name
+        self.object.cargo_service_nombre = self.request.user.cargo
+        self.object.dependencia_service_nombre = self.request.user.dependencia
+        self.object.correo_usuario = self.request.user.email
+        self.object.usuario_service = self.request.user.usuario_service
+        self.object.usuario_service_nombre = (
+    f"{self.request.user.first_name} {self.request.user.last_name}"
+)
+
+        # o si es ForeignKey:
+        # self.object.id_usuario = self.request.user
+
+        # Asignar otros campos
         entidad_id = self.request.session['entidad_id']
         self.object.entidad_id = entidad_id
         self.object.estado_reclamo = 0
+
+        # Ahora sí guardar
+        self.object.save()
 
         return super().form_valid(form)
 

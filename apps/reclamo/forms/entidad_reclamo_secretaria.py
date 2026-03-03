@@ -197,42 +197,41 @@ class EntidadReclamoForm_secretaria(forms.ModelForm):
                 instance.dependencia_padre = dep_data.get("id_dependencia_padre")
                 instance.dependencia_padre_nombre = dep_data.get("dependencia_padre")
 
-        # -------- USUARIO SERVICE + CARGO + TELEFONO + CORREO --------
+                # NUEVO: BUSCAR EN setup_entidad POR codigo
+                entidad_obj = Entidad.objects.filter(
+                    codigo=str(id_dependencia)
+                ).first()
+
+                if entidad_obj:
+                    instance.entidad = entidad_obj   # ForeignKey
+                else:
+                    print("⚠ No existe Entidad con codigo:", id_dependencia)
+
+        # -------- RESTO DE TU LÓGICA --------
         id_persona = self.cleaned_data.get("usuario_service")
 
         if id_persona and hasattr(self, "usuarios_map"):
             persona_data = self.usuarios_map.get(str(id_persona))
 
             if persona_data:
-                # Nombre completo (ya concatenado)
                 nombre_completo = f"{persona_data.get('nombre','')} {persona_data.get('apellido_paterno','')} {persona_data.get('apellido_materno','')}".strip()
 
-                # Asignaciones a tu modelo
                 instance.usuario_service = id_persona
                 instance.usuario_service_nombre = nombre_completo
-
-                # ✅ NUEVO: CARGO
                 instance.cargo_service = persona_data.get("id_cargo")
                 instance.cargo_service_nombre = persona_data.get("cargo")
 
-                # ✅ TELÉFONO → solo setear si el usuario NO lo cambió
                 if not self.cleaned_data.get("celular"):
                     instance.celular = persona_data.get("telefono")
                 else:
                     instance.celular = self.cleaned_data.get("celular")
 
-                # ✅ CORREO → solo setear si el usuario NO lo cambió
                 if not self.cleaned_data.get("correo_usuario"):
                     instance.correo_usuario = persona_data.get("correo")
                 else:
                     instance.correo_usuario = self.cleaned_data.get("correo_usuario")
 
-
-
-
-
-
-        # --------   lógica original --------
+        # -------- lógica original --------
         entidad = self.cleaned_data.get("nombre")
         if entidad:
             instance.entidad = entidad

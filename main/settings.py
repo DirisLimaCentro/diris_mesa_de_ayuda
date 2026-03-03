@@ -234,3 +234,7 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'setup.usuario'
 
+AUTHENTICATION_BACKENDS = [
+    'setup.backends.ActiveDirectoryBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

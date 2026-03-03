@@ -227,7 +227,8 @@ class EntidadReclamo(models.Model):
     cargo_service =models.CharField(_('Cargo:'), max_length=30,null=True, blank=True)
     cargo_service_nombre=models.CharField(_('Cargo:'), max_length=100,null=True, blank=True)
 
- 
+    id_usuario = models.PositiveIntegerField(
+        _('Id del usuario:'),null=True, blank=True)
 
     
     ############################
@@ -261,7 +262,7 @@ class EntidadReclamo(models.Model):
 
     anydesk= models.CharField(_('Código de anydesk:'), max_length=15,null=True, blank=True)
 
-    piso = models.PositiveIntegerField(('Piso:'))
+    piso = models.PositiveIntegerField(('Piso:'),null=True, blank=True)
 
     prioridad = models.PositiveIntegerField(('Prioridad:'))
 

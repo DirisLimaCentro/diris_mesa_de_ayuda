@@ -114,85 +114,57 @@ class Dashboard(TemplateView):
 
 
 def login_view(request):
-    if request.POST:
+    if request.method == "POST":
+
         username = request.POST['username']
         password = request.POST['password']
 
-        try:
-            user_active = Usuario.objects.get(username=username)
-            if not user_active.is_active:
-                msg = "Cuenta suspendida, contacte con el administrador"
-                messages.add_message(
-                    request, messages.WARNING, msg, extra_tags='danger')
-                return redirect(reverse('index:index'))
-
-        except Usuario.DoesNotExist:
-            msg = "Datos de acceso incorrectos"
-            messages.add_message(request, messages.WARNING, msg)
-            return redirect(reverse('index:index'))
-
-        user = authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
 
-            if user.is_active:
-                login(request, user)
-
-                u = Usuario.objects.get(pk=user.id)
-
-                request.session['user_full_name'] = u.first_name
-
-                # try:
-                #     u = User.objects.get(pk=user.id)
-                #     datos_personales = DatosPersonales.objects.get(user_id=u.id)
-                #     request.session['user_full_name'] = datos_personales.get_full_name()
-                # except DatosPersonales.DoesNotExist:
-                #     request.session['user_full_name'] = "USUARIO ANÓNIMO"
-
-                msg = "Bienvenido: " + request.session['user_full_name']
-                messages.add_message(request, messages.SUCCESS, msg)
-                #
-                if u.entidad:
-                    entidad = Entidad.objects.get(pk=u.entidad.id)
-                    request.session['entidad_nombre'] =  \
-                        entidad.nombre.upper()
-                    # request.session['entidad_tipo'] = entidad.get_tipo_display().upper()
-                    request.session['entidad_codigo'] = entidad.codigo.upper()
-                    request.session['entidad_id'] = entidad.id
-                else:
-
-                    if u.ris:
-                        request.session['entidad_nombre'] = "RIS - " + \
-                            u.get_ris_display()
-                    else:
-                        request.session['entidad_nombre'] = "OFICINA DE GESTIÓN DE TECNOLOGIA DE LA INFORMACIÓN - DIRIS LIMA CENTRO"
-                        request.session['entidad_id'] = 0
-
-                request.session["menu"] = get_menu(request.user)
-                request.session["menu_manager"] = 'active'
-                request.session["menu_patient"] = ''
-
-                request.session['menu_parent'] = 2
-                request.session["project"] = 0
-
-                if u.groups.all().first():
-                    request.session["tipo_usuario"] = u.groups.all(
-                    ).first().name
-
-                # return redirect(reverse('reclamo:entidad-reclamo-list'))
-                # return render(request, 'dashboard.html')
-                return redirect(reverse('index:dashboard'))
-            else:
-                msg = "Cuenta suspendida, contacte con el administrador"
-                messages.add_message(request, messages.WARNING, msg)
+            if not user.is_active:
+                messages.warning(request, "Cuenta suspendida, contacte con el administrador")
                 return redirect(reverse('index:index'))
+
+            login(request, user)
+
+            request.session['user_full_name'] = user.first_name or user.username
+
+            messages.success(request, "Bienvenido: " + request.session['user_full_name'])
+
+            # Aquí ya puedes cargar entidad, ris, etc.
+            u = user
+
+            if u.entidad:
+                entidad = u.entidad
+                request.session['entidad_nombre'] = entidad.nombre.upper()
+                request.session['entidad_codigo'] = entidad.codigo.upper()
+                request.session['entidad_id'] = entidad.id
+            else:
+                if u.ris:
+                    request.session['entidad_nombre'] = "RIS - " + u.get_ris_display()
+                else:
+                    request.session['entidad_nombre'] = "OFICINA DE GESTIÓN DE TECNOLOGIA DE LA INFORMACIÓN - DIRIS LIMA CENTRO"
+                    request.session['entidad_id'] = 0
+
+            request.session["menu"] = get_menu(request.user)
+            request.session["menu_manager"] = 'active'
+            request.session["menu_patient"] = ''
+            request.session['menu_parent'] = 2
+            request.session["project"] = 0
+
+            if u.groups.exists():
+                request.session["tipo_usuario"] = u.groups.first().name
+
+            return redirect(reverse('index:dashboard'))
+
         else:
-            msg = "Datos de acceso incorrectos"
-            messages.add_message(request, messages.WARNING, msg)
+            messages.warning(request, "Datos de acceso incorrectos")
             return redirect(reverse('index:index'))
+
     else:
-        msg = "Operación no soportada"
-        messages.add_message(request, messages.WARNING, msg)
+        messages.warning(request, "Operación no soportada")
         return redirect(reverse('index:index'))
 
 
