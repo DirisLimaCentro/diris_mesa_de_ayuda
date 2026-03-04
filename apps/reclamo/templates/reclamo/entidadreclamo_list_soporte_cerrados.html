@@ -287,13 +287,13 @@
                                                            
                                                             <!--<td>{{ object.periodo|default_if_none:"" }}</td>-->
                                                             {#                                                            <td>{{ object.codigo_administrador|default_if_none:"" }}</td>#}
-                                                            <td class="text-center">{{ object.usuario_service_nombre }} 
+                                                            <td class="text-center">{{ object.usuario_service_nombre|default_if_none:"" }} 
                                                             </td>
                                                              <td class="text-center">
                                                        {{ object.celular|default:'' }}
                                                             </td>
  
-                                                              <td class="text-center"> {{ object.dependencia_service_nombre }}   </td>
+                                                              <td class="text-center"> {{ object.dependencia_service_nombre|default_if_none:"" }}   </td>
                                                              <td class="text-center"> {{ object.cargo_service_nombre|default_if_none:"" }} </td>
                                                             <!--<td>{{ object.numero_documento_presenta|default_if_none:"" }}
                                                                 -

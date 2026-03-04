@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib import messages
@@ -54,7 +54,7 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 import requests
 from django.http import JsonResponse
- 
+from django.views.decorators.http import require_POST 
 
 
 
@@ -3113,7 +3113,7 @@ def atender_reclamo(request, pk):
         )
 
     reclamo.id_user = request.user.id
-    reclamo.nombre_soporte = request.user.first_name
+    reclamo.nombre_soporte = f"{request.user.first_name} {request.user.last_name}"
     reclamo.estado_reclamo = 1
     reclamo.save()
 
@@ -3866,37 +3866,43 @@ def listar_personas_por_dependencia(request):
 User = get_user_model()
 
 def listar_usuarios(request):
-
-    usuarios = User.objects.filter(
-        is_active=True,
-        rol=3
-    ).order_by('first_name', 'last_name').values(
-        'id',
-        'first_name',
-        'last_name'
+    usuarios = User.objects.filter(rol=3).values(
+        "id", "first_name", "last_name"
     )
 
-    return JsonResponse(list(usuarios), safe=False)
+    data = [
+        {
+            "id": u["id"],
+            "nombre": f"{u['first_name']} {u['last_name']}".strip()
+        }
+        for u in usuarios
+    ]
+
+    return JsonResponse(data, safe=False)
 
 
+@require_POST
 def asignar_reclamo(request):
+    reclamo_id = request.POST.get("reclamo_id")
+    user_id = request.POST.get("user_id")
 
-    if request.method == "POST":
+    try:
+        reclamo = EntidadReclamo.objects.get(id=reclamo_id)
+        usuario = User.objects.get(id=user_id)
 
-        reclamo_id = request.POST.get("reclamo_id")
-        usuario_id = request.POST.get("usuario_id")
+        # 👇 Como es IntegerField guardamos solo el ID
+        reclamo.id_user = usuario.id
 
-        reclamo = get_object_or_404(EntidadReclamo, pk=reclamo_id)
+        # Guardar nombre del soporte
+        reclamo.nombre_soporte = f"{usuario.first_name} {usuario.last_name}"
 
-        if reclamo.id_user:
-            return JsonResponse({"error": "Ya asignado"}, status=400)
-
-        usuario = get_object_or_404(User, id=usuario_id, rol=3)
-
-        reclamo.id_user = usuario
         reclamo.estado_reclamo = 1
         reclamo.save()
 
-        return JsonResponse({"ok": True})
+        return JsonResponse({"success": True})
 
-    return JsonResponse({"error": "Metodo no permitido"}, status=400)
+    except EntidadReclamo.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Reclamo no existe"})
+
+    except User.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Usuario no existe"})
