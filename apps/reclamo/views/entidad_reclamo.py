@@ -3117,13 +3117,52 @@ def atender_reclamo(request, pk):
     reclamo.estado_reclamo = 1
     reclamo.save()
 
+    # ---------------- ENVIO DE CORREO ----------------
+    correo_usuario = reclamo.correo_usuario
+
+    if correo_usuario:
+        try:
+            asunto = "Actualización de su Ticket de Soporte"
+
+            mensaje = f"""
+Estimado(a),
+
+Le informamos que su ticket ha sido tomado por el equipo de soporte y se encuentra actualmente en proceso de atención.
+
+Código de Ticket: {reclamo.codigo_ticket}
+
+Personal de soporte asignado:
+{reclamo.nombre_soporte}
+
+Nuestro equipo estará trabajando para brindarle una solución a la brevedad posible.
+
+Saludos cordiales,
+
+Oficina de Gestión de Tecnologías de la Información
+DIRIS Lima Centro
+"""
+
+            send_mail(
+                subject=asunto,
+                message=mensaje,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[correo_usuario],
+                fail_silently=False,
+            )
+
+        except Exception as e:
+            messages.warning(
+                request,
+                "El ticket fue asignado, pero no se pudo enviar el correo de notificación."
+            )
+    # -------------------------------------------------
+
     messages.success(request, "Se agregó TICKET en CURSO correctamente.")
     return redirect(
         reverse('reclamo:soporte-list-encurso')
         + "?anio=" + str(request.session.get('reclamo_anio', ''))
         + "&mes=" + str(request.session.get('reclamo_mes', ''))
     )
-
 
 
 def dar_por_atendido(request):
@@ -3899,10 +3938,47 @@ def asignar_reclamo(request):
         reclamo.estado_reclamo = 1
         reclamo.save()
 
+        # ---------------- ENVIO DE CORREO ----------------
+        correo_usuario = reclamo.correo_usuario
+
+        if correo_usuario:
+            try:
+                asunto = "Actualización de su Ticket de Soporte"
+
+                mensaje = f"""
+Estimado(a),
+
+Le informamos que su ticket ha sido tomado por el equipo de soporte y se encuentra actualmente en proceso de atención.
+
+Código de Ticket: {reclamo.codigo_ticket}
+
+Personal de soporte asignado:
+{reclamo.nombre_soporte}
+
+Nuestro equipo estará trabajando para brindarle una solución a la brevedad posible.
+
+Saludos cordiales,
+
+Oficina de Gestión de Tecnologías de la Información
+DIRIS Lima Centro
+"""
+
+                send_mail(
+                    subject=asunto,
+                    message=mensaje,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[correo_usuario],
+                    fail_silently=False,
+                )
+
+            except Exception as e:
+                print("Error enviando correo:", e)
+        # -------------------------------------------------
+
         return JsonResponse({"success": True})
 
     except EntidadReclamo.DoesNotExist:
-        return JsonResponse({"success": False, "error": "Reclamo no existe"})
+        return JsonResponse({"success": False, "error": "Ticekt no existe"})
 
     except User.DoesNotExist:
         return JsonResponse({"success": False, "error": "Usuario no existe"})

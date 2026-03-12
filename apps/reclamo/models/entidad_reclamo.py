@@ -258,7 +258,7 @@ class EntidadReclamo(models.Model):
     codigo_ticket= models.CharField(_('Codigo de ticket:'), max_length=30,null=True, blank=True
                                     )
     
-    celular= models.CharField(_('Celular:'), max_length=9 , null=True, blank=True)
+    celular= models.CharField(_('Celular:'), max_length=15 , null=True, blank=True)
 
     anydesk= models.CharField(_('Código de anydesk:'), max_length=15,null=True, blank=True)
 

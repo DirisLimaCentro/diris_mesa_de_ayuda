@@ -316,4 +316,4 @@ class ReporteTicketForm(forms.Form):
  
     fecha_fin = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     
- 
+  
