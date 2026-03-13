@@ -2928,7 +2928,7 @@ class EntidadReclamoUpdate3(UpdateView):
 
 
 class EntidadReclamoDelete(DeleteView):
-    success_url = reverse_lazy('reclamo:entidad-reclamo-registro/list')
+    success_url = reverse_lazy('reclamo:secretaria-list-nuevos')
     model = EntidadReclamo
 
     @method_decorator(valid_access_view(valid_ipress_entidad_edit, login_url='/validate'))
@@ -2936,7 +2936,7 @@ class EntidadReclamoDelete(DeleteView):
         return super(EntidadReclamoDelete, self).dispatch(*args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        msg = "Reclamo eliminado correctamente"
+        msg = "Ticekt eliminado correctamente"
         messages.add_message(self.request, messages.ERROR,
                              msg, extra_tags='danger')
         return super(EntidadReclamoDelete, self).delete(request, *args, **kwargs)
@@ -2954,7 +2954,7 @@ class EntidadReclamoDelete_programacion(DeleteView):
         return super(EntidadReclamoDelete_programacion, self).dispatch(*args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        msg = "Reclamo eliminado correctamente"
+        msg = "Programación eliminado correctamente"
         messages.add_message(self.request, messages.ERROR,
                              msg, extra_tags='danger')
         return super(EntidadReclamoDelete_programacion, self).delete(request, *args, **kwargs)
