@@ -1397,8 +1397,6 @@ class EntidadReclamoCreate(CreateView):
     form_class = EntidadReclamoForm
     model = EntidadReclamo
 
-    # success_url = reverse_lazy('reclamo:entidad-reclamo-list')
-
     @method_decorator(valid_access_view(valid_ipress_entidad_add, login_url='/validate'))
     def dispatch(self, *args, **kwargs):
         return super(EntidadReclamoCreate, self).dispatch(*args, **kwargs)
@@ -1408,16 +1406,10 @@ class EntidadReclamoCreate(CreateView):
             self.request.session['reclamo_anio']) + "&mes=" + str(self.request.session['reclamo_mes'])
 
     def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super(EntidadReclamoCreate,
-                       self).get_form_kwargs(*args, **kwargs)
+        kwargs = super(EntidadReclamoCreate, self).get_form_kwargs(*args, **kwargs)
         entidad_id = self.request.session['entidad_id']
         kwargs['entidad_id'] = entidad_id
-
         return kwargs
-
-    # def get_success_url(self):
-    #     return reverse_lazy('ciclo:edit',
-    #                         kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
         msg = "Ticket creado correctamente"
@@ -1435,11 +1427,8 @@ class EntidadReclamoCreate(CreateView):
         self.object.correo_usuario = self.request.user.email
         self.object.usuario_service = self.request.user.usuario_service
         self.object.usuario_service_nombre = (
-    f"{self.request.user.first_name} {self.request.user.last_name}"
-)
-
-        # o si es ForeignKey:
-        # self.object.id_usuario = self.request.user
+            f"{self.request.user.first_name} {self.request.user.last_name}"
+        )
 
         # Asignar otros campos
         entidad_id = self.request.session['entidad_id']
@@ -1449,14 +1438,48 @@ class EntidadReclamoCreate(CreateView):
         # Ahora sí guardar
         self.object.save()
 
+        # ---------------- ENVIO DE CORREO ----------------
+        correo_usuario = self.object.correo_usuario
+
+        if correo_usuario:
+            try:
+                asunto = "Confirmación de registro de TICKET"
+                mensaje = f"""
+Estimado(a),
+
+Su solicitud fue registrada correctamente en nuestro sistema.
+
+Código de Ticket: {self.object.codigo_ticket}
+
+Saludos cordiales,
+
+Atte.
+
+Oficina de Gestión de Tecnologías de la Información - DIRIS Lima Centro
+"""
+                send_mail(
+                    subject=asunto,
+                    message=mensaje,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[correo_usuario],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                messages.warning(
+                    self.request,
+                    "El reclamo fue registrado, pero no se pudo enviar el correo de confirmación."
+                )
+        # -------------------------------------------------
+
         return super().form_valid(form)
 
     def get_initial(self):
         initial = super(EntidadReclamoCreate, self).get_initial()
         if self.request.method == 'GET':
             initial.update(
-                {'periodo': '000000', 'tipo_institucion': 1, 'tipo_documento_usuario': 1, 'tipo_documento_presenta': 1,
-                 'competencia_reclamo': 1, 'autorizacion_notificacion_correo': 1})
+                {'periodo': '000000', 'tipo_institucion': 1, 'tipo_documento_usuario': 1,
+                 'tipo_documento_presenta': 1, 'competencia_reclamo': 1,
+                 'autorizacion_notificacion_correo': 1})
         return initial
 
     def get_context_data(self, **kwargs):
@@ -1464,10 +1487,18 @@ class EntidadReclamoCreate(CreateView):
         clasificaciones = ClasificacionCausa.objects.all()
 
         return dict(
-            super(EntidadReclamoCreate, self).get_context_data(**kwargs), title=title, paso_uno=paso_uno,
-            paso_dos=paso_dos, paso_tres=paso_tres, paso_cuatro=paso_cuatro, paso_cinco=paso_cinco,
-            paso_seis=paso_seis, inputs_hidden=inputs_hidden, clasificaciones=clasificaciones)
-    
+            super(EntidadReclamoCreate, self).get_context_data(**kwargs),
+            title=title,
+            paso_uno=paso_uno,
+            paso_dos=paso_dos,
+            paso_tres=paso_tres,
+            paso_cuatro=paso_cuatro,
+            paso_cinco=paso_cinco,
+            paso_seis=paso_seis,
+            inputs_hidden=inputs_hidden,
+            clasificaciones=clasificaciones
+        )
+
 
 
 class EntidadReclamoCreate_secretaria(CreateView):
@@ -3233,7 +3264,7 @@ def valoracion_atencion(request):
         reclamo.save()
 
         messages.success(request, "Se mandó tu valoración MUCHAS GRACIAS 😊")
-        return redirect('reclamo:general-list')  # ajusta la redirección a lo que necesites
+        return redirect('reclamo:list-cerrados')  # ajusta la redirección a lo que necesites
     
 
 def liberar_caso(request):
