@@ -209,7 +209,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #ESTA ES LA CONFIGURACION DE SIEMPRE######################
@@ -220,7 +220,7 @@ STATIC_LOCAL_ROOT = os.path.join(BASE_DIR, '..', 'static/')
 #STATIC_ROOT = os.path.join(BASE_DIR, '..', 'staticfiles/')
 ########################################################
 
-STATIC_URL = '/staticfiles/'
+STATIC_URL = 'staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # aquí Django copiará todos los static
 
 STATICFILES_DIRS = [
